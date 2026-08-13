@@ -1,10 +1,11 @@
-/* Layout only: a fixed side panel and a viewport that takes the rest.
-   Deliberately plain — the Desmos-style expression list arrives in step 5, and
-   styling it now would only be thrown away. */
+/* A fixed side panel holding the expression list, and a viewport that takes the
+   rest. The list is the part that gets the care: it is where all the interaction
+   happens, so rows are dense enough to see a dozen residues at once but still
+   have real hit targets. */
 
 .app {
   display: grid;
-  grid-template-columns: 20rem 1fr;
+  grid-template-columns: 23rem 1fr;
   height: 100vh;
   overflow: hidden;
 }
@@ -12,8 +13,8 @@
 .panel {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
-  padding: 1.5rem 1.25rem;
+  gap: 1.5rem;
+  padding: 1.25rem 1rem;
   overflow-y: auto;
   border-right: 1px solid var(--line);
   background: var(--panel);
@@ -27,7 +28,7 @@
 }
 
 .panel h2 {
-  margin: 0 0 0.6rem;
+  margin: 0;
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -41,56 +42,274 @@
   color: var(--muted);
 }
 
-.presets {
+/* ---- residue list ---- */
+
+.residues {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
-.preset {
+.residues-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.1rem;
+}
+
+.link {
+  padding: 0;
+  font: inherit;
+  font-size: 0.72rem;
+  color: var(--muted);
+  cursor: pointer;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+}
+
+.link:hover {
+  color: var(--accent);
+}
+
+.blank {
+  margin: 0;
+  padding: 0.75rem;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--muted);
+  background: var(--canvas);
+  border: 1px dashed var(--line);
+  border-radius: 0.5rem;
+}
+
+.rows {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.6rem 0.7rem;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1.1rem 3.6rem 1fr;
+  grid-template-areas:
+    'index acid angles'
+    '.     .    actions';
+  align-items: center;
+  gap: 0.25rem 0.35rem;
+  padding: 0.35rem 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 0.45rem;
+}
+
+.row:hover,
+.row:focus-within {
+  background: var(--canvas);
+  border-color: var(--line);
+}
+
+.row-index {
+  grid-area: index;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--muted);
+}
+
+.row-acid {
+  grid-area: acid;
+  padding: 0.2rem 0.1rem;
+  font: inherit;
+  font-size: 0.74rem;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+}
+
+.row-angles {
+  display: grid;
+  grid-area: angles;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.25rem;
+}
+
+.angle {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.15rem 0.25rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+}
+
+.angle:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+/* An angle that is stored and editable but has no geometric effect on this
+   residue — φ of residue 1, ω of the last. Muted, never disabled: the value
+   becomes live the moment a neighbour is inserted. */
+.angle.inert {
+  border-style: dashed;
+  opacity: 0.55;
+}
+
+.angle-label {
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.angle-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  text-align: right;
+  background: none;
+  border: 0;
+  outline: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.angle-input::-webkit-outer-spin-button,
+.angle-input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.angle-unit {
+  font-size: 0.66rem;
+  color: var(--muted);
+}
+
+.row-actions {
+  display: flex;
+  grid-area: actions;
+  gap: 0.15rem;
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity 90ms ease-out;
+}
+
+.row:hover .row-actions,
+.row:focus-within .row-actions {
+  opacity: 1;
+}
+
+.row-actions button {
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  font: inherit;
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+}
+
+.row-actions button:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.row-actions button.danger:hover:not(:disabled) {
+  color: #c2382f;
+  border-color: #c2382f;
+}
+
+.row-actions button:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.add {
+  padding: 0.4rem;
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--accent);
+  cursor: pointer;
+  background: transparent;
+  border: 1px dashed var(--line);
+  border-radius: 0.4rem;
+}
+
+.add:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* ---- examples ---- */
+
+.examples {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.examples-hint {
+  margin: 0.15rem 0 0.25rem;
+}
+
+.example {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.45rem 0.6rem;
   text-align: left;
   font: inherit;
   color: inherit;
   cursor: pointer;
   background: transparent;
   border: 1px solid var(--line);
-  border-radius: 0.5rem;
+  border-radius: 0.45rem;
 }
 
-.preset:hover {
-  border-color: var(--accent);
-}
-
-.preset.selected {
+.example:hover {
   border-color: var(--accent);
   background: var(--accent-soft);
 }
 
-.preset-name {
-  font-size: 0.85rem;
+.example-name {
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
-.preset-detail {
-  font-size: 0.72rem;
-  line-height: 1.35;
+.example-detail {
+  overflow: hidden;
+  font-size: 0.68rem;
+  line-height: 1.3;
   color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+/* ---- readout ---- */
 
 .readout dl {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 0.2rem 0.75rem;
-  margin: 0 0 0.9rem;
-  font-size: 0.8rem;
+  margin: 0.5rem 0 0.9rem;
+  font-size: 0.78rem;
 }
 
 .readout dt {
   color: var(--muted);
+  cursor: help;
 }
 
 .readout dd {
@@ -115,9 +334,14 @@
 }
 
 .hint {
-  margin: 0.7rem 0 0;
-  font-size: 0.7rem;
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.4;
   color: var(--muted);
+}
+
+.readout .hint {
+  margin-top: 0.7rem;
 }
 
 .viewport {

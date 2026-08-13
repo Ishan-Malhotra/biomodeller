@@ -1,11 +1,14 @@
 /**
- * Fixed sample chains, for validating the render pipeline at step 4.
+ * Example chains: conformations whose shape is known in advance.
  *
- * Temporary scaffolding, not a product feature: step 5 replaces these with an
- * editable, initially-empty residue list. They exist so the viewport can be
- * checked against conformations whose shape is known in advance — if the α-helix
- * preset doesn't look like a right-handed helix on screen, something between
- * `buildBackbone` and the canvas is wrong.
+ * These began as step 4 scaffolding for checking the render pipeline — if the
+ * α-helix doesn't look right-handed on screen, something between
+ * `buildBackbone` and the canvas is wrong — and they keep earning their place
+ * for the same reason at every later step.
+ *
+ * They are examples, not presets: loading one drops its residues into the
+ * editable list, where every angle is then just as editable as one typed by
+ * hand. The app still opens empty (product.md §5.1); nothing here is a default.
  */
 
 import { OMEGA_TRANS } from '../lib/constants.ts'
@@ -38,18 +41,13 @@ function chainOf(segments: readonly Segment[]): Residue[] {
   return residues
 }
 
-export interface SamplePreset {
+export interface ExampleChain {
   readonly name: string
   readonly description: string
   readonly residues: Residue[]
 }
 
-export const SAMPLE_PRESETS: readonly SamplePreset[] = [
-  {
-    name: 'Empty',
-    description: 'No residues — the blank canvas the real app opens on.',
-    residues: [],
-  },
+export const EXAMPLE_CHAINS: readonly ExampleChain[] = [
   {
     name: 'One residue',
     description: 'The canonical seed frame: N, Cα, C, O. Not derived from angles.',

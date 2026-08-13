@@ -349,9 +349,142 @@ for something as elongated as a helix, so generous padding compounds. Now 1.08.
 
 ---
 
+## Stage 5 — Editable residue list
+
+**Date:** 2026-08-13
+
+The app now opens on a blank canvas and the chain is built one row at a time. No
+new dependencies.
+
+### `lib/edits.ts` — the editing operations, kept pure
+
+Insert, append, duplicate, remove, update, move, plus `wrapDegrees` and
+`nextResidueId`. Framework-free and in `lib/` for one reason: these are the
+operations the suffix-recompute optimisation has to be correct *with respect to*,
+and the property worth testing — every edit followed by an incremental rebuild
+equals a rebuild from scratch — is a statement about pure functions.
+
+Decisions worth recording:
+
+- **New residues default to α-helical angles (−57/−47/180), not 180/180/180.** An
+  extended chain of straight residues is the least informative thing to show
+  someone: adding rows makes a line get longer. With helical defaults the third or
+  fourth residue already visibly curls, which is the behaviour the tool exists to
+  demonstrate.
+- **`wrapDegrees` normalises to (−180°, 180°], and is exact identity in range.**
+  The modulo arithmetic is mathematically the identity for in-range values but not
+  in floating point — it perturbs −60.5 by an ulp. That was a real bug caught by
+  the tests: an amino-acid substitution, which moves no atom, was registering as
+  an angle change and recomputing the suffix. The half-open interval includes
+  +180 rather than −180 so a trans peptide bond reads as ω = 180°, by convention.
+- **Ids derive from the highest existing number, not a module-level counter.** A
+  counter would make the module stateful and its tests order-dependent.
+- **`moveResidue` clamps out-of-range destinations instead of throwing**, so
+  holding the up arrow on the first row is a no-op rather than an error.
+
+### `src/useChain.ts` — residues are state, atoms are not
+
+`residues` is the only thing `useState` holds. There is deliberately no
+`setAtoms`. Atoms come from a `useMemo` holding a three-field cache (previous
+residues, previous atoms, previous `fromIndex`); throw the cache away and the next
+render reproduces it exactly, which is the test of whether it's a memoisation
+detail or a second copy of the truth.
+
+**The invalidation index is derived from the two residue lists, not declared by
+each edit.** It costs an O(i) comparison and buys the guarantee that no editing
+operation can get the boundary wrong — including reorders, where the boundary is
+not the row the user dragged but the first position whose occupant changed. The
+cache also short-circuits when handed the identical list, so React re-invoking the
+memo in StrictMode returns the same atoms rather than re-deriving them.
+
+`RebuildStats` is exposed and shown in the sidebar ("recomputed 8 of 12, from
+residue 5"). It is the most direct evidence the optimisation is real, which
+product.md §3 asks for.
+
+### The UI — `src/editor/`
+
+- `ResidueList.tsx` — rows, an add button, and the blank state. No submit control
+  anywhere. Enter inserts a row below and moves the cursor to it, so a chain can
+  be built without the mouse. The focus request is consumed after one render;
+  child effects run before parent effects, so the row has taken focus by the time
+  the parent clears the flag, which keeps `autoFocus` a one-shot signal rather
+  than something that steals the cursor back on unrelated re-renders.
+- `ResidueRow.tsx` — memoised. An edit at residue i re-renders the list, but
+  earlier rows are unchanged by value and their props are referentially stable
+  (the editor's action object never changes identity), so they skip re-rendering
+  entirely. That's the DOM-side counterpart of the suffix-only geometry recompute.
+- `AngleField.tsx` — commits on every keystroke, so it cannot round-trip its value
+  through state naively: the moment the text is not yet a number ("-", "", "-1.")
+  committing would either throw or snap the field to something the user didn't
+  type. It keeps an uncommitted draft string for those keystrokes. Typing 200
+  commits −160 but keeps showing "200" until blur — correcting someone's
+  arithmetic under their cursor mid-word is hostile, and the 3D view already shows
+  them the answer.
+
+**The rows carry the pedagogy about which angles do nothing.** φ of residue 1 has
+no geometric effect (there is no preceding C to rotate about; N/Cα/C come from the
+seed frame) and neither does ω of the last residue (it places the *next*
+residue's Cα). Both are marked muted-and-dashed with an explanation on hover, and
+deliberately *not* disabled — the value becomes live the instant a neighbour is
+inserted, so refusing the edit would be worse than marking it. ψ of the last
+residue is **not** in that list: it still orients that residue's own carbonyl O.
+
+The old preset picker became an Examples section. Loading one drops its residues
+into the editable list rather than displaying a fixed structure.
+
+### Tests — `tests/edits.test.ts`, 47 cases (115 total)
+
+The operations are small enough to be obvious, so the weight is on the invariant:
+for an append, a middle insert, an N-terminal insert, a middle/C-terminal delete,
+a duplication, φ/ψ/ω changes, an amino-acid substitution, a reorder and a
+neighbour swap, `rebuildFrom` at the reported index produces geometry identical to
+`buildBackbone` — plus an assertion that the reused prefix is the *same objects*,
+without which a `firstChangedIndex` that always returned 0 would pass every
+equality check while making the optimisation do nothing. Then two harder cases: a
+chain grown one residue at a time from empty (every previously placed atom must
+still be the same object in the same place, or the viewport would jitter as the
+user types) and a 200-step deterministic random walk of mixed edits, each
+compounding on the last. Edits are exercised against 1UBQ's real angles so the
+reused prefixes are real conformations.
+
+### One bug the tests could not have caught
+
+Drove the app in headless Chrome over CDP — add, type, wrap, reorder, duplicate,
+delete, Enter-to-insert, load an example, clear — and screenshotted each step.
+Everything passed except one thing that only showed up by *looking*: after typing
+φ = 200 in row 3 and loading the α-helix example, row 3 still displayed "200"
+while the structure was correctly built from −57.
+
+`AngleField`'s draft was outliving the value it was typed against. Rows are keyed
+by residue id, and the example chains use the same `r1…rN` ids as a hand-built
+chain, so React reused the field instances and their local draft state. Blur alone
+can't fix this — a row can have its value replaced underneath it (loading an
+example, a reorder moving a different residue into that position) without ever
+being focused. The field now also tracks the value its own last commit should have
+produced, via the same `wrapDegrees` that `updateResidue` applies, and discards
+the draft the moment the incoming value disagrees. Re-verified: loading the
+example shows every row at exactly −57/−47/180, while a draft still survives
+unrelated edits to other rows.
+
+The screenshot that best shows the architecture working: setting ψ of residue 5 to
+135° on a 12-residue helix leaves residues 1–4 pixel-identical and swings 5–12
+away. The suffix recompute is visible on screen.
+
+**Status: 115/115 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
 ## Next
 
-Step 5: the Desmos-style editable residue list — add, remove, reorder, live
-update, opening on an empty canvas. `rebuildFrom` and `firstChangedIndex` from
-stage 3 are the update path; the preset picker goes away. `fitToken` is already in
-place so editing won't move the camera.
+Step 6: the reference-frame / origin control — reposition Cα of residue 1 by
+typing x/y/z and an orientation, AutoCAD-UCS-style. It must be a rigid transform
+applied to the finished atom list *after* NeRF construction, never a change to the
+angle inputs, and the two systems stay decoupled. `useChain` is the seam: the
+transform composes onto its derived atoms without touching the residue state or
+the cache.
+
+Known rough edge, not a step-5 regression: the fixed view direction in
+`StructureViewport.tsx` (0.45, 0.3, 1) happens to look close to along the helix
+axis, so a from-scratch α-helix reads as a tangle until you orbit. It's a framing
+choice, so the fix is a better default direction (e.g. perpendicular to the
+structure's longest axis) — a rendering change, never a geometry one.
