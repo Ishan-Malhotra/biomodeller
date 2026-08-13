@@ -37,3 +37,6 @@ Reference-frame / origin control.
 Everything else (Ramachandran plot, export, side chains) only after the above is solid.
 
 Do not skip ahead to UI or side chains before step 2 is genuinely green — the math is the part most likely to be silently wrong.
+
+
+always update logs.md at the end of each phase. 
