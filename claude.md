@@ -1,4 +1,4 @@
-Project: Protein Structure Builder
+vProject: Protein Structure Builder
 What this is
 
 A web tool that reconstructs 3D protein structure (backbone, later side chains) from phi/psi/omega (and eventually chi) dihedral angles, using the NeRF (Natural Extension Reference Frame) algorithm. Interaction model is Desmos (live, expression-list-style editing, blank canvas on load) crossed with AutoCAD (precise coordinate input, reference-frame/UCS control).

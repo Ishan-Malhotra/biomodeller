@@ -1,0 +1,7287 @@
+{
+  "source": {
+    "pdbId": "1UBQ",
+    "description": "Ubiquitin, 1.8 A X-ray (Vijay-Kumar, Bugg & Cook, 1987)",
+    "chain": "A",
+    "url": "https://files.rcsb.org/download/1UBQ.pdb",
+    "generatedBy": "scripts/build-fixture.ts (npm run fixture)",
+    "note": "Coordinates are as deposited. Internal coordinates are measured from them, not idealized."
+  },
+  "residueCount": 76,
+  "residues": [
+    {
+      "residueIndex": 0,
+      "residueSeq": 1,
+      "residueName": "MET",
+      "phi": null,
+      "psi": 149.62875148548056,
+      "omega": 178.30739658190836
+    },
+    {
+      "residueIndex": 1,
+      "residueSeq": 2,
+      "residueName": "GLN",
+      "phi": -91.02018604276658,
+      "psi": 138.26406631793242,
+      "omega": 173.35893762645537
+    },
+    {
+      "residueIndex": 2,
+      "residueSeq": 3,
+      "residueName": "ILE",
+      "phi": -131.09891656868308,
+      "psi": 163.04654726832388,
+      "omega": 179.56937652811814
+    },
+    {
+      "residueIndex": 3,
+      "residueSeq": 4,
+      "residueName": "PHE",
+      "phi": -115.99120425237675,
+      "psi": 140.22603528425637,
+      "omega": 175.79436394675346
+    },
+    {
+      "residueIndex": 4,
+      "residueSeq": 5,
+      "residueName": "VAL",
+      "phi": -118.03026353521906,
+      "psi": 114.2243715566224,
+      "omega": -178.11596466664403
+    },
+    {
+      "residueIndex": 5,
+      "residueSeq": 6,
+      "residueName": "LYS",
+      "phi": -95.22612039157339,
+      "psi": 127.54152476126133,
+      "omega": 179.94531779894865
+    },
+    {
+      "residueIndex": 6,
+      "residueSeq": 7,
+      "residueName": "THR",
+      "phi": -99.57963499607291,
+      "psi": 170.7541829372615,
+      "omega": -177.98486895191013
+    },
+    {
+      "residueIndex": 7,
+      "residueSeq": 8,
+      "residueName": "LEU",
+      "phi": -73.42522386100856,
+      "psi": -6.935905511034304,
+      "omega": 179.94186263571075
+    },
+    {
+      "residueIndex": 8,
+      "residueSeq": 9,
+      "residueName": "THR",
+      "phi": -101.39716637928896,
+      "psi": 14.929594298308293,
+      "omega": 179.7956975395643
+    },
+    {
+      "residueIndex": 9,
+      "residueSeq": 10,
+      "residueName": "GLY",
+      "phi": 77.44467941934964,
+      "psi": 16.54437779030642,
+      "omega": 175.00798944582718
+    },
+    {
+      "residueIndex": 10,
+      "residueSeq": 11,
+      "residueName": "LYS",
+      "phi": -96.27117970410734,
+      "psi": 138.07895119633662,
+      "omega": 176.16022311011372
+    },
+    {
+      "residueIndex": 11,
+      "residueSeq": 12,
+      "residueName": "THR",
+      "phi": -119.94472152007316,
+      "psi": 131.7568059088998,
+      "omega": 179.69596733295504
+    },
+    {
+      "residueIndex": 12,
+      "residueSeq": 13,
+      "residueName": "ILE",
+      "phi": -109.4735922024675,
+      "psi": 141.98853190443558,
+      "omega": 178.15000502194516
+    },
+    {
+      "residueIndex": 13,
+      "residueSeq": 14,
+      "residueName": "THR",
+      "phi": -101.44128962128332,
+      "psi": 139.7375163608456,
+      "omega": -179.2617580742258
+    },
+    {
+      "residueIndex": 14,
+      "residueSeq": 15,
+      "residueName": "LEU",
+      "phi": -126.41318812216532,
+      "psi": 154.0002863228728,
+      "omega": 173.9928880545648
+    },
+    {
+      "residueIndex": 15,
+      "residueSeq": 16,
+      "residueName": "GLU",
+      "phi": -111.79522616640868,
+      "psi": 121.12875264694021,
+      "omega": -177.9356491619797
+    },
+    {
+      "residueIndex": 16,
+      "residueSeq": 17,
+      "residueName": "VAL",
+      "phi": -139.01962774763032,
+      "psi": 170.7170986741645,
+      "omega": 174.70030148884734
+    },
+    {
+      "residueIndex": 17,
+      "residueSeq": 18,
+      "residueName": "GLU",
+      "phi": -120.04276255889054,
+      "psi": 144.51155377248142,
+      "omega": 177.7298042925445
+    },
+    {
+      "residueIndex": 18,
+      "residueSeq": 19,
+      "residueName": "PRO",
+      "phi": -54.93662456889915,
+      "psi": -24.527072465839794,
+      "omega": -177.54391157600946
+    },
+    {
+      "residueIndex": 19,
+      "residueSeq": 20,
+      "residueName": "SER",
+      "phi": -79.83852548881151,
+      "psi": -8.136699616139532,
+      "omega": -178.9953960638498
+    },
+    {
+      "residueIndex": 20,
+      "residueSeq": 21,
+      "residueName": "ASP",
+      "phi": -71.0059920213198,
+      "psi": 148.43537396875462,
+      "omega": 175.73351540015884
+    },
+    {
+      "residueIndex": 21,
+      "residueSeq": 22,
+      "residueName": "THR",
+      "phi": -83.70375202615558,
+      "psi": 160.43427627247985,
+      "omega": 175.7852342727731
+    },
+    {
+      "residueIndex": 22,
+      "residueSeq": 23,
+      "residueName": "ILE",
+      "phi": -61.327523595143916,
+      "psi": -37.20991423416155,
+      "omega": 176.99871767801778
+    },
+    {
+      "residueIndex": 23,
+      "residueSeq": 24,
+      "residueName": "GLU",
+      "phi": -57.56676314201661,
+      "psi": -40.48782824893257,
+      "omega": -179.64110780656222
+    },
+    {
+      "residueIndex": 24,
+      "residueSeq": 25,
+      "residueName": "ASN",
+      "phi": -65.48814692480686,
+      "psi": -44.44434013530356,
+      "omega": 178.61791583350924
+    },
+    {
+      "residueIndex": 25,
+      "residueSeq": 26,
+      "residueName": "VAL",
+      "phi": -58.42327983698672,
+      "psi": -46.40884363875418,
+      "omega": -179.7807362475938
+    },
+    {
+      "residueIndex": 26,
+      "residueSeq": 27,
+      "residueName": "LYS",
+      "phi": -60.812326169201114,
+      "psi": -37.96471954965873,
+      "omega": 176.85905926517415
+    },
+    {
+      "residueIndex": 27,
+      "residueSeq": 28,
+      "residueName": "ALA",
+      "phi": -66.12195978099633,
+      "psi": -38.12003094506526,
+      "omega": 176.02595848002028
+    },
+    {
+      "residueIndex": 28,
+      "residueSeq": 29,
+      "residueName": "LYS",
+      "phi": -64.2163968414694,
+      "psi": -37.25898526807582,
+      "omega": 179.91165417966468
+    },
+    {
+      "residueIndex": 29,
+      "residueSeq": 30,
+      "residueName": "ILE",
+      "phi": -69.9996159996838,
+      "psi": -39.56396864635046,
+      "omega": 179.45960579186584
+    },
+    {
+      "residueIndex": 30,
+      "residueSeq": 31,
+      "residueName": "GLN",
+      "phi": -62.12631401205496,
+      "psi": -48.62769593660304,
+      "omega": 179.1368149768913
+    },
+    {
+      "residueIndex": 31,
+      "residueSeq": 32,
+      "residueName": "ASP",
+      "phi": -53.412103413209756,
+      "psi": -41.766530005885365,
+      "omega": -175.6530287868015
+    },
+    {
+      "residueIndex": 32,
+      "residueSeq": 33,
+      "residueName": "LYS",
+      "phi": -93.58013374550644,
+      "psi": -24.39825729049147,
+      "omega": 179.86509295613476
+    },
+    {
+      "residueIndex": 33,
+      "residueSeq": 34,
+      "residueName": "GLU",
+      "phi": -123.57893541701837,
+      "psi": -6.345782267882943,
+      "omega": 176.50457809246737
+    },
+    {
+      "residueIndex": 34,
+      "residueSeq": 35,
+      "residueName": "GLY",
+      "phi": 81.21642232818004,
+      "psi": 5.321277462833298,
+      "omega": 179.71320999851324
+    },
+    {
+      "residueIndex": 35,
+      "residueSeq": 36,
+      "residueName": "ILE",
+      "phi": -79.73324166635153,
+      "psi": 124.86654342843892,
+      "omega": 178.3035647467071
+    },
+    {
+      "residueIndex": 36,
+      "residueSeq": 37,
+      "residueName": "PRO",
+      "phi": -57.00294454588721,
+      "psi": 136.96701033271623,
+      "omega": -179.28779512578646
+    },
+    {
+      "residueIndex": 37,
+      "residueSeq": 38,
+      "residueName": "PRO",
+      "phi": -57.18416058765162,
+      "psi": -32.165253544145116,
+      "omega": -177.44260156803165
+    },
+    {
+      "residueIndex": 38,
+      "residueSeq": 39,
+      "residueName": "ASP",
+      "phi": -68.23877520863765,
+      "psi": -15.571853609414747,
+      "omega": 178.70932051135935
+    },
+    {
+      "residueIndex": 39,
+      "residueSeq": 40,
+      "residueName": "GLN",
+      "phi": -95.7978866356938,
+      "psi": -10.469229587768123,
+      "omega": -177.61918278891054
+    },
+    {
+      "residueIndex": 40,
+      "residueSeq": 41,
+      "residueName": "GLN",
+      "phi": -84.83106533570226,
+      "psi": 129.69546809156998,
+      "omega": 172.09594492727192
+    },
+    {
+      "residueIndex": 41,
+      "residueSeq": 42,
+      "residueName": "ARG",
+      "phi": -121.24310995443969,
+      "psi": 115.95647414189128,
+      "omega": -177.50904652865367
+    },
+    {
+      "residueIndex": 42,
+      "residueSeq": 43,
+      "residueName": "LEU",
+      "phi": -103.55814450046749,
+      "psi": 130.24087804410922,
+      "omega": -177.55898462933095
+    },
+    {
+      "residueIndex": 43,
+      "residueSeq": 44,
+      "residueName": "ILE",
+      "phi": -122.0749029372354,
+      "psi": 131.80696702054843,
+      "omega": 177.58882008873644
+    },
+    {
+      "residueIndex": 44,
+      "residueSeq": 45,
+      "residueName": "PHE",
+      "phi": -144.27045831666007,
+      "psi": 129.63656726832534,
+      "omega": 177.38290752123035
+    },
+    {
+      "residueIndex": 45,
+      "residueSeq": 46,
+      "residueName": "ALA",
+      "phi": 48.171238161252894,
+      "psi": 45.994070090304106,
+      "omega": -179.52820971220424
+    },
+    {
+      "residueIndex": 46,
+      "residueSeq": 47,
+      "residueName": "GLY",
+      "phi": 61.71436884259998,
+      "psi": 21.61646846219102,
+      "omega": 177.64840941182663
+    },
+    {
+      "residueIndex": 47,
+      "residueSeq": 48,
+      "residueName": "LYS",
+      "phi": -115.0664094374763,
+      "psi": 142.71298452616637,
+      "omega": 174.56908139764374
+    },
+    {
+      "residueIndex": 48,
+      "residueSeq": 49,
+      "residueName": "GLN",
+      "phi": -85.77222740301261,
+      "psi": 130.28286740053701,
+      "omega": -175.91826873938626
+    },
+    {
+      "residueIndex": 49,
+      "residueSeq": 50,
+      "residueName": "LEU",
+      "phi": -79.555278272299,
+      "psi": 138.33305479112613,
+      "omega": -177.7047781548535
+    },
+    {
+      "residueIndex": 50,
+      "residueSeq": 51,
+      "residueName": "GLU",
+      "phi": -101.8295632192387,
+      "psi": 139.9594874761956,
+      "omega": -175.83867095175003
+    },
+    {
+      "residueIndex": 51,
+      "residueSeq": 52,
+      "residueName": "ASP",
+      "phi": -48.19014058760364,
+      "psi": -42.20980002155734,
+      "omega": -177.23638629225817
+    },
+    {
+      "residueIndex": 52,
+      "residueSeq": 53,
+      "residueName": "GLY",
+      "phi": -82.9252360299413,
+      "psi": -8.888628322039684,
+      "omega": 176.47208846831435
+    },
+    {
+      "residueIndex": 53,
+      "residueSeq": 54,
+      "residueName": "ARG",
+      "phi": -85.44954664419318,
+      "psi": 165.4643936270025,
+      "omega": 177.11406126525958
+    },
+    {
+      "residueIndex": 54,
+      "residueSeq": 55,
+      "residueName": "THR",
+      "phi": -104.50997698397244,
+      "psi": 164.59271366896942,
+      "omega": 177.1758919173716
+    },
+    {
+      "residueIndex": 55,
+      "residueSeq": 56,
+      "residueName": "LEU",
+      "phi": -61.2179977632691,
+      "psi": -36.20513090862031,
+      "omega": -179.45145404010663
+    },
+    {
+      "residueIndex": 56,
+      "residueSeq": 57,
+      "residueName": "SER",
+      "phi": -63.89129036278814,
+      "psi": -29.62233509474637,
+      "omega": 179.75918874936403
+    },
+    {
+      "residueIndex": 57,
+      "residueSeq": 58,
+      "residueName": "ASP",
+      "phi": -55.55223279693061,
+      "psi": -39.302757642006085,
+      "omega": 179.28009333386228
+    },
+    {
+      "residueIndex": 58,
+      "residueSeq": 59,
+      "residueName": "TYR",
+      "phi": -91.02167914581833,
+      "psi": 4.651453522878576,
+      "omega": 179.91962996530273
+    },
+    {
+      "residueIndex": 59,
+      "residueSeq": 60,
+      "residueName": "ASN",
+      "phi": 57.93964397923613,
+      "psi": 45.35521970612445,
+      "omega": 175.85336185513913
+    },
+    {
+      "residueIndex": 60,
+      "residueSeq": 61,
+      "residueName": "ILE",
+      "phi": -88.66686103344986,
+      "psi": 116.44083635598516,
+      "omega": -176.84167412971837
+    },
+    {
+      "residueIndex": 61,
+      "residueSeq": 62,
+      "residueName": "GLN",
+      "phi": -103.43735587067873,
+      "psi": 169.54127446429183,
+      "omega": -176.91845425741295
+    },
+    {
+      "residueIndex": 62,
+      "residueSeq": 63,
+      "residueName": "LYS",
+      "phi": -54.788263328430965,
+      "psi": 143.05715428719836,
+      "omega": 179.4875236200601
+    },
+    {
+      "residueIndex": 63,
+      "residueSeq": 64,
+      "residueName": "GLU",
+      "phi": 66.89734384466695,
+      "psi": 19.147210398176675,
+      "omega": 174.79644815318474
+    },
+    {
+      "residueIndex": 64,
+      "residueSeq": 65,
+      "residueName": "SER",
+      "phi": -71.14696384589107,
+      "psi": 159.51727472669825,
+      "omega": 175.93100832893262
+    },
+    {
+      "residueIndex": 65,
+      "residueSeq": 66,
+      "residueName": "THR",
+      "phi": -119.1521977269832,
+      "psi": 126.6733305434092,
+      "omega": 175.07674208080826
+    },
+    {
+      "residueIndex": 66,
+      "residueSeq": 67,
+      "residueName": "LEU",
+      "phi": -103.13565310760328,
+      "psi": 154.6116974948854,
+      "omega": 177.9764662690878
+    },
+    {
+      "residueIndex": 67,
+      "residueSeq": 68,
+      "residueName": "HIS",
+      "phi": -105.5833406421657,
+      "psi": 135.67028451355003,
+      "omega": 176.57580570389135
+    },
+    {
+      "residueIndex": 68,
+      "residueSeq": 69,
+      "residueName": "LEU",
+      "phi": -106.97380836435525,
+      "psi": 115.7755591882219,
+      "omega": 175.07704087030393
+    },
+    {
+      "residueIndex": 69,
+      "residueSeq": 70,
+      "residueName": "VAL",
+      "phi": -108.11510208814472,
+      "psi": 139.93379713312294,
+      "omega": 178.43713159046405
+    },
+    {
+      "residueIndex": 70,
+      "residueSeq": 71,
+      "residueName": "LEU",
+      "phi": -96.01973444560198,
+      "psi": 138.79983772696843,
+      "omega": 177.24239042851713
+    },
+    {
+      "residueIndex": 71,
+      "residueSeq": 72,
+      "residueName": "ARG",
+      "phi": -117.61947139092578,
+      "psi": 98.81099473608715,
+      "omega": -179.31217935590178
+    },
+    {
+      "residueIndex": 72,
+      "residueSeq": 73,
+      "residueName": "LEU",
+      "phi": -83.72430142977711,
+      "psi": 150.3940186275867,
+      "omega": -179.63611498524787
+    },
+    {
+      "residueIndex": 73,
+      "residueSeq": 74,
+      "residueName": "ARG",
+      "phi": -97.66054958550185,
+      "psi": 93.8796345042728,
+      "omega": 179.34214150864418
+    },
+    {
+      "residueIndex": 74,
+      "residueSeq": 75,
+      "residueName": "GLY",
+      "phi": 120.41486690341966,
+      "psi": 125.55800499946768,
+      "omega": 179.221818798256
+    },
+    {
+      "residueIndex": 75,
+      "residueSeq": 76,
+      "residueName": "GLY",
+      "phi": 174.1601408047402,
+      "psi": null,
+      "omega": null
+    }
+  ],
+  "atoms": [
+    {
+      "index": 0,
+      "name": "N",
+      "residueIndex": 0,
+      "residueSeq": 1,
+      "residueName": "MET",
+      "position": {
+        "x": 27.34,
+        "y": 24.43,
+        "z": 2.614
+      },
+      "parents": null,
+      "internal": null
+    },
+    {
+      "index": 1,
+      "name": "CA",
+      "residueIndex": 0,
+      "residueSeq": 1,
+      "residueName": "MET",
+      "position": {
+        "x": 26.266,
+        "y": 25.413,
+        "z": 2.842
+      },
+      "parents": null,
+      "internal": null
+    },
+    {
+      "index": 2,
+      "name": "C",
+      "residueIndex": 0,
+      "residueSeq": 1,
+      "residueName": "MET",
+      "position": {
+        "x": 26.913,
+        "y": 26.639,
+        "z": 3.531
+      },
+      "parents": null,
+      "internal": null
+    },
+    {
+      "index": 3,
+      "name": "O",
+      "residueIndex": 0,
+      "residueSeq": 1,
+      "residueName": "MET",
+      "position": {
+        "x": 27.886,
+        "y": 26.463,
+        "z": 4.263
+      },
+      "parents": [
+        0,
+        1,
+        2
+      ],
+      "internal": {
+        "bondLength": 1.2302556644860438,
+        "bondAngleDeg": 118.82110030885673,
+        "dihedralDeg": -30.646121797053908
+      }
+    },
+    {
+      "index": 4,
+      "name": "N",
+      "residueIndex": 1,
+      "residueSeq": 2,
+      "residueName": "GLN",
+      "position": {
+        "x": 26.335,
+        "y": 27.77,
+        "z": 3.258
+      },
+      "parents": [
+        0,
+        1,
+        2
+      ],
+      "internal": {
+        "bondLength": 1.2991435640451752,
+        "bondAngleDeg": 114.20436671979577,
+        "dihedralDeg": 149.62875148548056
+      }
+    },
+    {
+      "index": 5,
+      "name": "CA",
+      "residueIndex": 1,
+      "residueSeq": 2,
+      "residueName": "GLN",
+      "position": {
+        "x": 26.85,
+        "y": 29.021,
+        "z": 3.898
+      },
+      "parents": [
+        1,
+        2,
+        4
+      ],
+      "internal": {
+        "bondLength": 1.4966048242605674,
+        "bondAngleDeg": 118.99573662933393,
+        "dihedralDeg": 178.30739658190836
+      }
+    },
+    {
+      "index": 6,
+      "name": "C",
+      "residueIndex": 1,
+      "residueSeq": 2,
+      "residueName": "GLN",
+      "position": {
+        "x": 26.1,
+        "y": 29.253,
+        "z": 5.202
+      },
+      "parents": [
+        2,
+        4,
+        5
+      ],
+      "internal": {
+        "bondLength": 1.5220840975452044,
+        "bondAngleDeg": 108.91785571742892,
+        "dihedralDeg": -91.02018604276658
+      }
+    },
+    {
+      "index": 7,
+      "name": "O",
+      "residueIndex": 1,
+      "residueSeq": 2,
+      "residueName": "GLN",
+      "position": {
+        "x": 24.865,
+        "y": 29.024,
+        "z": 5.33
+      },
+      "parents": [
+        4,
+        5,
+        6
+      ],
+      "internal": {
+        "bondLength": 1.2625569294095245,
+        "bondAngleDeg": 122.76537657390517,
+        "dihedralDeg": -38.75612297269903
+      }
+    },
+    {
+      "index": 8,
+      "name": "N",
+      "residueIndex": 2,
+      "residueSeq": 3,
+      "residueName": "ILE",
+      "position": {
+        "x": 26.849,
+        "y": 29.656,
+        "z": 6.217
+      },
+      "parents": [
+        4,
+        5,
+        6
+      ],
+      "internal": {
+        "bondLength": 1.3242488436845987,
+        "bondAngleDeg": 115.1088511683133,
+        "dihedralDeg": 138.26406631793242
+      }
+    },
+    {
+      "index": 9,
+      "name": "CA",
+      "residueIndex": 2,
+      "residueSeq": 3,
+      "residueName": "ILE",
+      "position": {
+        "x": 26.235,
+        "y": 30.058,
+        "z": 7.497
+      },
+      "parents": [
+        5,
+        6,
+        8
+      ],
+      "internal": {
+        "bondLength": 1.475466028073843,
+        "bondAngleDeg": 120.82893874087742,
+        "dihedralDeg": 173.35893762645537
+      }
+    },
+    {
+      "index": 10,
+      "name": "C",
+      "residueIndex": 2,
+      "residueSeq": 3,
+      "residueName": "ILE",
+      "position": {
+        "x": 26.882,
+        "y": 31.428,
+        "z": 7.862
+      },
+      "parents": [
+        6,
+        8,
+        9
+      ],
+      "internal": {
+        "bondLength": 1.5584396042195559,
+        "bondAngleDeg": 105.66005730491739,
+        "dihedralDeg": -131.09891656868308
+      }
+    },
+    {
+      "index": 11,
+      "name": "O",
+      "residueIndex": 2,
+      "residueSeq": 3,
+      "residueName": "ILE",
+      "position": {
+        "x": 27.906,
+        "y": 31.711,
+        "z": 7.264
+      },
+      "parents": [
+        8,
+        9,
+        10
+      ],
+      "internal": {
+        "bondLength": 1.219126326514194,
+        "bondAngleDeg": 115.96951906637122,
+        "dihedralDeg": -16.49669017856707
+      }
+    },
+    {
+      "index": 12,
+      "name": "N",
+      "residueIndex": 3,
+      "residueSeq": 4,
+      "residueName": "PHE",
+      "position": {
+        "x": 26.214,
+        "y": 32.097,
+        "z": 8.771
+      },
+      "parents": [
+        8,
+        9,
+        10
+      ],
+      "internal": {
+        "bondLength": 1.3115128668831297,
+        "bondAngleDeg": 113.53394542187792,
+        "dihedralDeg": 163.04654726832388
+      }
+    },
+    {
+      "index": 13,
+      "name": "CA",
+      "residueIndex": 3,
+      "residueSeq": 4,
+      "residueName": "PHE",
+      "position": {
+        "x": 26.772,
+        "y": 33.436,
+        "z": 9.197
+      },
+      "parents": [
+        9,
+        10,
+        12
+      ],
+      "internal": {
+        "bondLength": 1.511873341255806,
+        "bondAngleDeg": 117.32769887791434,
+        "dihedralDeg": 179.56937652811814
+      }
+    },
+    {
+      "index": 14,
+      "name": "C",
+      "residueIndex": 3,
+      "residueSeq": 4,
+      "residueName": "PHE",
+      "position": {
+        "x": 27.151,
+        "y": 33.362,
+        "z": 10.65
+      },
+      "parents": [
+        10,
+        12,
+        13
+      ],
+      "internal": {
+        "bondLength": 1.5034380599146757,
+        "bondAngleDeg": 108.76968773715414,
+        "dihedralDeg": -115.99120425237675
+      }
+    },
+    {
+      "index": 15,
+      "name": "O",
+      "residueIndex": 3,
+      "residueSeq": 4,
+      "residueName": "PHE",
+      "position": {
+        "x": 26.35,
+        "y": 32.778,
+        "z": 11.395
+      },
+      "parents": [
+        12,
+        13,
+        14
+      ],
+      "internal": {
+        "bondLength": 1.2400330640753092,
+        "bondAngleDeg": 116.16633311348491,
+        "dihedralDeg": -42.34119713842627
+      }
+    },
+    {
+      "index": 16,
+      "name": "N",
+      "residueIndex": 4,
+      "residueSeq": 5,
+      "residueName": "VAL",
+      "position": {
+        "x": 28.26,
+        "y": 33.943,
+        "z": 11.096
+      },
+      "parents": [
+        12,
+        13,
+        14
+      ],
+      "internal": {
+        "bondLength": 1.3290440173297493,
+        "bondAngleDeg": 120.87427397053541,
+        "dihedralDeg": 140.22603528425637
+      }
+    },
+    {
+      "index": 17,
+      "name": "CA",
+      "residueIndex": 4,
+      "residueSeq": 5,
+      "residueName": "VAL",
+      "position": {
+        "x": 28.605,
+        "y": 33.965,
+        "z": 12.503
+      },
+      "parents": [
+        13,
+        14,
+        16
+      ],
+      "internal": {
+        "bondLength": 1.4488471278916901,
+        "bondAngleDeg": 122.08797646162904,
+        "dihedralDeg": 175.79436394675346
+      }
+    },
+    {
+      "index": 18,
+      "name": "C",
+      "residueIndex": 4,
+      "residueSeq": 5,
+      "residueName": "VAL",
+      "position": {
+        "x": 28.638,
+        "y": 35.461,
+        "z": 12.9
+      },
+      "parents": [
+        14,
+        16,
+        17
+      ],
+      "internal": {
+        "bondLength": 1.5481324232765057,
+        "bondAngleDeg": 105.59169645098066,
+        "dihedralDeg": -118.03026353521906
+      }
+    },
+    {
+      "index": 19,
+      "name": "O",
+      "residueIndex": 4,
+      "residueSeq": 5,
+      "residueName": "VAL",
+      "position": {
+        "x": 29.522,
+        "y": 36.103,
+        "z": 12.32
+      },
+      "parents": [
+        16,
+        17,
+        18
+      ],
+      "internal": {
+        "bondLength": 1.2369397721797122,
+        "bondAngleDeg": 113.36176413385505,
+        "dihedralDeg": -64.2697085474201
+      }
+    },
+    {
+      "index": 20,
+      "name": "N",
+      "residueIndex": 5,
+      "residueSeq": 6,
+      "residueName": "LYS",
+      "position": {
+        "x": 27.751,
+        "y": 35.867,
+        "z": 13.74
+      },
+      "parents": [
+        16,
+        17,
+        18
+      ],
+      "internal": {
+        "bondLength": 1.287324745353712,
+        "bondAngleDeg": 117.2197858811532,
+        "dihedralDeg": 114.2243715566224
+      }
+    },
+    {
+      "index": 21,
+      "name": "CA",
+      "residueIndex": 5,
+      "residueSeq": 6,
+      "residueName": "LYS",
+      "position": {
+        "x": 27.691,
+        "y": 37.315,
+        "z": 14.143
+      },
+      "parents": [
+        17,
+        18,
+        20
+      ],
+      "internal": {
+        "bondLength": 1.5042316975785353,
+        "bondAngleDeg": 120.39062381736855,
+        "dihedralDeg": -178.11596466664403
+      }
+    },
+    {
+      "index": 22,
+      "name": "C",
+      "residueIndex": 5,
+      "residueSeq": 6,
+      "residueName": "LYS",
+      "position": {
+        "x": 28.469,
+        "y": 37.475,
+        "z": 15.42
+      },
+      "parents": [
+        18,
+        20,
+        21
+      ],
+      "internal": {
+        "bondLength": 1.503866017968357,
+        "bondAngleDeg": 108.01555895019699,
+        "dihedralDeg": -95.22612039157339
+      }
+    },
+    {
+      "index": 23,
+      "name": "O",
+      "residueIndex": 5,
+      "residueSeq": 6,
+      "residueName": "LYS",
+      "position": {
+        "x": 28.213,
+        "y": 36.753,
+        "z": 16.411
+      },
+      "parents": [
+        20,
+        21,
+        22
+      ],
+      "internal": {
+        "bondLength": 1.2525577830982508,
+        "bondAngleDeg": 120.31588508305208,
+        "dihedralDeg": -53.277680402703716
+      }
+    },
+    {
+      "index": 24,
+      "name": "N",
+      "residueIndex": 6,
+      "residueSeq": 7,
+      "residueName": "THR",
+      "position": {
+        "x": 29.426,
+        "y": 38.43,
+        "z": 15.446
+      },
+      "parents": [
+        20,
+        21,
+        22
+      ],
+      "internal": {
+        "bondLength": 1.3522388842212723,
+        "bondAngleDeg": 117.2316825007534,
+        "dihedralDeg": 127.54152476126133
+      }
+    },
+    {
+      "index": 25,
+      "name": "CA",
+      "residueIndex": 6,
+      "residueSeq": 7,
+      "residueName": "THR",
+      "position": {
+        "x": 30.225,
+        "y": 38.643,
+        "z": 16.662
+      },
+      "parents": [
+        21,
+        22,
+        24
+      ],
+      "internal": {
+        "bondLength": 1.4705189560151897,
+        "bondAngleDeg": 120.18074558081189,
+        "dihedralDeg": 179.94531779894865
+      }
+    },
+    {
+      "index": 26,
+      "name": "C",
+      "residueIndex": 6,
+      "residueSeq": 7,
+      "residueName": "THR",
+      "position": {
+        "x": 29.664,
+        "y": 39.839,
+        "z": 17.434
+      },
+      "parents": [
+        22,
+        24,
+        25
+      ],
+      "internal": {
+        "bondLength": 1.5300722205177106,
+        "bondAngleDeg": 109.34327123951549,
+        "dihedralDeg": -99.57963499607291
+      }
+    },
+    {
+      "index": 27,
+      "name": "O",
+      "residueIndex": 6,
+      "residueSeq": 7,
+      "residueName": "THR",
+      "position": {
+        "x": 28.85,
+        "y": 40.565,
+        "z": 16.859
+      },
+      "parents": [
+        24,
+        25,
+        26
+      ],
+      "internal": {
+        "bondLength": 1.233003244115764,
+        "bondAngleDeg": 117.84025992890697,
+        "dihedralDeg": -12.76110965714027
+      }
+    },
+    {
+      "index": 28,
+      "name": "N",
+      "residueIndex": 7,
+      "residueSeq": 8,
+      "residueName": "LEU",
+      "position": {
+        "x": 30.132,
+        "y": 40.069,
+        "z": 18.642
+      },
+      "parents": [
+        24,
+        25,
+        26
+      ],
+      "internal": {
+        "bondLength": 1.3157461761297267,
+        "bondAngleDeg": 117.9991653654319,
+        "dihedralDeg": 170.7541829372615
+      }
+    },
+    {
+      "index": 29,
+      "name": "CA",
+      "residueIndex": 7,
+      "residueSeq": 8,
+      "residueName": "LEU",
+      "position": {
+        "x": 29.607,
+        "y": 41.18,
+        "z": 19.467
+      },
+      "parents": [
+        25,
+        26,
+        28
+      ],
+      "internal": {
+        "bondLength": 1.480057769142811,
+        "bondAngleDeg": 121.11866470712795,
+        "dihedralDeg": -177.98486895191013
+      }
+    },
+    {
+      "index": 30,
+      "name": "C",
+      "residueIndex": 7,
+      "residueSeq": 8,
+      "residueName": "LEU",
+      "position": {
+        "x": 30.075,
+        "y": 42.538,
+        "z": 18.984
+      },
+      "parents": [
+        26,
+        28,
+        29
+      ],
+      "internal": {
+        "bondLength": 1.5154131449871975,
+        "bondAngleDeg": 112.67272007019537,
+        "dihedralDeg": -73.42522386100856
+      }
+    },
+    {
+      "index": 31,
+      "name": "O",
+      "residueIndex": 7,
+      "residueSeq": 8,
+      "residueName": "LEU",
+      "position": {
+        "x": 29.586,
+        "y": 43.57,
+        "z": 19.483
+      },
+      "parents": [
+        28,
+        29,
+        30
+      ],
+      "internal": {
+        "bondLength": 1.2462527833469448,
+        "bondAngleDeg": 119.55585083234124,
+        "dihedralDeg": 171.49533112473094
+      }
+    },
+    {
+      "index": 32,
+      "name": "N",
+      "residueIndex": 8,
+      "residueSeq": 9,
+      "residueName": "THR",
+      "position": {
+        "x": 30.991,
+        "y": 42.571,
+        "z": 17.998
+      },
+      "parents": [
+        28,
+        29,
+        30
+      ],
+      "internal": {
+        "bondLength": 1.3462321493709777,
+        "bondAngleDeg": 117.74494785858107,
+        "dihedralDeg": -6.935905511034304
+      }
+    },
+    {
+      "index": 33,
+      "name": "CA",
+      "residueIndex": 8,
+      "residueSeq": 9,
+      "residueName": "THR",
+      "position": {
+        "x": 31.422,
+        "y": 43.94,
+        "z": 17.553
+      },
+      "parents": [
+        29,
+        30,
+        32
+      ],
+      "internal": {
+        "bondLength": 1.5026466650546964,
+        "bondAngleDeg": 115.74681774489837,
+        "dihedralDeg": 179.94186263571075
+      }
+    },
+    {
+      "index": 34,
+      "name": "C",
+      "residueIndex": 8,
+      "residueSeq": 9,
+      "residueName": "THR",
+      "position": {
+        "x": 30.755,
+        "y": 44.351,
+        "z": 16.277
+      },
+      "parents": [
+        30,
+        32,
+        33
+      ],
+      "internal": {
+        "bondLength": 1.497326283747134,
+        "bondAngleDeg": 112.0042576168506,
+        "dihedralDeg": -101.39716637928896
+      }
+    },
+    {
+      "index": 35,
+      "name": "O",
+      "residueIndex": 8,
+      "residueSeq": 9,
+      "residueName": "THR",
+      "position": {
+        "x": 31.207,
+        "y": 45.268,
+        "z": 15.566
+      },
+      "parents": [
+        32,
+        33,
+        34
+      ],
+      "internal": {
+        "bondLength": 1.2452766760844776,
+        "bondAngleDeg": 121.80306843027472,
+        "dihedralDeg": -161.36098681551968
+      }
+    },
+    {
+      "index": 36,
+      "name": "N",
+      "residueIndex": 9,
+      "residueSeq": 10,
+      "residueName": "GLY",
+      "position": {
+        "x": 29.721,
+        "y": 43.673,
+        "z": 15.885
+      },
+      "parents": [
+        32,
+        33,
+        34
+      ],
+      "internal": {
+        "bondLength": 1.2971137189930553,
+        "bondAngleDeg": 117.98006111166306,
+        "dihedralDeg": 14.929594298308293
+      }
+    },
+    {
+      "index": 37,
+      "name": "CA",
+      "residueIndex": 9,
+      "residueSeq": 10,
+      "residueName": "GLY",
+      "position": {
+        "x": 28.978,
+        "y": 43.96,
+        "z": 14.678
+      },
+      "parents": [
+        33,
+        34,
+        36
+      ],
+      "internal": {
+        "bondLength": 1.4461213642014956,
+        "bondAngleDeg": 123.92247807260306,
+        "dihedralDeg": 179.7956975395643
+      }
+    },
+    {
+      "index": 38,
+      "name": "C",
+      "residueIndex": 9,
+      "residueSeq": 10,
+      "residueName": "GLY",
+      "position": {
+        "x": 29.604,
+        "y": 43.507,
+        "z": 13.393
+      },
+      "parents": [
+        34,
+        36,
+        37
+      ],
+      "internal": {
+        "bondLength": 1.4994365608454396,
+        "bondAngleDeg": 116.15639903416691,
+        "dihedralDeg": 77.44467941934964
+      }
+    },
+    {
+      "index": 39,
+      "name": "O",
+      "residueIndex": 9,
+      "residueSeq": 10,
+      "residueName": "GLY",
+      "position": {
+        "x": 29.219,
+        "y": 43.981,
+        "z": 12.301
+      },
+      "parents": [
+        36,
+        37,
+        38
+      ],
+      "internal": {
+        "bondLength": 1.2511454751546691,
+        "bondAngleDeg": 120.33493688307483,
+        "dihedralDeg": -162.56973965224807
+      }
+    },
+    {
+      "index": 40,
+      "name": "N",
+      "residueIndex": 10,
+      "residueSeq": 11,
+      "residueName": "LYS",
+      "position": {
+        "x": 30.563,
+        "y": 42.623,
+        "z": 13.495
+      },
+      "parents": [
+        36,
+        37,
+        38
+      ],
+      "internal": {
+        "bondLength": 1.3082587664525698,
+        "bondAngleDeg": 116.31840760042341,
+        "dihedralDeg": 16.54437779030642
+      }
+    },
+    {
+      "index": 41,
+      "name": "CA",
+      "residueIndex": 10,
+      "residueSeq": 11,
+      "residueName": "LYS",
+      "position": {
+        "x": 31.191,
+        "y": 42.012,
+        "z": 12.331
+      },
+      "parents": [
+        37,
+        38,
+        40
+      ],
+      "internal": {
+        "bondLength": 1.4569148911312548,
+        "bondAngleDeg": 122.48372359401577,
+        "dihedralDeg": 175.00798944582718
+      }
+    },
+    {
+      "index": 42,
+      "name": "C",
+      "residueIndex": 10,
+      "residueSeq": 11,
+      "residueName": "LYS",
+      "position": {
+        "x": 30.459,
+        "y": 40.666,
+        "z": 12.13
+      },
+      "parents": [
+        38,
+        40,
+        41
+      ],
+      "internal": {
+        "bondLength": 1.54529641169583,
+        "bondAngleDeg": 105.36859395258716,
+        "dihedralDeg": -96.27117970410734
+      }
+    },
+    {
+      "index": 43,
+      "name": "O",
+      "residueIndex": 10,
+      "residueSeq": 11,
+      "residueName": "LYS",
+      "position": {
+        "x": 30.253,
+        "y": 39.991,
+        "z": 13.133
+      },
+      "parents": [
+        40,
+        41,
+        42
+      ],
+      "internal": {
+        "bondLength": 1.2264053163615984,
+        "bondAngleDeg": 116.9102709439328,
+        "dihedralDeg": -44.34121160840965
+      }
+    },
+    {
+      "index": 44,
+      "name": "N",
+      "residueIndex": 11,
+      "residueSeq": 12,
+      "residueName": "THR",
+      "position": {
+        "x": 30.163,
+        "y": 40.338,
+        "z": 10.886
+      },
+      "parents": [
+        40,
+        41,
+        42
+      ],
+      "internal": {
+        "bondLength": 1.320127266592127,
+        "bondAngleDeg": 116.43617852749217,
+        "dihedralDeg": 138.07895119633662
+      }
+    },
+    {
+      "index": 45,
+      "name": "CA",
+      "residueIndex": 11,
+      "residueSeq": 12,
+      "residueName": "THR",
+      "position": {
+        "x": 29.542,
+        "y": 39.02,
+        "z": 10.653
+      },
+      "parents": [
+        41,
+        42,
+        44
+      ],
+      "internal": {
+        "bondLength": 1.4754843272634217,
+        "bondAngleDeg": 117.7179440938063,
+        "dihedralDeg": 176.16022311011372
+      }
+    },
+    {
+      "index": 46,
+      "name": "C",
+      "residueIndex": 11,
+      "residueSeq": 12,
+      "residueName": "THR",
+      "position": {
+        "x": 30.494,
+        "y": 38.261,
+        "z": 9.729
+      },
+      "parents": [
+        42,
+        44,
+        45
+      ],
+      "internal": {
+        "bondLength": 1.5284505225881535,
+        "bondAngleDeg": 106.07516258951169,
+        "dihedralDeg": -119.94472152007316
+      }
+    },
+    {
+      "index": 47,
+      "name": "O",
+      "residueIndex": 11,
+      "residueSeq": 12,
+      "residueName": "THR",
+      "position": {
+        "x": 30.849,
+        "y": 38.85,
+        "z": 8.706
+      },
+      "parents": [
+        44,
+        45,
+        46
+      ],
+      "internal": {
+        "bondLength": 1.2326698665904015,
+        "bondAngleDeg": 116.34687908491566,
+        "dihedralDeg": -51.17349759386987
+      }
+    },
+    {
+      "index": 48,
+      "name": "N",
+      "residueIndex": 12,
+      "residueSeq": 13,
+      "residueName": "ILE",
+      "position": {
+        "x": 30.795,
+        "y": 37.015,
+        "z": 10.095
+      },
+      "parents": [
+        44,
+        45,
+        46
+      ],
+      "internal": {
+        "bondLength": 1.3330690154676943,
+        "bondAngleDeg": 116.02777398335925,
+        "dihedralDeg": 131.7568059088998
+      }
+    },
+    {
+      "index": 49,
+      "name": "CA",
+      "residueIndex": 12,
+      "residueSeq": 13,
+      "residueName": "ILE",
+      "position": {
+        "x": 31.72,
+        "y": 36.289,
+        "z": 9.176
+      },
+      "parents": [
+        45,
+        46,
+        48
+      ],
+      "internal": {
+        "bondLength": 1.492401420530011,
+        "bondAngleDeg": 115.18695508527213,
+        "dihedralDeg": 179.69596733295504
+      }
+    },
+    {
+      "index": 50,
+      "name": "C",
+      "residueIndex": 12,
+      "residueSeq": 13,
+      "residueName": "ILE",
+      "position": {
+        "x": 30.955,
+        "y": 35.211,
+        "z": 8.459
+      },
+      "parents": [
+        46,
+        48,
+        49
+      ],
+      "internal": {
+        "bondLength": 1.5037945338376542,
+        "bondAngleDeg": 109.08817472153962,
+        "dihedralDeg": -109.4735922024675
+      }
+    },
+    {
+      "index": 51,
+      "name": "O",
+      "residueIndex": 12,
+      "residueSeq": 13,
+      "residueName": "ILE",
+      "position": {
+        "x": 30.025,
+        "y": 34.618,
+        "z": 9.04
+      },
+      "parents": [
+        48,
+        49,
+        50
+      ],
+      "internal": {
+        "bondLength": 1.2466394827695755,
+        "bondAngleDeg": 119.88650509315302,
+        "dihedralDeg": -33.792917532863434
+      }
+    },
+    {
+      "index": 52,
+      "name": "N",
+      "residueIndex": 13,
+      "residueSeq": 14,
+      "residueName": "THR",
+      "position": {
+        "x": 31.244,
+        "y": 34.986,
+        "z": 7.197
+      },
+      "parents": [
+        48,
+        49,
+        50
+      ],
+      "internal": {
+        "bondLength": 1.3140738183222433,
+        "bondAngleDeg": 117.95395888945954,
+        "dihedralDeg": 141.98853190443558
+      }
+    },
+    {
+      "index": 53,
+      "name": "CA",
+      "residueIndex": 13,
+      "residueSeq": 14,
+      "residueName": "THR",
+      "position": {
+        "x": 30.505,
+        "y": 33.884,
+        "z": 6.512
+      },
+      "parents": [
+        49,
+        50,
+        52
+      ],
+      "internal": {
+        "bondLength": 1.4932347437693763,
+        "bondAngleDeg": 117.2631167685532,
+        "dihedralDeg": 178.15000502194516
+      }
+    },
+    {
+      "index": 54,
+      "name": "C",
+      "residueIndex": 13,
+      "residueSeq": 14,
+      "residueName": "THR",
+      "position": {
+        "x": 31.409,
+        "y": 32.68,
+        "z": 6.446
+      },
+      "parents": [
+        50,
+        52,
+        53
+      ],
+      "internal": {
+        "bondLength": 1.5070461174098162,
+        "bondAngleDeg": 108.22926254024625,
+        "dihedralDeg": -101.44128962128332
+      }
+    },
+    {
+      "index": 55,
+      "name": "O",
+      "residueIndex": 13,
+      "residueSeq": 14,
+      "residueName": "THR",
+      "position": {
+        "x": 32.619,
+        "y": 32.812,
+        "z": 6.125
+      },
+      "parents": [
+        52,
+        53,
+        54
+      ],
+      "internal": {
+        "bondLength": 1.258795058776448,
+        "bondAngleDeg": 120.26424597477356,
+        "dihedralDeg": -43.630718986357465
+      }
+    },
+    {
+      "index": 56,
+      "name": "N",
+      "residueIndex": 14,
+      "residueSeq": 15,
+      "residueName": "LEU",
+      "position": {
+        "x": 30.884,
+        "y": 31.485,
+        "z": 6.666
+      },
+      "parents": [
+        52,
+        53,
+        54
+      ],
+      "internal": {
+        "bondLength": 1.3236502559211023,
+        "bondAngleDeg": 118.42886485016543,
+        "dihedralDeg": 139.7375163608456
+      }
+    },
+    {
+      "index": 57,
+      "name": "CA",
+      "residueIndex": 14,
+      "residueSeq": 15,
+      "residueName": "LEU",
+      "position": {
+        "x": 31.677,
+        "y": 30.275,
+        "z": 6.639
+      },
+      "parents": [
+        53,
+        54,
+        56
+      ],
+      "internal": {
+        "bondLength": 1.4469547332242294,
+        "bondAngleDeg": 122.3092111610525,
+        "dihedralDeg": -179.2617580742258
+      }
+    },
+    {
+      "index": 58,
+      "name": "C",
+      "residueIndex": 14,
+      "residueSeq": 15,
+      "residueName": "LEU",
+      "position": {
+        "x": 31.022,
+        "y": 29.288,
+        "z": 5.665
+      },
+      "parents": [
+        54,
+        56,
+        57
+      ],
+      "internal": {
+        "bondLength": 1.5335807771356547,
+        "bondAngleDeg": 108.419616595092,
+        "dihedralDeg": -126.41318812216532
+      }
+    },
+    {
+      "index": 59,
+      "name": "O",
+      "residueIndex": 14,
+      "residueSeq": 15,
+      "residueName": "LEU",
+      "position": {
+        "x": 29.809,
+        "y": 29.395,
+        "z": 5.545
+      },
+      "parents": [
+        56,
+        57,
+        58
+      ],
+      "internal": {
+        "bondLength": 1.223608597550701,
+        "bondAngleDeg": 115.4300219411587,
+        "dihedralDeg": -28.88076984935552
+      }
+    },
+    {
+      "index": 60,
+      "name": "N",
+      "residueIndex": 15,
+      "residueSeq": 16,
+      "residueName": "GLU",
+      "position": {
+        "x": 31.834,
+        "y": 28.412,
+        "z": 5.125
+      },
+      "parents": [
+        56,
+        57,
+        58
+      ],
+      "internal": {
+        "bondLength": 1.3108470543888804,
+        "bondAngleDeg": 115.28735366836311,
+        "dihedralDeg": 154.0002863228728
+      }
+    },
+    {
+      "index": 61,
+      "name": "CA",
+      "residueIndex": 15,
+      "residueSeq": 16,
+      "residueName": "GLU",
+      "position": {
+        "x": 31.22,
+        "y": 27.341,
+        "z": 4.275
+      },
+      "parents": [
+        57,
+        58,
+        60
+      ],
+      "internal": {
+        "bondLength": 1.4988452221627142,
+        "bondAngleDeg": 117.21776305074316,
+        "dihedralDeg": 173.9928880545648
+      }
+    },
+    {
+      "index": 62,
+      "name": "C",
+      "residueIndex": 15,
+      "residueSeq": 16,
+      "residueName": "GLU",
+      "position": {
+        "x": 31.44,
+        "y": 26.079,
+        "z": 5.08
+      },
+      "parents": [
+        58,
+        60,
+        61
+      ],
+      "internal": {
+        "bondLength": 1.5129669527124516,
+        "bondAngleDeg": 103.57503212689144,
+        "dihedralDeg": -111.79522616640868
+      }
+    },
+    {
+      "index": 63,
+      "name": "O",
+      "residueIndex": 15,
+      "residueSeq": 16,
+      "residueName": "GLU",
+      "position": {
+        "x": 32.576,
+        "y": 25.802,
+        "z": 5.461
+      },
+      "parents": [
+        60,
+        61,
+        62
+      ],
+      "internal": {
+        "bondLength": 1.229791039160718,
+        "bondAngleDeg": 119.14608055202788,
+        "dihedralDeg": -53.29176394461289
+      }
+    },
+    {
+      "index": 64,
+      "name": "N",
+      "residueIndex": 16,
+      "residueSeq": 17,
+      "residueName": "VAL",
+      "position": {
+        "x": 30.31,
+        "y": 25.458,
+        "z": 5.384
+      },
+      "parents": [
+        60,
+        61,
+        62
+      ],
+      "internal": {
+        "bondLength": 1.3247479005456126,
+        "bondAngleDeg": 112.89692619421363,
+        "dihedralDeg": 121.12875264694021
+      }
+    },
+    {
+      "index": 65,
+      "name": "CA",
+      "residueIndex": 16,
+      "residueSeq": 17,
+      "residueName": "VAL",
+      "position": {
+        "x": 30.288,
+        "y": 24.245,
+        "z": 6.193
+      },
+      "parents": [
+        61,
+        62,
+        64
+      ],
+      "internal": {
+        "bondLength": 1.4581954601492875,
+        "bondAngleDeg": 122.01406200639502,
+        "dihedralDeg": -177.9356491619797
+      }
+    },
+    {
+      "index": 66,
+      "name": "C",
+      "residueIndex": 16,
+      "residueSeq": 17,
+      "residueName": "VAL",
+      "position": {
+        "x": 29.279,
+        "y": 23.227,
+        "z": 5.641
+      },
+      "parents": [
+        62,
+        64,
+        65
+      ],
+      "internal": {
+        "bondLength": 1.5359391263979185,
+        "bondAngleDeg": 111.21464334467973,
+        "dihedralDeg": -139.01962774763032
+      }
+    },
+    {
+      "index": 67,
+      "name": "O",
+      "residueIndex": 16,
+      "residueSeq": 17,
+      "residueName": "VAL",
+      "position": {
+        "x": 28.478,
+        "y": 23.522,
+        "z": 4.725
+      },
+      "parents": [
+        64,
+        65,
+        66
+      ],
+      "internal": {
+        "bondLength": 1.2520710842440204,
+        "bondAngleDeg": 121.8048970999487,
+        "dihedralDeg": -8.797613049007607
+      }
+    },
+    {
+      "index": 68,
+      "name": "N",
+      "residueIndex": 17,
+      "residueSeq": 18,
+      "residueName": "GLU",
+      "position": {
+        "x": 29.38,
+        "y": 22.057,
+        "z": 6.232
+      },
+      "parents": [
+        64,
+        65,
+        66
+      ],
+      "internal": {
+        "bondLength": 1.3146794286060781,
+        "bondAngleDeg": 112.19869298287419,
+        "dihedralDeg": 170.7170986741645
+      }
+    },
+    {
+      "index": 69,
+      "name": "CA",
+      "residueIndex": 17,
+      "residueSeq": 18,
+      "residueName": "GLU",
+      "position": {
+        "x": 28.468,
+        "y": 20.94,
+        "z": 5.98
+      },
+      "parents": [
+        65,
+        66,
+        68
+      ],
+      "internal": {
+        "bondLength": 1.4638773855757157,
+        "bondAngleDeg": 123.62958787067106,
+        "dihedralDeg": 174.70030148884734
+      }
+    },
+    {
+      "index": 70,
+      "name": "C",
+      "residueIndex": 17,
+      "residueSeq": 18,
+      "residueName": "GLU",
+      "position": {
+        "x": 27.819,
+        "y": 20.609,
+        "z": 7.316
+      },
+      "parents": [
+        66,
+        68,
+        69
+      ],
+      "internal": {
+        "bondLength": 1.5217286223239672,
+        "bondAngleDeg": 106.29257906077903,
+        "dihedralDeg": -120.04276255889054
+      }
+    },
+    {
+      "index": 71,
+      "name": "O",
+      "residueIndex": 17,
+      "residueSeq": 18,
+      "residueName": "GLU",
+      "position": {
+        "x": 28.449,
+        "y": 20.674,
+        "z": 8.36
+      },
+      "parents": [
+        68,
+        69,
+        70
+      ],
+      "internal": {
+        "bondLength": 1.221090086766739,
+        "bondAngleDeg": 121.26555611199362,
+        "dihedralDeg": -37.04735828977745
+      }
+    },
+    {
+      "index": 72,
+      "name": "N",
+      "residueIndex": 18,
+      "residueSeq": 19,
+      "residueName": "PRO",
+      "position": {
+        "x": 26.559,
+        "y": 20.22,
+        "z": 7.288
+      },
+      "parents": [
+        68,
+        69,
+        70
+      ],
+      "internal": {
+        "bondLength": 1.3189787716259869,
+        "bondAngleDeg": 116.93190984981378,
+        "dihedralDeg": 144.51155377248142
+      }
+    },
+    {
+      "index": 73,
+      "name": "CA",
+      "residueIndex": 18,
+      "residueSeq": 19,
+      "residueName": "PRO",
+      "position": {
+        "x": 25.829,
+        "y": 19.825,
+        "z": 8.494
+      },
+      "parents": [
+        69,
+        70,
+        72
+      ],
+      "internal": {
+        "bondLength": 1.4640221992852427,
+        "bondAngleDeg": 122.57580566946203,
+        "dihedralDeg": 177.7298042925445
+      }
+    },
+    {
+      "index": 74,
+      "name": "C",
+      "residueIndex": 18,
+      "residueSeq": 19,
+      "residueName": "PRO",
+      "position": {
+        "x": 26.541,
+        "y": 18.732,
+        "z": 9.251
+      },
+      "parents": [
+        70,
+        72,
+        73
+      ],
+      "internal": {
+        "bondLength": 1.5081916323862823,
+        "bondAngleDeg": 111.93776802975027,
+        "dihedralDeg": -54.93662456889915
+      }
+    },
+    {
+      "index": 75,
+      "name": "O",
+      "residueIndex": 18,
+      "residueSeq": 19,
+      "residueName": "PRO",
+      "position": {
+        "x": 26.333,
+        "y": 18.536,
+        "z": 10.457
+      },
+      "parents": [
+        72,
+        73,
+        74
+      ],
+      "internal": {
+        "bondLength": 1.2394014684516084,
+        "bondAngleDeg": 121.58599340061541,
+        "dihedralDeg": 157.92039714682394
+      }
+    },
+    {
+      "index": 76,
+      "name": "N",
+      "residueIndex": 19,
+      "residueSeq": 20,
+      "residueName": "SER",
+      "position": {
+        "x": 27.361,
+        "y": 17.959,
+        "z": 8.559
+      },
+      "parents": [
+        72,
+        73,
+        74
+      ],
+      "internal": {
+        "bondLength": 1.3224193737237822,
+        "bondAngleDeg": 116.98124585268714,
+        "dihedralDeg": -24.527072465839794
+      }
+    },
+    {
+      "index": 77,
+      "name": "CA",
+      "residueIndex": 19,
+      "residueSeq": 20,
+      "residueName": "SER",
+      "position": {
+        "x": 28.054,
+        "y": 16.835,
+        "z": 9.21
+      },
+      "parents": [
+        73,
+        74,
+        76
+      ],
+      "internal": {
+        "bondLength": 1.4722180545014372,
+        "bondAngleDeg": 120.44873923912567,
+        "dihedralDeg": -177.54391157600946
+      }
+    },
+    {
+      "index": 78,
+      "name": "C",
+      "residueIndex": 19,
+      "residueSeq": 20,
+      "residueName": "SER",
+      "position": {
+        "x": 29.258,
+        "y": 17.318,
+        "z": 9.984
+      },
+      "parents": [
+        74,
+        76,
+        77
+      ],
+      "internal": {
+        "bondLength": 1.5106227192783779,
+        "bondAngleDeg": 110.95463528232789,
+        "dihedralDeg": -79.83852548881151
+      }
+    },
+    {
+      "index": 79,
+      "name": "O",
+      "residueIndex": 19,
+      "residueSeq": 20,
+      "residueName": "SER",
+      "position": {
+        "x": 29.93,
+        "y": 16.477,
+        "z": 10.606
+      },
+      "parents": [
+        76,
+        77,
+        78
+      ],
+      "internal": {
+        "bondLength": 1.2432815449446688,
+        "bondAngleDeg": 118.0893406681824,
+        "dihedralDeg": 178.84443826203957
+      }
+    },
+    {
+      "index": 80,
+      "name": "N",
+      "residueIndex": 20,
+      "residueSeq": 21,
+      "residueName": "ASP",
+      "position": {
+        "x": 29.599,
+        "y": 18.599,
+        "z": 9.828
+      },
+      "parents": [
+        76,
+        77,
+        78
+      ],
+      "internal": {
+        "bondLength": 1.3347576559061192,
+        "bondAngleDeg": 116.78191060487472,
+        "dihedralDeg": -8.136699616139532
+      }
+    },
+    {
+      "index": 81,
+      "name": "CA",
+      "residueIndex": 20,
+      "residueSeq": 21,
+      "residueName": "ASP",
+      "position": {
+        "x": 30.796,
+        "y": 19.083,
+        "z": 10.566
+      },
+      "parents": [
+        77,
+        78,
+        80
+      ],
+      "internal": {
+        "bondLength": 1.487181562553812,
+        "bondAngleDeg": 117.3851762805807,
+        "dihedralDeg": -178.9953960638498
+      }
+    },
+    {
+      "index": 82,
+      "name": "C",
+      "residueIndex": 20,
+      "residueSeq": 21,
+      "residueName": "ASP",
+      "position": {
+        "x": 30.491,
+        "y": 19.162,
+        "z": 12.04
+      },
+      "parents": [
+        78,
+        80,
+        81
+      ],
+      "internal": {
+        "bondLength": 1.5072962548882005,
+        "bondAngleDeg": 109.84456441676386,
+        "dihedralDeg": -71.0059920213198
+      }
+    },
+    {
+      "index": 83,
+      "name": "O",
+      "residueIndex": 20,
+      "residueSeq": 21,
+      "residueName": "ASP",
+      "position": {
+        "x": 29.367,
+        "y": 19.523,
+        "z": 12.441
+      },
+      "parents": [
+        80,
+        81,
+        82
+      ],
+      "internal": {
+        "bondLength": 1.2467950914244084,
+        "bondAngleDeg": 120.80483383708527,
+        "dihedralDeg": -36.953619269372396
+      }
+    },
+    {
+      "index": 84,
+      "name": "N",
+      "residueIndex": 21,
+      "residueSeq": 22,
+      "residueName": "THR",
+      "position": {
+        "x": 31.51,
+        "y": 18.936,
+        "z": 12.852
+      },
+      "parents": [
+        80,
+        81,
+        82
+      ],
+      "internal": {
+        "bondLength": 1.3224148365773902,
+        "bondAngleDeg": 115.8225267864898,
+        "dihedralDeg": 148.43537396875462
+      }
+    },
+    {
+      "index": 85,
+      "name": "CA",
+      "residueIndex": 21,
+      "residueSeq": 22,
+      "residueName": "THR",
+      "position": {
+        "x": 31.398,
+        "y": 19.064,
+        "z": 14.286
+      },
+      "parents": [
+        81,
+        82,
+        84
+      ],
+      "internal": {
+        "bondLength": 1.444051245628076,
+        "bondAngleDeg": 122.3331652242939,
+        "dihedralDeg": 175.73351540015884
+      }
+    },
+    {
+      "index": 86,
+      "name": "C",
+      "residueIndex": 21,
+      "residueSeq": 22,
+      "residueName": "THR",
+      "position": {
+        "x": 31.593,
+        "y": 20.553,
+        "z": 14.655
+      },
+      "parents": [
+        82,
+        84,
+        85
+      ],
+      "internal": {
+        "bondLength": 1.546385139607854,
+        "bondAngleDeg": 108.21176501366281,
+        "dihedralDeg": -83.70375202615558
+      }
+    },
+    {
+      "index": 87,
+      "name": "O",
+      "residueIndex": 21,
+      "residueSeq": 22,
+      "residueName": "THR",
+      "position": {
+        "x": 32.159,
+        "y": 21.311,
+        "z": 13.861
+      },
+      "parents": [
+        84,
+        85,
+        86
+      ],
+      "internal": {
+        "bondLength": 1.2350530352984828,
+        "bondAngleDeg": 119.6925925183819,
+        "dihedralDeg": -20.21221058740432
+      }
+    },
+    {
+      "index": 88,
+      "name": "N",
+      "residueIndex": 22,
+      "residueSeq": 23,
+      "residueName": "ILE",
+      "position": {
+        "x": 31.113,
+        "y": 20.863,
+        "z": 15.86
+      },
+      "parents": [
+        84,
+        85,
+        86
+      ],
+      "internal": {
+        "bondLength": 1.3336135122290864,
+        "bondAngleDeg": 113.20654227179968,
+        "dihedralDeg": 160.43427627247985
+      }
+    },
+    {
+      "index": 89,
+      "name": "CA",
+      "residueIndex": 22,
+      "residueSeq": 23,
+      "residueName": "ILE",
+      "position": {
+        "x": 31.288,
+        "y": 22.201,
+        "z": 16.417
+      },
+      "parents": [
+        85,
+        86,
+        88
+      ],
+      "internal": {
+        "bondLength": 1.4598349221744236,
+        "bondAngleDeg": 120.97460490518364,
+        "dihedralDeg": 175.7852342727731
+      }
+    },
+    {
+      "index": 90,
+      "name": "C",
+      "residueIndex": 22,
+      "residueSeq": 23,
+      "residueName": "ILE",
+      "position": {
+        "x": 32.776,
+        "y": 22.519,
+        "z": 16.577
+      },
+      "parents": [
+        86,
+        88,
+        89
+      ],
+      "internal": {
+        "bondLength": 1.529989542447924,
+        "bondAngleDeg": 110.30306511062122,
+        "dihedralDeg": -61.327523595143916
+      }
+    },
+    {
+      "index": 91,
+      "name": "O",
+      "residueIndex": 22,
+      "residueSeq": 23,
+      "residueName": "ILE",
+      "position": {
+        "x": 33.233,
+        "y": 23.659,
+        "z": 16.384
+      },
+      "parents": [
+        88,
+        89,
+        90
+      ],
+      "internal": {
+        "bondLength": 1.2432610345377981,
+        "bondAngleDeg": 122.12995011138158,
+        "dihedralDeg": 143.77527135909205
+      }
+    },
+    {
+      "index": 92,
+      "name": "N",
+      "residueIndex": 23,
+      "residueSeq": 24,
+      "residueName": "GLU",
+      "position": {
+        "x": 33.548,
+        "y": 21.526,
+        "z": 16.95
+      },
+      "parents": [
+        88,
+        89,
+        90
+      ],
+      "internal": {
+        "bondLength": 1.311930638410428,
+        "bondAngleDeg": 116.404857203413,
+        "dihedralDeg": -37.20991423416155
+      }
+    },
+    {
+      "index": 93,
+      "name": "CA",
+      "residueIndex": 23,
+      "residueSeq": 24,
+      "residueName": "GLU",
+      "position": {
+        "x": 35.031,
+        "y": 21.722,
+        "z": 17.069
+      },
+      "parents": [
+        89,
+        90,
+        92
+      ],
+      "internal": {
+        "bondLength": 1.5006218710921122,
+        "bondAngleDeg": 120.34603914170094,
+        "dihedralDeg": 176.99871767801778
+      }
+    },
+    {
+      "index": 94,
+      "name": "C",
+      "residueIndex": 23,
+      "residueSeq": 24,
+      "residueName": "GLU",
+      "position": {
+        "x": 35.615,
+        "y": 22.19,
+        "z": 15.759
+      },
+      "parents": [
+        90,
+        92,
+        93
+      ],
+      "internal": {
+        "bondLength": 1.5087014283813747,
+        "bondAngleDeg": 110.74454707339585,
+        "dihedralDeg": -57.56676314201661
+      }
+    },
+    {
+      "index": 95,
+      "name": "O",
+      "residueIndex": 23,
+      "residueSeq": 24,
+      "residueName": "GLU",
+      "position": {
+        "x": 36.532,
+        "y": 23.046,
+        "z": 15.724
+      },
+      "parents": [
+        92,
+        93,
+        94
+      ],
+      "internal": {
+        "bondLength": 1.2549302769476822,
+        "bondAngleDeg": 121.24238111144176,
+        "dihedralDeg": 141.45070959377318
+      }
+    },
+    {
+      "index": 96,
+      "name": "N",
+      "residueIndex": 24,
+      "residueSeq": 25,
+      "residueName": "ASN",
+      "position": {
+        "x": 35.139,
+        "y": 21.624,
+        "z": 14.662
+      },
+      "parents": [
+        92,
+        93,
+        94
+      ],
+      "internal": {
+        "bondLength": 1.3230045351396196,
+        "bondAngleDeg": 116.61484630379972,
+        "dihedralDeg": -40.48782824893257
+      }
+    },
+    {
+      "index": 97,
+      "name": "CA",
+      "residueIndex": 24,
+      "residueSeq": 25,
+      "residueName": "ASN",
+      "position": {
+        "x": 35.59,
+        "y": 21.945,
+        "z": 13.302
+      },
+      "parents": [
+        93,
+        94,
+        96
+      ],
+      "internal": {
+        "bondLength": 1.4683466893074009,
+        "bondAngleDeg": 124.32984452891766,
+        "dihedralDeg": -179.64110780656222
+      }
+    },
+    {
+      "index": 98,
+      "name": "C",
+      "residueIndex": 24,
+      "residueSeq": 25,
+      "residueName": "ASN",
+      "position": {
+        "x": 35.238,
+        "y": 23.382,
+        "z": 12.92
+      },
+      "parents": [
+        94,
+        96,
+        97
+      ],
+      "internal": {
+        "bondLength": 1.528004253920782,
+        "bondAngleDeg": 111.49308884992698,
+        "dihedralDeg": -65.48814692480686
+      }
+    },
+    {
+      "index": 99,
+      "name": "O",
+      "residueIndex": 24,
+      "residueSeq": 25,
+      "residueName": "ASN",
+      "position": {
+        "x": 36.066,
+        "y": 24.109,
+        "z": 12.333
+      },
+      "parents": [
+        96,
+        97,
+        98
+      ],
+      "internal": {
+        "bondLength": 1.2484718659224985,
+        "bondAngleDeg": 120.82336095977489,
+        "dihedralDeg": 136.4117127335605
+      }
+    },
+    {
+      "index": 100,
+      "name": "N",
+      "residueIndex": 25,
+      "residueSeq": 26,
+      "residueName": "VAL",
+      "position": {
+        "x": 34.007,
+        "y": 23.745,
+        "z": 13.25
+      },
+      "parents": [
+        96,
+        97,
+        98
+      ],
+      "internal": {
+        "bondLength": 1.3251528213757098,
+        "bondAngleDeg": 114.16447750513423,
+        "dihedralDeg": -44.44434013530356
+      }
+    },
+    {
+      "index": 101,
+      "name": "CA",
+      "residueIndex": 25,
+      "residueSeq": 26,
+      "residueName": "VAL",
+      "position": {
+        "x": 33.533,
+        "y": 25.097,
+        "z": 12.978
+      },
+      "parents": [
+        97,
+        98,
+        100
+      ],
+      "internal": {
+        "bondLength": 1.4582743226156036,
+        "bondAngleDeg": 120.6282458380622,
+        "dihedralDeg": 178.61791583350924
+      }
+    },
+    {
+      "index": 102,
+      "name": "C",
+      "residueIndex": 25,
+      "residueSeq": 26,
+      "residueName": "VAL",
+      "position": {
+        "x": 34.441,
+        "y": 26.099,
+        "z": 13.684
+      },
+      "parents": [
+        98,
+        100,
+        101
+      ],
+      "internal": {
+        "bondLength": 1.5254192866225336,
+        "bondAngleDeg": 109.21971470332963,
+        "dihedralDeg": -58.42327983698672
+      }
+    },
+    {
+      "index": 103,
+      "name": "O",
+      "residueIndex": 25,
+      "residueSeq": 26,
+      "residueName": "VAL",
+      "position": {
+        "x": 34.883,
+        "y": 27.09,
+        "z": 13.093
+      },
+      "parents": [
+        100,
+        101,
+        102
+      ],
+      "internal": {
+        "bondLength": 1.2356075428711168,
+        "bondAngleDeg": 121.22433121280868,
+        "dihedralDeg": 132.53370036247583
+      }
+    },
+    {
+      "index": 104,
+      "name": "N",
+      "residueIndex": 26,
+      "residueSeq": 27,
+      "residueName": "LYS",
+      "position": {
+        "x": 34.734,
+        "y": 25.822,
+        "z": 14.949
+      },
+      "parents": [
+        100,
+        101,
+        102
+      ],
+      "internal": {
+        "bondLength": 1.3277059162329592,
+        "bondAngleDeg": 115.80323276556138,
+        "dihedralDeg": -46.40884363875418
+      }
+    },
+    {
+      "index": 105,
+      "name": "CA",
+      "residueIndex": 26,
+      "residueSeq": 27,
+      "residueName": "LYS",
+      "position": {
+        "x": 35.596,
+        "y": 26.715,
+        "z": 15.736
+      },
+      "parents": [
+        101,
+        102,
+        104
+      ],
+      "internal": {
+        "bondLength": 1.4696468963666045,
+        "bondAngleDeg": 120.85579965498508,
+        "dihedralDeg": -179.7807362475938
+      }
+    },
+    {
+      "index": 106,
+      "name": "C",
+      "residueIndex": 26,
+      "residueSeq": 27,
+      "residueName": "LYS",
+      "position": {
+        "x": 36.975,
+        "y": 26.826,
+        "z": 15.107
+      },
+      "parents": [
+        102,
+        104,
+        105
+      ],
+      "internal": {
+        "bondLength": 1.519737806333716,
+        "bondAngleDeg": 110.79106606889756,
+        "dihedralDeg": -60.812326169201114
+      }
+    },
+    {
+      "index": 107,
+      "name": "O",
+      "residueIndex": 26,
+      "residueSeq": 27,
+      "residueName": "LYS",
+      "position": {
+        "x": 37.579,
+        "y": 27.926,
+        "z": 15.159
+      },
+      "parents": [
+        104,
+        105,
+        106
+      ],
+      "internal": {
+        "bondLength": 1.2559936305570958,
+        "bondAngleDeg": 118.89409483065985,
+        "dihedralDeg": 144.32251566928002
+      }
+    },
+    {
+      "index": 108,
+      "name": "N",
+      "residueIndex": 27,
+      "residueSeq": 28,
+      "residueName": "ALA",
+      "position": {
+        "x": 37.499,
+        "y": 25.743,
+        "z": 14.571
+      },
+      "parents": [
+        104,
+        105,
+        106
+      ],
+      "internal": {
+        "bondLength": 1.3171032609480566,
+        "bondAngleDeg": 117.99379147818055,
+        "dihedralDeg": -37.96471954965873
+      }
+    },
+    {
+      "index": 109,
+      "name": "CA",
+      "residueIndex": 27,
+      "residueSeq": 28,
+      "residueName": "ALA",
+      "position": {
+        "x": 38.794,
+        "y": 25.761,
+        "z": 13.88
+      },
+      "parents": [
+        105,
+        106,
+        108
+      ],
+      "internal": {
+        "bondLength": 1.4679339222185666,
+        "bondAngleDeg": 122.1715693998452,
+        "dihedralDeg": 176.85905926517415
+      }
+    },
+    {
+      "index": 110,
+      "name": "C",
+      "residueIndex": 27,
+      "residueSeq": 28,
+      "residueName": "ALA",
+      "position": {
+        "x": 38.728,
+        "y": 26.591,
+        "z": 12.611
+      },
+      "parents": [
+        106,
+        108,
+        109
+      ],
+      "internal": {
+        "bondLength": 1.517767109934855,
+        "bondAngleDeg": 111.21809649111285,
+        "dihedralDeg": -66.12195978099633
+      }
+    },
+    {
+      "index": 111,
+      "name": "O",
+      "residueIndex": 27,
+      "residueSeq": 28,
+      "residueName": "ALA",
+      "position": {
+        "x": 39.704,
+        "y": 27.346,
+        "z": 12.277
+      },
+      "parents": [
+        108,
+        109,
+        110
+      ],
+      "internal": {
+        "bondLength": 1.2783415036679353,
+        "bondAngleDeg": 120.54598918317983,
+        "dihedralDeg": 140.5391257697316
+      }
+    },
+    {
+      "index": 112,
+      "name": "N",
+      "residueIndex": 28,
+      "residueSeq": 29,
+      "residueName": "LYS",
+      "position": {
+        "x": 37.633,
+        "y": 26.543,
+        "z": 11.867
+      },
+      "parents": [
+        108,
+        109,
+        110
+      ],
+      "internal": {
+        "bondLength": 1.3247131765027467,
+        "bondAngleDeg": 119.0588213820947,
+        "dihedralDeg": -38.12003094506526
+      }
+    },
+    {
+      "index": 113,
+      "name": "CA",
+      "residueIndex": 28,
+      "residueSeq": 29,
+      "residueName": "LYS",
+      "position": {
+        "x": 37.471,
+        "y": 27.391,
+        "z": 10.668
+      },
+      "parents": [
+        109,
+        110,
+        112
+      ],
+      "internal": {
+        "bondLength": 1.4774806259305076,
+        "bondAngleDeg": 121.70925209217113,
+        "dihedralDeg": 176.02595848002028
+      }
+    },
+    {
+      "index": 114,
+      "name": "C",
+      "residueIndex": 28,
+      "residueSeq": 29,
+      "residueName": "LYS",
+      "position": {
+        "x": 37.441,
+        "y": 28.882,
+        "z": 11.052
+      },
+      "parents": [
+        110,
+        112,
+        113
+      ],
+      "internal": {
+        "bondLength": 1.5399470770127164,
+        "bondAngleDeg": 110.82310738200957,
+        "dihedralDeg": -64.2163968414694
+      }
+    },
+    {
+      "index": 115,
+      "name": "O",
+      "residueIndex": 28,
+      "residueSeq": 29,
+      "residueName": "LYS",
+      "position": {
+        "x": 38.02,
+        "y": 29.772,
+        "z": 10.382
+      },
+      "parents": [
+        112,
+        113,
+        114
+      ],
+      "internal": {
+        "bondLength": 1.2554843686800705,
+        "bondAngleDeg": 122.9768957026715,
+        "dihedralDeg": 139.4609152374037
+      }
+    },
+    {
+      "index": 116,
+      "name": "N",
+      "residueIndex": 29,
+      "residueSeq": 30,
+      "residueName": "ILE",
+      "position": {
+        "x": 36.811,
+        "y": 29.17,
+        "z": 12.192
+      },
+      "parents": [
+        112,
+        113,
+        114
+      ],
+      "internal": {
+        "bondLength": 1.3339580203289774,
+        "bondAngleDeg": 115.55258964410028,
+        "dihedralDeg": -37.25898526807582
+      }
+    },
+    {
+      "index": 117,
+      "name": "CA",
+      "residueIndex": 29,
+      "residueSeq": 30,
+      "residueName": "ILE",
+      "position": {
+        "x": 36.731,
+        "y": 30.57,
+        "z": 12.645
+      },
+      "parents": [
+        113,
+        114,
+        116
+      ],
+      "internal": {
+        "bondLength": 1.4736380152534052,
+        "bondAngleDeg": 119.56793445969129,
+        "dihedralDeg": 179.91165417966468
+      }
+    },
+    {
+      "index": 118,
+      "name": "C",
+      "residueIndex": 29,
+      "residueSeq": 30,
+      "residueName": "ILE",
+      "position": {
+        "x": 38.148,
+        "y": 30.981,
+        "z": 13.069
+      },
+      "parents": [
+        114,
+        116,
+        117
+      ],
+      "internal": {
+        "bondLength": 1.535117585072885,
+        "bondAngleDeg": 106.80693341779306,
+        "dihedralDeg": -69.9996159996838
+      }
+    },
+    {
+      "index": 119,
+      "name": "O",
+      "residueIndex": 29,
+      "residueSeq": 30,
+      "residueName": "ILE",
+      "position": {
+        "x": 38.544,
+        "y": 32.15,
+        "z": 12.856
+      },
+      "parents": [
+        116,
+        117,
+        118
+      ],
+      "internal": {
+        "bondLength": 1.2524959081769442,
+        "bondAngleDeg": 119.65357768008633,
+        "dihedralDeg": 144.13716195115748
+      }
+    },
+    {
+      "index": 120,
+      "name": "N",
+      "residueIndex": 30,
+      "residueSeq": 31,
+      "residueName": "GLN",
+      "position": {
+        "x": 38.883,
+        "y": 30.11,
+        "z": 13.713
+      },
+      "parents": [
+        116,
+        117,
+        118
+      ],
+      "internal": {
+        "bondLength": 1.3090462176714772,
+        "bondAngleDeg": 118.42542084186616,
+        "dihedralDeg": -39.56396864635046
+      }
+    },
+    {
+      "index": 121,
+      "name": "CA",
+      "residueIndex": 30,
+      "residueSeq": 31,
+      "residueName": "GLN",
+      "position": {
+        "x": 40.269,
+        "y": 30.508,
+        "z": 14.115
+      },
+      "parents": [
+        117,
+        118,
+        120
+      ],
+      "internal": {
+        "bondLength": 1.4969983299923846,
+        "bondAngleDeg": 118.36303808809232,
+        "dihedralDeg": 179.45960579186584
+      }
+    },
+    {
+      "index": 122,
+      "name": "C",
+      "residueIndex": 30,
+      "residueSeq": 31,
+      "residueName": "GLN",
+      "position": {
+        "x": 41.092,
+        "y": 30.808,
+        "z": 12.851
+      },
+      "parents": [
+        118,
+        120,
+        121
+      ],
+      "internal": {
+        "bondLength": 1.5378637781025988,
+        "bondAngleDeg": 109.06407050610427,
+        "dihedralDeg": -62.12631401205496
+      }
+    },
+    {
+      "index": 123,
+      "name": "O",
+      "residueIndex": 30,
+      "residueSeq": 31,
+      "residueName": "GLN",
+      "position": {
+        "x": 41.828,
+        "y": 31.808,
+        "z": 12.681
+      },
+      "parents": [
+        120,
+        121,
+        122
+      ],
+      "internal": {
+        "bondLength": 1.253234215938907,
+        "bondAngleDeg": 125.55176599945823,
+        "dihedralDeg": 133.5222474824232
+      }
+    },
+    {
+      "index": 124,
+      "name": "N",
+      "residueIndex": 31,
+      "residueSeq": 32,
+      "residueName": "ASP",
+      "position": {
+        "x": 41.001,
+        "y": 29.878,
+        "z": 11.931
+      },
+      "parents": [
+        120,
+        121,
+        122
+      ],
+      "internal": {
+        "bondLength": 1.3113279528783037,
+        "bondAngleDeg": 113.65041143371661,
+        "dihedralDeg": -48.62769593660304
+      }
+    },
+    {
+      "index": 125,
+      "name": "CA",
+      "residueIndex": 31,
+      "residueSeq": 32,
+      "residueName": "ASP",
+      "position": {
+        "x": 41.718,
+        "y": 30.022,
+        "z": 10.643
+      },
+      "parents": [
+        121,
+        122,
+        124
+      ],
+      "internal": {
+        "bondLength": 1.4811377383619675,
+        "bondAngleDeg": 120.50078403630079,
+        "dihedralDeg": 179.1368149768913
+      }
+    },
+    {
+      "index": 126,
+      "name": "C",
+      "residueIndex": 31,
+      "residueSeq": 32,
+      "residueName": "ASP",
+      "position": {
+        "x": 41.399,
+        "y": 31.338,
+        "z": 9.967
+      },
+      "parents": [
+        122,
+        124,
+        125
+      ],
+      "internal": {
+        "bondLength": 1.5134705150745449,
+        "bondAngleDeg": 111.77217748144275,
+        "dihedralDeg": -53.412103413209756
+      }
+    },
+    {
+      "index": 127,
+      "name": "O",
+      "residueIndex": 31,
+      "residueSeq": 32,
+      "residueName": "ASP",
+      "position": {
+        "x": 42.26,
+        "y": 32.036,
+        "z": 9.381
+      },
+      "parents": [
+        124,
+        125,
+        126
+      ],
+      "internal": {
+        "bondLength": 1.253762736724934,
+        "bondAngleDeg": 123.2370222932589,
+        "dihedralDeg": 139.394196133035
+      }
+    },
+    {
+      "index": 128,
+      "name": "N",
+      "residueIndex": 32,
+      "residueSeq": 33,
+      "residueName": "LYS",
+      "position": {
+        "x": 40.117,
+        "y": 31.75,
+        "z": 9.988
+      },
+      "parents": [
+        124,
+        125,
+        126
+      ],
+      "internal": {
+        "bondLength": 1.3467401382597937,
+        "bondAngleDeg": 117.3667945027229,
+        "dihedralDeg": -41.766530005885365
+      }
+    },
+    {
+      "index": 129,
+      "name": "CA",
+      "residueIndex": 32,
+      "residueSeq": 33,
+      "residueName": "LYS",
+      "position": {
+        "x": 39.808,
+        "y": 32.994,
+        "z": 9.233
+      },
+      "parents": [
+        125,
+        126,
+        128
+      ],
+      "internal": {
+        "bondLength": 1.4876296582147037,
+        "bondAngleDeg": 116.46407860717478,
+        "dihedralDeg": -175.6530287868015
+      }
+    },
+    {
+      "index": 130,
+      "name": "C",
+      "residueIndex": 32,
+      "residueSeq": 33,
+      "residueName": "LYS",
+      "position": {
+        "x": 39.837,
+        "y": 34.271,
+        "z": 9.995
+      },
+      "parents": [
+        126,
+        128,
+        129
+      ],
+      "internal": {
+        "bondLength": 1.4873513371090237,
+        "bondAngleDeg": 116.99433080344997,
+        "dihedralDeg": -93.58013374550644
+      }
+    },
+    {
+      "index": 131,
+      "name": "O",
+      "residueIndex": 32,
+      "residueSeq": 33,
+      "residueName": "LYS",
+      "position": {
+        "x": 40.164,
+        "y": 35.323,
+        "z": 9.345
+      },
+      "parents": [
+        128,
+        129,
+        130
+      ],
+      "internal": {
+        "bondLength": 1.2791141465873934,
+        "bondAngleDeg": 116.79311799853825,
+        "dihedralDeg": 149.87376423256566
+      }
+    },
+    {
+      "index": 132,
+      "name": "N",
+      "residueIndex": 33,
+      "residueSeq": 34,
+      "residueName": "GLU",
+      "position": {
+        "x": 39.655,
+        "y": 34.335,
+        "z": 11.285
+      },
+      "parents": [
+        128,
+        129,
+        130
+      ],
+      "internal": {
+        "bondLength": 1.3043465797095506,
+        "bondAngleDeg": 123.09930843756047,
+        "dihedralDeg": -24.39825729049147
+      }
+    },
+    {
+      "index": 133,
+      "name": "CA",
+      "residueIndex": 33,
+      "residueSeq": 34,
+      "residueName": "GLU",
+      "position": {
+        "x": 39.676,
+        "y": 35.547,
+        "z": 12.072
+      },
+      "parents": [
+        129,
+        130,
+        132
+      ],
+      "internal": {
+        "bondLength": 1.4452522271216153,
+        "bondAngleDeg": 125.28700127879556,
+        "dihedralDeg": 179.86509295613476
+      }
+    },
+    {
+      "index": 134,
+      "name": "C",
+      "residueIndex": 33,
+      "residueSeq": 34,
+      "residueName": "GLU",
+      "position": {
+        "x": 40.675,
+        "y": 35.527,
+        "z": 13.2
+      },
+      "parents": [
+        130,
+        132,
+        133
+      ],
+      "internal": {
+        "bondLength": 1.5069124062134436,
+        "bondAngleDeg": 113.96130353184242,
+        "dihedralDeg": -123.57893541701837
+      }
+    },
+    {
+      "index": 135,
+      "name": "O",
+      "residueIndex": 33,
+      "residueSeq": 34,
+      "residueName": "GLU",
+      "position": {
+        "x": 40.814,
+        "y": 36.528,
+        "z": 13.911
+      },
+      "parents": [
+        132,
+        133,
+        134
+      ],
+      "internal": {
+        "bondLength": 1.2356548870942876,
+        "bondAngleDeg": 119.63955686690726,
+        "dihedralDeg": 177.47031653951194
+      }
+    },
+    {
+      "index": 136,
+      "name": "N",
+      "residueIndex": 34,
+      "residueSeq": 35,
+      "residueName": "GLY",
+      "position": {
+        "x": 41.317,
+        "y": 34.393,
+        "z": 13.432
+      },
+      "parents": [
+        132,
+        133,
+        134
+      ],
+      "internal": {
+        "bondLength": 1.3236102145269224,
+        "bondAngleDeg": 117.65382488673862,
+        "dihedralDeg": -6.345782267882943
+      }
+    },
+    {
+      "index": 137,
+      "name": "CA",
+      "residueIndex": 34,
+      "residueSeq": 35,
+      "residueName": "GLY",
+      "position": {
+        "x": 42.345,
+        "y": 34.269,
+        "z": 14.431
+      },
+      "parents": [
+        133,
+        134,
+        136
+      ],
+      "internal": {
+        "bondLength": 1.4388054072736853,
+        "bondAngleDeg": 122.82582374461128,
+        "dihedralDeg": 176.50457809246737
+      }
+    },
+    {
+      "index": 138,
+      "name": "C",
+      "residueIndex": 34,
+      "residueSeq": 35,
+      "residueName": "GLY",
+      "position": {
+        "x": 41.949,
+        "y": 34.076,
+        "z": 15.842
+      },
+      "parents": [
+        134,
+        136,
+        137
+      ],
+      "internal": {
+        "bondLength": 1.4781698143312236,
+        "bondAngleDeg": 118.8565786678834,
+        "dihedralDeg": 81.21642232818004
+      }
+    },
+    {
+      "index": 139,
+      "name": "O",
+      "residueIndex": 34,
+      "residueSeq": 35,
+      "residueName": "GLY",
+      "position": {
+        "x": 42.829,
+        "y": 34,
+        "z": 16.739
+      },
+      "parents": [
+        136,
+        137,
+        138
+      ],
+      "internal": {
+        "bondLength": 1.258882440897483,
+        "bondAngleDeg": 120.05099641909962,
+        "dihedralDeg": -178.1363727862248
+      }
+    },
+    {
+      "index": 140,
+      "name": "N",
+      "residueIndex": 35,
+      "residueSeq": 36,
+      "residueName": "ILE",
+      "position": {
+        "x": 40.642,
+        "y": 33.916,
+        "z": 16.112
+      },
+      "parents": [
+        136,
+        137,
+        138
+      ],
+      "internal": {
+        "bondLength": 1.3441536370519507,
+        "bondAngleDeg": 117.89015216117157,
+        "dihedralDeg": 5.321277462833298
+      }
+    },
+    {
+      "index": 141,
+      "name": "CA",
+      "residueIndex": 35,
+      "residueSeq": 36,
+      "residueName": "ILE",
+      "position": {
+        "x": 40.226,
+        "y": 33.716,
+        "z": 17.509
+      },
+      "parents": [
+        137,
+        138,
+        140
+      ],
+      "internal": {
+        "bondLength": 1.471280054918168,
+        "bondAngleDeg": 118.80572633912233,
+        "dihedralDeg": 179.71320999851324
+      }
+    },
+    {
+      "index": 142,
+      "name": "C",
+      "residueIndex": 35,
+      "residueSeq": 36,
+      "residueName": "ILE",
+      "position": {
+        "x": 40.449,
+        "y": 32.278,
+        "z": 17.945
+      },
+      "parents": [
+        138,
+        140,
+        141
+      ],
+      "internal": {
+        "bondLength": 1.5191013791054258,
+        "bondAngleDeg": 111.08138919934595,
+        "dihedralDeg": -79.73324166635153
+      }
+    },
+    {
+      "index": 143,
+      "name": "O",
+      "residueIndex": 35,
+      "residueSeq": 36,
+      "residueName": "ILE",
+      "position": {
+        "x": 39.936,
+        "y": 31.336,
+        "z": 17.315
+      },
+      "parents": [
+        140,
+        141,
+        142
+      ],
+      "internal": {
+        "bondLength": 1.2439586005973018,
+        "bondAngleDeg": 120.7262540824266,
+        "dihedralDeg": -56.2926348027593
+      }
+    },
+    {
+      "index": 144,
+      "name": "N",
+      "residueIndex": 36,
+      "residueSeq": 37,
+      "residueName": "PRO",
+      "position": {
+        "x": 41.189,
+        "y": 32.085,
+        "z": 19.031
+      },
+      "parents": [
+        140,
+        141,
+        142
+      ],
+      "internal": {
+        "bondLength": 1.3282488471668248,
+        "bondAngleDeg": 117.00041734780005,
+        "dihedralDeg": 124.86654342843892
+      }
+    },
+    {
+      "index": 145,
+      "name": "CA",
+      "residueIndex": 36,
+      "residueSeq": 37,
+      "residueName": "PRO",
+      "position": {
+        "x": 41.461,
+        "y": 30.751,
+        "z": 19.594
+      },
+      "parents": [
+        141,
+        142,
+        144
+      ],
+      "internal": {
+        "bondLength": 1.4732647419931018,
+        "bondAngleDeg": 123.15292244786772,
+        "dihedralDeg": 178.3035647467071
+      }
+    },
+    {
+      "index": 146,
+      "name": "C",
+      "residueIndex": 36,
+      "residueSeq": 37,
+      "residueName": "PRO",
+      "position": {
+        "x": 40.168,
+        "y": 30.026,
+        "z": 19.918
+      },
+      "parents": [
+        142,
+        144,
+        145
+      ],
+      "internal": {
+        "bondLength": 1.5173826148997487,
+        "bondAngleDeg": 110.91031461280005,
+        "dihedralDeg": -57.00294454588721
+      }
+    },
+    {
+      "index": 147,
+      "name": "O",
+      "residueIndex": 36,
+      "residueSeq": 37,
+      "residueName": "PRO",
+      "position": {
+        "x": 39.264,
+        "y": 30.662,
+        "z": 20.521
+      },
+      "parents": [
+        144,
+        145,
+        146
+      ],
+      "internal": {
+        "bondLength": 1.2590953101334283,
+        "bondAngleDeg": 118.21095441552927,
+        "dihedralDeg": -45.63050147631217
+      }
+    },
+    {
+      "index": 148,
+      "name": "N",
+      "residueIndex": 37,
+      "residueSeq": 38,
+      "residueName": "PRO",
+      "position": {
+        "x": 40.059,
+        "y": 28.758,
+        "z": 19.607
+      },
+      "parents": [
+        144,
+        145,
+        146
+      ],
+      "internal": {
+        "bondLength": 1.3101244215722423,
+        "bondAngleDeg": 118.85809782894295,
+        "dihedralDeg": 136.96701033271623
+      }
+    },
+    {
+      "index": 149,
+      "name": "CA",
+      "residueIndex": 37,
+      "residueSeq": 38,
+      "residueName": "PRO",
+      "position": {
+        "x": 38.817,
+        "y": 28.02,
+        "z": 19.889
+      },
+      "parents": [
+        145,
+        146,
+        148
+      ],
+      "internal": {
+        "bondLength": 1.4719823368505456,
+        "bondAngleDeg": 120.66159144887203,
+        "dihedralDeg": -179.28779512578646
+      }
+    },
+    {
+      "index": 150,
+      "name": "C",
+      "residueIndex": 37,
+      "residueSeq": 38,
+      "residueName": "PRO",
+      "position": {
+        "x": 38.421,
+        "y": 28.048,
+        "z": 21.341
+      },
+      "parents": [
+        146,
+        148,
+        149
+      ],
+      "internal": {
+        "bondLength": 1.5052919982515038,
+        "bondAngleDeg": 113.41821128589456,
+        "dihedralDeg": -57.18416058765162
+      }
+    },
+    {
+      "index": 151,
+      "name": "O",
+      "residueIndex": 37,
+      "residueSeq": 38,
+      "residueName": "PRO",
+      "position": {
+        "x": 37.213,
+        "y": 28.036,
+        "z": 21.704
+      },
+      "parents": [
+        148,
+        149,
+        150
+      ],
+      "internal": {
+        "bondLength": 1.2614186458111343,
+        "bondAngleDeg": 121.96070892900791,
+        "dihedralDeg": 147.62990366105475
+      }
+    },
+    {
+      "index": 152,
+      "name": "N",
+      "residueIndex": 38,
+      "residueSeq": 39,
+      "residueName": "ASP",
+      "position": {
+        "x": 39.374,
+        "y": 28.09,
+        "z": 22.24
+      },
+      "parents": [
+        148,
+        149,
+        150
+      ],
+      "internal": {
+        "bondLength": 1.3107913640240392,
+        "bondAngleDeg": 118.09247085918595,
+        "dihedralDeg": -32.165253544145116
+      }
+    },
+    {
+      "index": 153,
+      "name": "CA",
+      "residueIndex": 38,
+      "residueSeq": 39,
+      "residueName": "ASP",
+      "position": {
+        "x": 39.063,
+        "y": 28.063,
+        "z": 23.695
+      },
+      "parents": [
+        149,
+        150,
+        152
+      ],
+      "internal": {
+        "bondLength": 1.4881112189618104,
+        "bondAngleDeg": 121.20215618075486,
+        "dihedralDeg": -177.44260156803165
+      }
+    },
+    {
+      "index": 154,
+      "name": "C",
+      "residueIndex": 38,
+      "residueSeq": 39,
+      "residueName": "ASP",
+      "position": {
+        "x": 38.365,
+        "y": 29.335,
+        "z": 24.159
+      },
+      "parents": [
+        150,
+        152,
+        153
+      ],
+      "internal": {
+        "bondLength": 1.523313493670953,
+        "bondAngleDeg": 112.23663661918374,
+        "dihedralDeg": -68.23877520863765
+      }
+    },
+    {
+      "index": 155,
+      "name": "O",
+      "residueIndex": 38,
+      "residueSeq": 39,
+      "residueName": "ASP",
+      "position": {
+        "x": 37.684,
+        "y": 29.39,
+        "z": 25.221
+      },
+      "parents": [
+        152,
+        153,
+        154
+      ],
+      "internal": {
+        "bondLength": 1.2627866011325939,
+        "bondAngleDeg": 122.65926896343478,
+        "dihedralDeg": 159.51033403990388
+      }
+    },
+    {
+      "index": 156,
+      "name": "N",
+      "residueIndex": 39,
+      "residueSeq": 40,
+      "residueName": "GLN",
+      "position": {
+        "x": 38.419,
+        "y": 30.373,
+        "z": 23.341
+      },
+      "parents": [
+        152,
+        153,
+        154
+      ],
+      "internal": {
+        "bondLength": 1.3226806114856287,
+        "bondAngleDeg": 116.62930586072689,
+        "dihedralDeg": -15.571853609414747
+      }
+    },
+    {
+      "index": 157,
+      "name": "CA",
+      "residueIndex": 39,
+      "residueSeq": 40,
+      "residueName": "GLN",
+      "position": {
+        "x": 37.738,
+        "y": 31.637,
+        "z": 23.712
+      },
+      "parents": [
+        153,
+        154,
+        156
+      ],
+      "internal": {
+        "bondLength": 1.4829356021081948,
+        "bondAngleDeg": 119.69873930501056,
+        "dihedralDeg": 178.70932051135935
+      }
+    },
+    {
+      "index": 158,
+      "name": "C",
+      "residueIndex": 39,
+      "residueSeq": 40,
+      "residueName": "GLN",
+      "position": {
+        "x": 36.334,
+        "y": 31.742,
+        "z": 23.087
+      },
+      "parents": [
+        154,
+        156,
+        157
+      ],
+      "internal": {
+        "bondLength": 1.540410984120793,
+        "bondAngleDeg": 112.03365147317193,
+        "dihedralDeg": -95.7978866356938
+      }
+    },
+    {
+      "index": 159,
+      "name": "O",
+      "residueIndex": 39,
+      "residueSeq": 40,
+      "residueName": "GLN",
+      "position": {
+        "x": 35.574,
+        "y": 32.618,
+        "z": 23.483
+      },
+      "parents": [
+        156,
+        157,
+        158
+      ],
+      "internal": {
+        "bondLength": 1.2254762339596843,
+        "bondAngleDeg": 118.87261289933838,
+        "dihedralDeg": 167.9262968173777
+      }
+    },
+    {
+      "index": 160,
+      "name": "N",
+      "residueIndex": 40,
+      "residueSeq": 41,
+      "residueName": "GLN",
+      "position": {
+        "x": 36,
+        "y": 30.86,
+        "z": 22.172
+      },
+      "parents": [
+        156,
+        157,
+        158
+      ],
+      "internal": {
+        "bondLength": 1.3140414757533352,
+        "bondAngleDeg": 117.9331340507765,
+        "dihedralDeg": -10.469229587768123
+      }
+    },
+    {
+      "index": 161,
+      "name": "CA",
+      "residueIndex": 40,
+      "residueSeq": 41,
+      "residueName": "GLN",
+      "position": {
+        "x": 34.738,
+        "y": 30.875,
+        "z": 21.473
+      },
+      "parents": [
+        157,
+        158,
+        160
+      ],
+      "internal": {
+        "bondLength": 1.44273005097974,
+        "bondAngleDeg": 123.55426999219232,
+        "dihedralDeg": -177.61918278891054
+      }
+    },
+    {
+      "index": 162,
+      "name": "C",
+      "residueIndex": 40,
+      "residueSeq": 41,
+      "residueName": "GLN",
+      "position": {
+        "x": 33.589,
+        "y": 30.189,
+        "z": 22.181
+      },
+      "parents": [
+        158,
+        160,
+        161
+      ],
+      "internal": {
+        "bondLength": 1.5139554154597832,
+        "bondAngleDeg": 115.63147009374836,
+        "dihedralDeg": -84.83106533570226
+      }
+    },
+    {
+      "index": 163,
+      "name": "O",
+      "residueIndex": 40,
+      "residueSeq": 41,
+      "residueName": "GLN",
+      "position": {
+        "x": 33.58,
+        "y": 29.009,
+        "z": 22.499
+      },
+      "parents": [
+        160,
+        161,
+        162
+      ],
+      "internal": {
+        "bondLength": 1.2221313350045477,
+        "bondAngleDeg": 124.38624537291913,
+        "dihedralDeg": -59.826287547999115
+      }
+    },
+    {
+      "index": 164,
+      "name": "N",
+      "residueIndex": 41,
+      "residueSeq": 42,
+      "residueName": "ARG",
+      "position": {
+        "x": 32.478,
+        "y": 30.917,
+        "z": 22.269
+      },
+      "parents": [
+        160,
+        161,
+        162
+      ],
+      "internal": {
+        "bondLength": 1.3311833081886189,
+        "bondAngleDeg": 114.6150906226278,
+        "dihedralDeg": 129.69546809156998
+      }
+    },
+    {
+      "index": 165,
+      "name": "CA",
+      "residueIndex": 41,
+      "residueSeq": 42,
+      "residueName": "ARG",
+      "position": {
+        "x": 31.2,
+        "y": 30.329,
+        "z": 22.78
+      },
+      "parents": [
+        161,
+        162,
+        164
+      ],
+      "internal": {
+        "bondLength": 1.4967127312881419,
+        "bondAngleDeg": 121.35631020133829,
+        "dihedralDeg": 172.09594492727192
+      }
+    },
+    {
+      "index": 166,
+      "name": "C",
+      "residueIndex": 41,
+      "residueSeq": 42,
+      "residueName": "ARG",
+      "position": {
+        "x": 30.21,
+        "y": 30.509,
+        "z": 21.65
+      },
+      "parents": [
+        162,
+        164,
+        165
+      ],
+      "internal": {
+        "bondLength": 1.5130763364748,
+        "bondAngleDeg": 104.89048709353268,
+        "dihedralDeg": -121.24310995443969
+      }
+    },
+    {
+      "index": 167,
+      "name": "O",
+      "residueIndex": 41,
+      "residueSeq": 42,
+      "residueName": "ARG",
+      "position": {
+        "x": 29.978,
+        "y": 31.726,
+        "z": 21.269
+      },
+      "parents": [
+        164,
+        165,
+        166
+      ],
+      "internal": {
+        "bondLength": 1.2961766854869736,
+        "bondAngleDeg": 116.63654984401525,
+        "dihedralDeg": -60.02534046304641
+      }
+    },
+    {
+      "index": 168,
+      "name": "N",
+      "residueIndex": 42,
+      "residueSeq": 43,
+      "residueName": "LEU",
+      "position": {
+        "x": 29.694,
+        "y": 29.436,
+        "z": 21.054
+      },
+      "parents": [
+        164,
+        165,
+        166
+      ],
+      "internal": {
+        "bondLength": 1.3314657336935123,
+        "bondAngleDeg": 119.47186682617864,
+        "dihedralDeg": 115.95647414189128
+      }
+    },
+    {
+      "index": 169,
+      "name": "CA",
+      "residueIndex": 42,
+      "residueSeq": 43,
+      "residueName": "LEU",
+      "position": {
+        "x": 28.762,
+        "y": 29.573,
+        "z": 19.906
+      },
+      "parents": [
+        165,
+        166,
+        168
+      ],
+      "internal": {
+        "bondLength": 1.4850242422263673,
+        "bondAngleDeg": 120.99173096161056,
+        "dihedralDeg": -177.50904652865367
+      }
+    },
+    {
+      "index": 170,
+      "name": "C",
+      "residueIndex": 42,
+      "residueSeq": 43,
+      "residueName": "LEU",
+      "position": {
+        "x": 27.331,
+        "y": 29.317,
+        "z": 20.364
+      },
+      "parents": [
+        166,
+        168,
+        169
+      ],
+      "internal": {
+        "bondLength": 1.5241591124288842,
+        "bondAngleDeg": 109.96506689317245,
+        "dihedralDeg": -103.55814450046749
+      }
+    },
+    {
+      "index": 171,
+      "name": "O",
+      "residueIndex": 42,
+      "residueSeq": 43,
+      "residueName": "LEU",
+      "position": {
+        "x": 27.101,
+        "y": 28.346,
+        "z": 21.097
+      },
+      "parents": [
+        168,
+        169,
+        170
+      ],
+      "internal": {
+        "bondLength": 1.2381558867929356,
+        "bondAngleDeg": 118.94840037896947,
+        "dihedralDeg": -45.283415192327766
+      }
+    },
+    {
+      "index": 172,
+      "name": "N",
+      "residueIndex": 43,
+      "residueSeq": 44,
+      "residueName": "ILE",
+      "position": {
+        "x": 26.436,
+        "y": 30.232,
+        "z": 20.004
+      },
+      "parents": [
+        168,
+        169,
+        170
+      ],
+      "internal": {
+        "bondLength": 1.3296052045626163,
+        "bondAngleDeg": 115.78794709908372,
+        "dihedralDeg": 130.24087804410922
+      }
+    },
+    {
+      "index": 173,
+      "name": "CA",
+      "residueIndex": 43,
+      "residueSeq": 44,
+      "residueName": "ILE",
+      "position": {
+        "x": 25.034,
+        "y": 30.17,
+        "z": 20.401
+      },
+      "parents": [
+        169,
+        170,
+        172
+      ],
+      "internal": {
+        "bondLength": 1.4584433482312578,
+        "bondAngleDeg": 122.96481558839747,
+        "dihedralDeg": -177.55898462933095
+      }
+    },
+    {
+      "index": 174,
+      "name": "C",
+      "residueIndex": 43,
+      "residueSeq": 44,
+      "residueName": "ILE",
+      "position": {
+        "x": 24.101,
+        "y": 30.149,
+        "z": 19.196
+      },
+      "parents": [
+        170,
+        172,
+        173
+      ],
+      "internal": {
+        "bondLength": 1.5241243387597994,
+        "bondAngleDeg": 111.95244492299423,
+        "dihedralDeg": -122.0749029372354
+      }
+    },
+    {
+      "index": 175,
+      "name": "O",
+      "residueIndex": 43,
+      "residueSeq": 44,
+      "residueName": "ILE",
+      "position": {
+        "x": 24.196,
+        "y": 30.948,
+        "z": 18.287
+      },
+      "parents": [
+        172,
+        173,
+        174
+      ],
+      "internal": {
+        "bondLength": 1.2139633437629014,
+        "bondAngleDeg": 122.34601435986036,
+        "dihedralDeg": -49.67722289868002
+      }
+    },
+    {
+      "index": 176,
+      "name": "N",
+      "residueIndex": 44,
+      "residueSeq": 45,
+      "residueName": "PHE",
+      "position": {
+        "x": 23.141,
+        "y": 29.187,
+        "z": 19.241
+      },
+      "parents": [
+        172,
+        173,
+        174
+      ],
+      "internal": {
+        "bondLength": 1.3598047653983278,
+        "bondAngleDeg": 114.56687037033977,
+        "dihedralDeg": 131.80696702054843
+      }
+    },
+    {
+      "index": 177,
+      "name": "CA",
+      "residueIndex": 44,
+      "residueSeq": 45,
+      "residueName": "PHE",
+      "position": {
+        "x": 22.126,
+        "y": 29.062,
+        "z": 18.183
+      },
+      "parents": [
+        173,
+        174,
+        176
+      ],
+      "internal": {
+        "bondLength": 1.471466615319557,
+        "bondAngleDeg": 121.55270111185293,
+        "dihedralDeg": 177.58882008873644
+      }
+    },
+    {
+      "index": 178,
+      "name": "C",
+      "residueIndex": 44,
+      "residueSeq": 45,
+      "residueName": "PHE",
+      "position": {
+        "x": 20.835,
+        "y": 28.629,
+        "z": 18.904
+      },
+      "parents": [
+        174,
+        176,
+        177
+      ],
+      "internal": {
+        "bondLength": 1.5407825933596215,
+        "bondAngleDeg": 105.38952767440759,
+        "dihedralDeg": -144.27045831666007
+      }
+    },
+    {
+      "index": 179,
+      "name": "O",
+      "residueIndex": 44,
+      "residueSeq": 45,
+      "residueName": "PHE",
+      "position": {
+        "x": 20.821,
+        "y": 27.734,
+        "z": 19.749
+      },
+      "parents": [
+        176,
+        177,
+        178
+      ],
+      "internal": {
+        "bondLength": 1.230953289121889,
+        "bondAngleDeg": 122.34949681711319,
+        "dihedralDeg": -45.984673266308455
+      }
+    },
+    {
+      "index": 180,
+      "name": "N",
+      "residueIndex": 45,
+      "residueSeq": 46,
+      "residueName": "ALA",
+      "position": {
+        "x": 19.81,
+        "y": 29.378,
+        "z": 18.578
+      },
+      "parents": [
+        176,
+        177,
+        178
+      ],
+      "internal": {
+        "bondLength": 1.3106876058008645,
+        "bondAngleDeg": 112.22661083612164,
+        "dihedralDeg": 129.63656726832534
+      }
+    },
+    {
+      "index": 181,
+      "name": "CA",
+      "residueIndex": 45,
+      "residueSeq": 46,
+      "residueName": "ALA",
+      "position": {
+        "x": 18.443,
+        "y": 29.143,
+        "z": 19.083
+      },
+      "parents": [
+        177,
+        178,
+        180
+      ],
+      "internal": {
+        "bondLength": 1.4761229623578083,
+        "bondAngleDeg": 123.24034417474601,
+        "dihedralDeg": 177.38290752123035
+      }
+    },
+    {
+      "index": 182,
+      "name": "C",
+      "residueIndex": 45,
+      "residueSeq": 46,
+      "residueName": "ALA",
+      "position": {
+        "x": 18.453,
+        "y": 28.941,
+        "z": 20.591
+      },
+      "parents": [
+        178,
+        180,
+        181
+      ],
+      "internal": {
+        "bondLength": 1.5215018895814783,
+        "bondAngleDeg": 110.73988739666285,
+        "dihedralDeg": 48.171238161252894
+      }
+    },
+    {
+      "index": 183,
+      "name": "O",
+      "residueIndex": 45,
+      "residueSeq": 46,
+      "residueName": "ALA",
+      "position": {
+        "x": 17.86,
+        "y": 27.994,
+        "z": 21.128
+      },
+      "parents": [
+        180,
+        181,
+        182
+      ],
+      "internal": {
+        "bondLength": 1.239688267267218,
+        "bondAngleDeg": 121.8436965456598,
+        "dihedralDeg": -131.45579224663362
+      }
+    },
+    {
+      "index": 184,
+      "name": "N",
+      "residueIndex": 46,
+      "residueSeq": 47,
+      "residueName": "GLY",
+      "position": {
+        "x": 19.172,
+        "y": 29.808,
+        "z": 21.243
+      },
+      "parents": [
+        180,
+        181,
+        182
+      ],
+      "internal": {
+        "bondLength": 1.3014430452386303,
+        "bondAngleDeg": 114.31310124537715,
+        "dihedralDeg": 45.994070090304106
+      }
+    },
+    {
+      "index": 185,
+      "name": "CA",
+      "residueIndex": 46,
+      "residueSeq": 47,
+      "residueName": "GLY",
+      "position": {
+        "x": 19.399,
+        "y": 29.894,
+        "z": 22.655
+      },
+      "parents": [
+        181,
+        182,
+        184
+      ],
+      "internal": {
+        "bondLength": 1.4327138583820591,
+        "bondAngleDeg": 128.40822083650312,
+        "dihedralDeg": -179.52820971220424
+      }
+    },
+    {
+      "index": 186,
+      "name": "C",
+      "residueIndex": 46,
+      "residueSeq": 47,
+      "residueName": "GLY",
+      "position": {
+        "x": 20.083,
+        "y": 28.729,
+        "z": 23.321
+      },
+      "parents": [
+        182,
+        184,
+        185
+      ],
+      "internal": {
+        "bondLength": 1.5061995219757556,
+        "bondAngleDeg": 117.47121493591881,
+        "dihedralDeg": 61.71436884259998
+      }
+    },
+    {
+      "index": 187,
+      "name": "O",
+      "residueIndex": 46,
+      "residueSeq": 47,
+      "residueName": "GLY",
+      "position": {
+        "x": 19.991,
+        "y": 28.584,
+        "z": 24.561
+      },
+      "parents": [
+        184,
+        185,
+        186
+      ],
+      "internal": {
+        "bondLength": 1.2518342542046035,
+        "bondAngleDeg": 119.61760173676714,
+        "dihedralDeg": -161.08060289013483
+      }
+    },
+    {
+      "index": 188,
+      "name": "N",
+      "residueIndex": 47,
+      "residueSeq": 48,
+      "residueName": "LYS",
+      "position": {
+        "x": 20.801,
+        "y": 27.931,
+        "z": 22.578
+      },
+      "parents": [
+        184,
+        185,
+        186
+      ],
+      "internal": {
+        "bondLength": 1.3055179048944523,
+        "bondAngleDeg": 118.09207798429755,
+        "dihedralDeg": 21.61646846219102
+      }
+    },
+    {
+      "index": 189,
+      "name": "CA",
+      "residueIndex": 47,
+      "residueSeq": 48,
+      "residueName": "LYS",
+      "position": {
+        "x": 21.55,
+        "y": 26.796,
+        "z": 23.133
+      },
+      "parents": [
+        185,
+        186,
+        188
+      ],
+      "internal": {
+        "bondLength": 1.4687583191253784,
+        "bondAngleDeg": 122.53119088077568,
+        "dihedralDeg": 177.64840941182663
+      }
+    },
+    {
+      "index": 190,
+      "name": "C",
+      "residueIndex": 47,
+      "residueSeq": 48,
+      "residueName": "LYS",
+      "position": {
+        "x": 23.046,
+        "y": 27.087,
+        "z": 22.913
+      },
+      "parents": [
+        186,
+        188,
+        189
+      ],
+      "internal": {
+        "bondLength": 1.539836679651448,
+        "bondAngleDeg": 107.18227245988712,
+        "dihedralDeg": -115.0664094374763
+      }
+    },
+    {
+      "index": 191,
+      "name": "O",
+      "residueIndex": 47,
+      "residueSeq": 48,
+      "residueName": "LYS",
+      "position": {
+        "x": 23.383,
+        "y": 27.627,
+        "z": 21.87
+      },
+      "parents": [
+        188,
+        189,
+        190
+      ],
+      "internal": {
+        "bondLength": 1.2218911571821762,
+        "bondAngleDeg": 118.25674047909092,
+        "dihedralDeg": -37.9845141119101
+      }
+    },
+    {
+      "index": 192,
+      "name": "N",
+      "residueIndex": 48,
+      "residueSeq": 49,
+      "residueName": "GLN",
+      "position": {
+        "x": 23.88,
+        "y": 26.727,
+        "z": 23.851
+      },
+      "parents": [
+        188,
+        189,
+        190
+      ],
+      "internal": {
+        "bondLength": 1.3057564857200583,
+        "bondAngleDeg": 117.76144295407984,
+        "dihedralDeg": 142.71298452616637
+      }
+    },
+    {
+      "index": 193,
+      "name": "CA",
+      "residueIndex": 48,
+      "residueSeq": 49,
+      "residueName": "GLN",
+      "position": {
+        "x": 25.349,
+        "y": 26.872,
+        "z": 23.643
+      },
+      "parents": [
+        189,
+        190,
+        192
+      ],
+      "internal": {
+        "bondLength": 1.4907213019206516,
+        "bondAngleDeg": 120.15587525307556,
+        "dihedralDeg": 174.56908139764374
+      }
+    },
+    {
+      "index": 194,
+      "name": "C",
+      "residueIndex": 48,
+      "residueSeq": 49,
+      "residueName": "GLN",
+      "position": {
+        "x": 25.743,
+        "y": 25.586,
+        "z": 22.922
+      },
+      "parents": [
+        190,
+        192,
+        193
+      ],
+      "internal": {
+        "bondLength": 1.526064546472397,
+        "bondAngleDeg": 103.79054530716786,
+        "dihedralDeg": -85.77222740301261
+      }
+    },
+    {
+      "index": 195,
+      "name": "O",
+      "residueIndex": 48,
+      "residueSeq": 49,
+      "residueName": "GLN",
+      "position": {
+        "x": 25.325,
+        "y": 24.489,
+        "z": 23.378
+      },
+      "parents": [
+        192,
+        193,
+        194
+      ],
+      "internal": {
+        "bondLength": 1.259392313776765,
+        "bondAngleDeg": 118.5073247532068,
+        "dihedralDeg": -47.54368662402002
+      }
+    },
+    {
+      "index": 196,
+      "name": "N",
+      "residueIndex": 49,
+      "residueSeq": 50,
+      "residueName": "LEU",
+      "position": {
+        "x": 26.465,
+        "y": 25.689,
+        "z": 21.833
+      },
+      "parents": [
+        192,
+        193,
+        194
+      ],
+      "internal": {
+        "bondLength": 1.310654035205327,
+        "bondAngleDeg": 117.94060924650671,
+        "dihedralDeg": 130.28286740053701
+      }
+    },
+    {
+      "index": 197,
+      "name": "CA",
+      "residueIndex": 49,
+      "residueSeq": 50,
+      "residueName": "LEU",
+      "position": {
+        "x": 26.826,
+        "y": 24.521,
+        "z": 21.012
+      },
+      "parents": [
+        193,
+        194,
+        196
+      ],
+      "internal": {
+        "bondLength": 1.472611965182952,
+        "bondAngleDeg": 122.40758900662296,
+        "dihedralDeg": -175.91826873938626
+      }
+    },
+    {
+      "index": 198,
+      "name": "C",
+      "residueIndex": 49,
+      "residueSeq": 50,
+      "residueName": "LEU",
+      "position": {
+        "x": 27.994,
+        "y": 23.781,
+        "z": 21.643
+      },
+      "parents": [
+        194,
+        196,
+        197
+      ],
+      "internal": {
+        "bondLength": 1.5198634807113438,
+        "bondAngleDeg": 110.06588754482284,
+        "dihedralDeg": -79.555278272299
+      }
+    },
+    {
+      "index": 199,
+      "name": "O",
+      "residueIndex": 49,
+      "residueSeq": 50,
+      "residueName": "LEU",
+      "position": {
+        "x": 28.904,
+        "y": 24.444,
+        "z": 22.098
+      },
+      "parents": [
+        196,
+        197,
+        198
+      ],
+      "internal": {
+        "bondLength": 1.214369795408301,
+        "bondAngleDeg": 117.74969528066048,
+        "dihedralDeg": -41.977866499666604
+      }
+    },
+    {
+      "index": 200,
+      "name": "N",
+      "residueIndex": 50,
+      "residueSeq": 51,
+      "residueName": "GLU",
+      "position": {
+        "x": 27.942,
+        "y": 22.448,
+        "z": 21.648
+      },
+      "parents": [
+        196,
+        197,
+        198
+      ],
+      "internal": {
+        "bondLength": 1.3340232381784043,
+        "bondAngleDeg": 117.26539961428637,
+        "dihedralDeg": 138.33305479112613
+      }
+    },
+    {
+      "index": 201,
+      "name": "CA",
+      "residueIndex": 50,
+      "residueSeq": 51,
+      "residueName": "GLU",
+      "position": {
+        "x": 29.015,
+        "y": 21.657,
+        "z": 22.288
+      },
+      "parents": [
+        197,
+        198,
+        200
+      ],
+      "internal": {
+        "bondLength": 1.478719040250717,
+        "bondAngleDeg": 120.52068978089115,
+        "dihedralDeg": -177.7047781548535
+      }
+    },
+    {
+      "index": 202,
+      "name": "C",
+      "residueIndex": 50,
+      "residueSeq": 51,
+      "residueName": "GLU",
+      "position": {
+        "x": 29.942,
+        "y": 21.106,
+        "z": 21.24
+      },
+      "parents": [
+        198,
+        200,
+        201
+      ],
+      "internal": {
+        "bondLength": 1.5037400041230535,
+        "bondAngleDeg": 109.9800647587026,
+        "dihedralDeg": -101.8295632192387
+      }
+    },
+    {
+      "index": 203,
+      "name": "O",
+      "residueIndex": 50,
+      "residueSeq": 51,
+      "residueName": "GLU",
+      "position": {
+        "x": 29.47,
+        "y": 20.677,
+        "z": 20.19
+      },
+      "parents": [
+        200,
+        201,
+        202
+      ],
+      "internal": {
+        "bondLength": 1.2285458884388474,
+        "bondAngleDeg": 119.12741970894277,
+        "dihedralDeg": -40.07334137757598
+      }
+    },
+    {
+      "index": 204,
+      "name": "N",
+      "residueIndex": 51,
+      "residueSeq": 52,
+      "residueName": "ASP",
+      "position": {
+        "x": 31.233,
+        "y": 21.09,
+        "z": 21.459
+      },
+      "parents": [
+        200,
+        201,
+        202
+      ],
+      "internal": {
+        "bondLength": 1.309541141010851,
+        "bondAngleDeg": 119.71337029739557,
+        "dihedralDeg": 139.9594874761956
+      }
+    },
+    {
+      "index": 205,
+      "name": "CA",
+      "residueIndex": 51,
+      "residueSeq": 52,
+      "residueName": "ASP",
+      "position": {
+        "x": 32.262,
+        "y": 20.67,
+        "z": 20.514
+      },
+      "parents": [
+        201,
+        202,
+        204
+      ],
+      "internal": {
+        "bondLength": 1.458857772368506,
+        "bondAngleDeg": 126.19593761402977,
+        "dihedralDeg": -175.83867095175003
+      }
+    },
+    {
+      "index": 206,
+      "name": "C",
+      "residueIndex": 51,
+      "residueSeq": 52,
+      "residueName": "ASP",
+      "position": {
+        "x": 32.128,
+        "y": 19.364,
+        "z": 19.75
+      },
+      "parents": [
+        202,
+        204,
+        205
+      ],
+      "internal": {
+        "bondLength": 1.5189759708435158,
+        "bondAngleDeg": 120.73808410872905,
+        "dihedralDeg": -48.19014058760364
+      }
+    },
+    {
+      "index": 207,
+      "name": "O",
+      "residueIndex": 51,
+      "residueSeq": 52,
+      "residueName": "ASP",
+      "position": {
+        "x": 32.546,
+        "y": 19.317,
+        "z": 18.558
+      },
+      "parents": [
+        204,
+        205,
+        206
+      ],
+      "internal": {
+        "bondLength": 1.2640399519002552,
+        "bondAngleDeg": 118.49630166618462,
+        "dihedralDeg": 143.9783973375542
+      }
+    },
+    {
+      "index": 208,
+      "name": "N",
+      "residueIndex": 52,
+      "residueSeq": 53,
+      "residueName": "GLY",
+      "position": {
+        "x": 31.697,
+        "y": 18.311,
+        "z": 20.406
+      },
+      "parents": [
+        204,
+        205,
+        206
+      ],
+      "internal": {
+        "bondLength": 1.3133567679804299,
+        "bondAngleDeg": 117.84437726361347,
+        "dihedralDeg": -42.20980002155734
+      }
+    },
+    {
+      "index": 209,
+      "name": "CA",
+      "residueIndex": 52,
+      "residueSeq": 53,
+      "residueName": "GLY",
+      "position": {
+        "x": 31.568,
+        "y": 16.962,
+        "z": 19.825
+      },
+      "parents": [
+        205,
+        206,
+        208
+      ],
+      "internal": {
+        "bondLength": 1.4744500669741243,
+        "bondAngleDeg": 124.43275544518836,
+        "dihedralDeg": -177.23638629225817
+      }
+    },
+    {
+      "index": 210,
+      "name": "C",
+      "residueIndex": 52,
+      "residueSeq": 53,
+      "residueName": "GLY",
+      "position": {
+        "x": 30.32,
+        "y": 16.698,
+        "z": 19.051
+      },
+      "parents": [
+        206,
+        208,
+        209
+      ],
+      "internal": {
+        "bondLength": 1.4920710438849767,
+        "bondAngleDeg": 116.06992269806707,
+        "dihedralDeg": -82.9252360299413
+      }
+    },
+    {
+      "index": 211,
+      "name": "O",
+      "residueIndex": 52,
+      "residueSeq": 53,
+      "residueName": "GLY",
+      "position": {
+        "x": 30.198,
+        "y": 15.657,
+        "z": 18.366
+      },
+      "parents": [
+        208,
+        209,
+        210
+      ],
+      "internal": {
+        "bondLength": 1.2521142120429745,
+        "bondAngleDeg": 120.82318601505341,
+        "dihedralDeg": 169.96229303608766
+      }
+    },
+    {
+      "index": 212,
+      "name": "N",
+      "residueIndex": 53,
+      "residueSeq": 54,
+      "residueName": "ARG",
+      "position": {
+        "x": 29.34,
+        "y": 17.594,
+        "z": 19.076
+      },
+      "parents": [
+        208,
+        209,
+        210
+      ],
+      "internal": {
+        "bondLength": 1.3280967585232644,
+        "bondAngleDeg": 119.21312145987962,
+        "dihedralDeg": -8.888628322039684
+      }
+    },
+    {
+      "index": 213,
+      "name": "CA",
+      "residueIndex": 53,
+      "residueSeq": 54,
+      "residueName": "ARG",
+      "position": {
+        "x": 28.108,
+        "y": 17.439,
+        "z": 18.276
+      },
+      "parents": [
+        209,
+        210,
+        212
+      ],
+      "internal": {
+        "bondLength": 1.4771083237190155,
+        "bondAngleDeg": 122.3075377099034,
+        "dihedralDeg": 176.47208846831435
+      }
+    },
+    {
+      "index": 214,
+      "name": "C",
+      "residueIndex": 53,
+      "residueSeq": 54,
+      "residueName": "ARG",
+      "position": {
+        "x": 28.375,
+        "y": 17.999,
+        "z": 16.887
+      },
+      "parents": [
+        210,
+        212,
+        213
+      ],
+      "internal": {
+        "bondLength": 1.5212527732102896,
+        "bondAngleDeg": 108.02889793687814,
+        "dihedralDeg": -85.44954664419318
+      }
+    },
+    {
+      "index": 215,
+      "name": "O",
+      "residueIndex": 53,
+      "residueSeq": 54,
+      "residueName": "ARG",
+      "position": {
+        "x": 29.326,
+        "y": 18.786,
+        "z": 16.69
+      },
+      "parents": [
+        212,
+        213,
+        214
+      ],
+      "internal": {
+        "bondLength": 1.250031599600588,
+        "bondAngleDeg": 120.60944118201226,
+        "dihedralDeg": -19.207997092034738
+      }
+    },
+    {
+      "index": 216,
+      "name": "N",
+      "residueIndex": 54,
+      "residueSeq": 55,
+      "residueName": "THR",
+      "position": {
+        "x": 27.51,
+        "y": 17.689,
+        "z": 15.954
+      },
+      "parents": [
+        212,
+        213,
+        214
+      ],
+      "internal": {
+        "bondLength": 1.3095090683152966,
+        "bondAngleDeg": 116.58081999601288,
+        "dihedralDeg": 165.4643936270025
+      }
+    },
+    {
+      "index": 217,
+      "name": "CA",
+      "residueIndex": 54,
+      "residueSeq": 55,
+      "residueName": "THR",
+      "position": {
+        "x": 27.574,
+        "y": 18.192,
+        "z": 14.563
+      },
+      "parents": [
+        213,
+        214,
+        216
+      ],
+      "internal": {
+        "bondLength": 1.4805357138549546,
+        "bondAngleDeg": 124.08430422934511,
+        "dihedralDeg": 177.11406126525958
+      }
+    },
+    {
+      "index": 218,
+      "name": "C",
+      "residueIndex": 54,
+      "residueSeq": 55,
+      "residueName": "THR",
+      "position": {
+        "x": 26.482,
+        "y": 19.28,
+        "z": 14.432
+      },
+      "parents": [
+        214,
+        216,
+        217
+      ],
+      "internal": {
+        "bondLength": 1.5470517121285918,
+        "bondAngleDeg": 106.73676758201331,
+        "dihedralDeg": -104.50997698397244
+      }
+    },
+    {
+      "index": 219,
+      "name": "O",
+      "residueIndex": 54,
+      "residueSeq": 55,
+      "residueName": "THR",
+      "position": {
+        "x": 25.609,
+        "y": 19.388,
+        "z": 15.287
+      },
+      "parents": [
+        216,
+        217,
+        218
+      ],
+      "internal": {
+        "bondLength": 1.2267102347335317,
+        "bondAngleDeg": 120.34653415575139,
+        "dihedralDeg": -14.198603989830854
+      }
+    },
+    {
+      "index": 220,
+      "name": "N",
+      "residueIndex": 55,
+      "residueSeq": 56,
+      "residueName": "LEU",
+      "position": {
+        "x": 26.585,
+        "y": 20.063,
+        "z": 13.378
+      },
+      "parents": [
+        216,
+        217,
+        218
+      ],
+      "internal": {
+        "bondLength": 1.3170474554851839,
+        "bondAngleDeg": 115.50991379938064,
+        "dihedralDeg": 164.59271366896942
+      }
+    },
+    {
+      "index": 221,
+      "name": "CA",
+      "residueIndex": 55,
+      "residueSeq": 56,
+      "residueName": "LEU",
+      "position": {
+        "x": 25.594,
+        "y": 21.109,
+        "z": 13.072
+      },
+      "parents": [
+        217,
+        218,
+        220
+      ],
+      "internal": {
+        "bondLength": 1.4730353016815334,
+        "bondAngleDeg": 122.39770068670022,
+        "dihedralDeg": 177.1758919173716
+      }
+    },
+    {
+      "index": 222,
+      "name": "C",
+      "residueIndex": 55,
+      "residueSeq": 56,
+      "residueName": "LEU",
+      "position": {
+        "x": 24.241,
+        "y": 20.436,
+        "z": 12.857
+      },
+      "parents": [
+        218,
+        220,
+        221
+      ],
+      "internal": {
+        "bondLength": 1.5263561183419834,
+        "bondAngleDeg": 108.21095913648611,
+        "dihedralDeg": -61.2179977632691
+      }
+    },
+    {
+      "index": 223,
+      "name": "O",
+      "residueIndex": 55,
+      "residueSeq": 56,
+      "residueName": "LEU",
+      "position": {
+        "x": 23.264,
+        "y": 20.951,
+        "z": 13.329
+      },
+      "parents": [
+        220,
+        221,
+        222
+      ],
+      "internal": {
+        "bondLength": 1.20105703444924,
+        "bondAngleDeg": 118.46654412922693,
+        "dihedralDeg": 138.05844460795458
+      }
+    },
+    {
+      "index": 224,
+      "name": "N",
+      "residueIndex": 56,
+      "residueSeq": 57,
+      "residueName": "SER",
+      "position": {
+        "x": 24.24,
+        "y": 19.233,
+        "z": 12.246
+      },
+      "parents": [
+        220,
+        221,
+        222
+      ],
+      "internal": {
+        "bondLength": 1.3492705436642414,
+        "bondAngleDeg": 117.2299932510146,
+        "dihedralDeg": -36.20513090862031
+      }
+    },
+    {
+      "index": 225,
+      "name": "CA",
+      "residueIndex": 56,
+      "residueSeq": 57,
+      "residueName": "SER",
+      "position": {
+        "x": 22.924,
+        "y": 18.583,
+        "z": 12.025
+      },
+      "parents": [
+        221,
+        222,
+        224
+      ],
+      "internal": {
+        "bondLength": 1.4843170146569094,
+        "bondAngleDeg": 117.29159093304946,
+        "dihedralDeg": -179.45145404010663
+      }
+    },
+    {
+      "index": 226,
+      "name": "C",
+      "residueIndex": 56,
+      "residueSeq": 57,
+      "residueName": "SER",
+      "position": {
+        "x": 22.229,
+        "y": 18.244,
+        "z": 13.325
+      },
+      "parents": [
+        222,
+        224,
+        225
+      ],
+      "internal": {
+        "bondLength": 1.5125957820911695,
+        "bondAngleDeg": 112.18215631228772,
+        "dihedralDeg": -63.89129036278814
+      }
+    },
+    {
+      "index": 227,
+      "name": "O",
+      "residueIndex": 56,
+      "residueSeq": 57,
+      "residueName": "SER",
+      "position": {
+        "x": 20.963,
+        "y": 18.253,
+        "z": 13.395
+      },
+      "parents": [
+        224,
+        225,
+        226
+      ],
+      "internal": {
+        "bondLength": 1.2679656935422172,
+        "bondAngleDeg": 120.30607609859244,
+        "dihedralDeg": 148.7397437336878
+      }
+    },
+    {
+      "index": 228,
+      "name": "N",
+      "residueIndex": 57,
+      "residueSeq": 58,
+      "residueName": "ASP",
+      "position": {
+        "x": 22.997,
+        "y": 17.978,
+        "z": 14.366
+      },
+      "parents": [
+        224,
+        225,
+        226
+      ],
+      "internal": {
+        "bondLength": 1.3207047361162905,
+        "bondAngleDeg": 117.08954232371066,
+        "dihedralDeg": -29.62233509474637
+      }
+    },
+    {
+      "index": 229,
+      "name": "CA",
+      "residueIndex": 57,
+      "residueSeq": 58,
+      "residueName": "ASP",
+      "position": {
+        "x": 22.418,
+        "y": 17.638,
+        "z": 15.693
+      },
+      "parents": [
+        225,
+        226,
+        228
+      ],
+      "internal": {
+        "bondLength": 1.4872020710044753,
+        "bondAngleDeg": 121.53103310567265,
+        "dihedralDeg": 179.75918874936403
+      }
+    },
+    {
+      "index": 230,
+      "name": "C",
+      "residueIndex": 57,
+      "residueSeq": 58,
+      "residueName": "ASP",
+      "position": {
+        "x": 21.46,
+        "y": 18.737,
+        "z": 16.163
+      },
+      "parents": [
+        226,
+        228,
+        229
+      ],
+      "internal": {
+        "bondLength": 1.5318175478822502,
+        "bondAngleDeg": 110.68529672578738,
+        "dihedralDeg": -55.55223279693061
+      }
+    },
+    {
+      "index": 231,
+      "name": "O",
+      "residueIndex": 57,
+      "residueSeq": 58,
+      "residueName": "ASP",
+      "position": {
+        "x": 20.497,
+        "y": 18.506,
+        "z": 16.9
+      },
+      "parents": [
+        228,
+        229,
+        230
+      ],
+      "internal": {
+        "bondLength": 1.2344630411640514,
+        "bondAngleDeg": 122.46610683853652,
+        "dihedralDeg": 150.8845011869533
+      }
+    },
+    {
+      "index": 232,
+      "name": "N",
+      "residueIndex": 58,
+      "residueSeq": 59,
+      "residueName": "TYR",
+      "position": {
+        "x": 21.846,
+        "y": 19.954,
+        "z": 15.905
+      },
+      "parents": [
+        228,
+        229,
+        230
+      ],
+      "internal": {
+        "bondLength": 1.3025547973118081,
+        "bondAngleDeg": 115.10126673744642,
+        "dihedralDeg": -39.302757642006085
+      }
+    },
+    {
+      "index": 233,
+      "name": "CA",
+      "residueIndex": 58,
+      "residueSeq": 59,
+      "residueName": "TYR",
+      "position": {
+        "x": 21.079,
+        "y": 21.149,
+        "z": 16.251
+      },
+      "parents": [
+        229,
+        230,
+        232
+      ],
+      "internal": {
+        "bondLength": 1.461516335864913,
+        "bondAngleDeg": 124.1615814769011,
+        "dihedralDeg": 179.28009333386228
+      }
+    },
+    {
+      "index": 234,
+      "name": "C",
+      "residueIndex": 58,
+      "residueSeq": 59,
+      "residueName": "TYR",
+      "position": {
+        "x": 20.142,
+        "y": 21.59,
+        "z": 15.149
+      },
+      "parents": [
+        230,
+        232,
+        233
+      ],
+      "internal": {
+        "bondLength": 1.5122347701332641,
+        "bondAngleDeg": 113.02268192167642,
+        "dihedralDeg": -91.02167914581833
+      }
+    },
+    {
+      "index": 235,
+      "name": "O",
+      "residueIndex": 58,
+      "residueSeq": 59,
+      "residueName": "TYR",
+      "position": {
+        "x": 19.499,
+        "y": 22.645,
+        "z": 15.321
+      },
+      "parents": [
+        232,
+        233,
+        234
+      ],
+      "internal": {
+        "bondLength": 1.2474205385514545,
+        "bondAngleDeg": 117.74554400783734,
+        "dihedralDeg": -176.05575041684872
+      }
+    },
+    {
+      "index": 236,
+      "name": "N",
+      "residueIndex": 59,
+      "residueSeq": 60,
+      "residueName": "ASN",
+      "position": {
+        "x": 19.993,
+        "y": 20.884,
+        "z": 14.049
+      },
+      "parents": [
+        232,
+        233,
+        234
+      ],
+      "internal": {
+        "bondLength": 1.3155367725761218,
+        "bondAngleDeg": 121.53405856527894,
+        "dihedralDeg": 4.651453522878576
+      }
+    },
+    {
+      "index": 237,
+      "name": "CA",
+      "residueIndex": 59,
+      "residueSeq": 60,
+      "residueName": "ASN",
+      "position": {
+        "x": 19.065,
+        "y": 21.352,
+        "z": 12.999
+      },
+      "parents": [
+        233,
+        234,
+        236
+      ],
+      "internal": {
+        "bondLength": 1.47739906592633,
+        "bondAngleDeg": 119.69674231059402,
+        "dihedralDeg": 179.91962996530273
+      }
+    },
+    {
+      "index": 238,
+      "name": "C",
+      "residueIndex": 59,
+      "residueSeq": 60,
+      "residueName": "ASN",
+      "position": {
+        "x": 19.442,
+        "y": 22.745,
+        "z": 12.51
+      },
+      "parents": [
+        234,
+        236,
+        237
+      ],
+      "internal": {
+        "bondLength": 1.5237122431745445,
+        "bondAngleDeg": 111.23969075601968,
+        "dihedralDeg": 57.93964397923613
+      }
+    },
+    {
+      "index": 239,
+      "name": "O",
+      "residueIndex": 59,
+      "residueSeq": 60,
+      "residueName": "ASN",
+      "position": {
+        "x": 18.571,
+        "y": 23.61,
+        "z": 12.289
+      },
+      "parents": [
+        236,
+        237,
+        238
+      ],
+      "internal": {
+        "bondLength": 1.2472798402924643,
+        "bondAngleDeg": 121.20489809969195,
+        "dihedralDeg": -138.4428746594513
+      }
+    },
+    {
+      "index": 240,
+      "name": "N",
+      "residueIndex": 60,
+      "residueSeq": 61,
+      "residueName": "ILE",
+      "position": {
+        "x": 20.717,
+        "y": 22.964,
+        "z": 12.26
+      },
+      "parents": [
+        236,
+        237,
+        238
+      ],
+      "internal": {
+        "bondLength": 1.3176061627056832,
+        "bondAngleDeg": 116.8891284167492,
+        "dihedralDeg": 45.35521970612445
+      }
+    },
+    {
+      "index": 241,
+      "name": "CA",
+      "residueIndex": 60,
+      "residueSeq": 61,
+      "residueName": "ILE",
+      "position": {
+        "x": 21.184,
+        "y": 24.263,
+        "z": 11.69
+      },
+      "parents": [
+        237,
+        238,
+        240
+      ],
+      "internal": {
+        "bondLength": 1.4934490282564084,
+        "bondAngleDeg": 121.3036771471891,
+        "dihedralDeg": 175.85336185513913
+      }
+    },
+    {
+      "index": 242,
+      "name": "C",
+      "residueIndex": 60,
+      "residueSeq": 61,
+      "residueName": "ILE",
+      "position": {
+        "x": 21.11,
+        "y": 24.111,
+        "z": 10.173
+      },
+      "parents": [
+        238,
+        240,
+        241
+      ],
+      "internal": {
+        "bondLength": 1.5263908411674905,
+        "bondAngleDeg": 106.11363375825471,
+        "dihedralDeg": -88.66686103344986
+      }
+    },
+    {
+      "index": 243,
+      "name": "O",
+      "residueIndex": 60,
+      "residueSeq": 61,
+      "residueName": "ILE",
+      "position": {
+        "x": 21.841,
+        "y": 23.198,
+        "z": 9.686
+      },
+      "parents": [
+        240,
+        241,
+        242
+      ],
+      "internal": {
+        "bondLength": 1.2669250175128768,
+        "bondAngleDeg": 115.2025974120819,
+        "dihedralDeg": -61.26815864123794
+      }
+    },
+    {
+      "index": 244,
+      "name": "N",
+      "residueIndex": 61,
+      "residueSeq": 62,
+      "residueName": "GLN",
+      "position": {
+        "x": 20.291,
+        "y": 24.875,
+        "z": 9.507
+      },
+      "parents": [
+        240,
+        241,
+        242
+      ],
+      "internal": {
+        "bondLength": 1.3030782785389365,
+        "bondAngleDeg": 118.68792256164929,
+        "dihedralDeg": 116.44083635598516
+      }
+    },
+    {
+      "index": 245,
+      "name": "CA",
+      "residueIndex": 61,
+      "residueSeq": 62,
+      "residueName": "GLN",
+      "position": {
+        "x": 20.081,
+        "y": 24.773,
+        "z": 8.033
+      },
+      "parents": [
+        241,
+        242,
+        244
+      ],
+      "internal": {
+        "bondLength": 1.492373947775825,
+        "bondAngleDeg": 123.58502019692052,
+        "dihedralDeg": -176.84167412971837
+      }
+    },
+    {
+      "index": 246,
+      "name": "C",
+      "residueIndex": 61,
+      "residueSeq": 62,
+      "residueName": "GLN",
+      "position": {
+        "x": 20.822,
+        "y": 25.914,
+        "z": 7.332
+      },
+      "parents": [
+        242,
+        244,
+        245
+      ],
+      "internal": {
+        "bondLength": 1.5304780298978495,
+        "bondAngleDeg": 109.46945093588887,
+        "dihedralDeg": -103.43735587067873
+      }
+    },
+    {
+      "index": 247,
+      "name": "O",
+      "residueIndex": 61,
+      "residueSeq": 62,
+      "residueName": "GLN",
+      "position": {
+        "x": 21.323,
+        "y": 26.83,
+        "z": 8.008
+      },
+      "parents": [
+        244,
+        245,
+        246
+      ],
+      "internal": {
+        "bondLength": 1.2437978131513154,
+        "bondAngleDeg": 119.67794004002953,
+        "dihedralDeg": -9.093606523598027
+      }
+    },
+    {
+      "index": 248,
+      "name": "N",
+      "residueIndex": 62,
+      "residueSeq": 63,
+      "residueName": "LYS",
+      "position": {
+        "x": 20.924,
+        "y": 25.862,
+        "z": 6.006
+      },
+      "parents": [
+        244,
+        245,
+        246
+      ],
+      "internal": {
+        "bondLength": 1.3309335069792176,
+        "bondAngleDeg": 117.66535379519406,
+        "dihedralDeg": 169.54127446429183
+      }
+    },
+    {
+      "index": 249,
+      "name": "CA",
+      "residueIndex": 62,
+      "residueSeq": 63,
+      "residueName": "LYS",
+      "position": {
+        "x": 21.656,
+        "y": 26.847,
+        "z": 5.24
+      },
+      "parents": [
+        245,
+        246,
+        248
+      ],
+      "internal": {
+        "bondLength": 1.4466530337299282,
+        "bondAngleDeg": 122.66400226876735,
+        "dihedralDeg": -176.91845425741295
+      }
+    },
+    {
+      "index": 250,
+      "name": "C",
+      "residueIndex": 62,
+      "residueSeq": 63,
+      "residueName": "LYS",
+      "position": {
+        "x": 21.127,
+        "y": 28.24,
+        "z": 5.574
+      },
+      "parents": [
+        246,
+        248,
+        249
+      ],
+      "internal": {
+        "bondLength": 1.5270383099320042,
+        "bondAngleDeg": 109.26964868571699,
+        "dihedralDeg": -54.788263328430965
+      }
+    },
+    {
+      "index": 251,
+      "name": "O",
+      "residueIndex": 62,
+      "residueSeq": 63,
+      "residueName": "LYS",
+      "position": {
+        "x": 19.958,
+        "y": 28.465,
+        "z": 5.842
+      },
+      "parents": [
+        248,
+        249,
+        250
+      ],
+      "internal": {
+        "bondLength": 1.2202499743904942,
+        "bondAngleDeg": 123.23770898511475,
+        "dihedralDeg": -33.76409080786947
+      }
+    },
+    {
+      "index": 252,
+      "name": "N",
+      "residueIndex": 63,
+      "residueSeq": 64,
+      "residueName": "GLU",
+      "position": {
+        "x": 22.099,
+        "y": 29.163,
+        "z": 5.605
+      },
+      "parents": [
+        248,
+        249,
+        250
+      ],
+      "internal": {
+        "bondLength": 1.3407736572591236,
+        "bondAngleDeg": 112.4513644912651,
+        "dihedralDeg": 143.05715428719836
+      }
+    },
+    {
+      "index": 253,
+      "name": "CA",
+      "residueIndex": 63,
+      "residueSeq": 64,
+      "residueName": "GLU",
+      "position": {
+        "x": 21.907,
+        "y": 30.563,
+        "z": 5.881
+      },
+      "parents": [
+        249,
+        250,
+        252
+      ],
+      "internal": {
+        "bondLength": 1.4398055424257805,
+        "bondAngleDeg": 125.24927816111108,
+        "dihedralDeg": 179.4875236200601
+      }
+    },
+    {
+      "index": 254,
+      "name": "C",
+      "residueIndex": 63,
+      "residueSeq": 64,
+      "residueName": "GLU",
+      "position": {
+        "x": 21.466,
+        "y": 30.953,
+        "z": 7.261
+      },
+      "parents": [
+        250,
+        252,
+        253
+      ],
+      "internal": {
+        "bondLength": 1.5003269643647676,
+        "bondAngleDeg": 117.92220534641139,
+        "dihedralDeg": 66.89734384466695
+      }
+    },
+    {
+      "index": 255,
+      "name": "O",
+      "residueIndex": 63,
+      "residueSeq": 64,
+      "residueName": "GLU",
+      "position": {
+        "x": 21.066,
+        "y": 32.112,
+        "z": 7.533
+      },
+      "parents": [
+        252,
+        253,
+        254
+      ],
+      "internal": {
+        "bondLength": 1.2558921132008145,
+        "bondAngleDeg": 122.18916686230232,
+        "dihedralDeg": -168.16237604311388
+      }
+    },
+    {
+      "index": 256,
+      "name": "N",
+      "residueIndex": 64,
+      "residueSeq": 65,
+      "residueName": "SER",
+      "position": {
+        "x": 21.674,
+        "y": 30.034,
+        "z": 8.191
+      },
+      "parents": [
+        252,
+        253,
+        254
+      ],
+      "internal": {
+        "bondLength": 1.3239052080870448,
+        "bondAngleDeg": 114.80343939958856,
+        "dihedralDeg": 19.147210398176675
+      }
+    },
+    {
+      "index": 257,
+      "name": "CA",
+      "residueIndex": 64,
+      "residueSeq": 65,
+      "residueName": "SER",
+      "position": {
+        "x": 21.419,
+        "y": 30.253,
+        "z": 9.62
+      },
+      "parents": [
+        253,
+        254,
+        256
+      ],
+      "internal": {
+        "bondLength": 1.468001021798008,
+        "bondAngleDeg": 123.57012284881998,
+        "dihedralDeg": 174.79644815318474
+      }
+    },
+    {
+      "index": 258,
+      "name": "C",
+      "residueIndex": 64,
+      "residueSeq": 65,
+      "residueName": "SER",
+      "position": {
+        "x": 22.504,
+        "y": 31.228,
+        "z": 10.136
+      },
+      "parents": [
+        254,
+        256,
+        257
+      ],
+      "internal": {
+        "bondLength": 1.5472898888055866,
+        "bondAngleDeg": 107.26697369603272,
+        "dihedralDeg": -71.14696384589107
+      }
+    },
+    {
+      "index": 259,
+      "name": "O",
+      "residueIndex": 64,
+      "residueSeq": 65,
+      "residueName": "SER",
+      "position": {
+        "x": 23.579,
+        "y": 31.321,
+        "z": 9.554
+      },
+      "parents": [
+        256,
+        257,
+        258
+      ],
+      "internal": {
+        "bondLength": 1.2259681888205733,
+        "bondAngleDeg": 120.28899244599506,
+        "dihedralDeg": -24.079887592144814
+      }
+    },
+    {
+      "index": 260,
+      "name": "N",
+      "residueIndex": 65,
+      "residueSeq": 66,
+      "residueName": "THR",
+      "position": {
+        "x": 22.241,
+        "y": 31.873,
+        "z": 11.241
+      },
+      "parents": [
+        256,
+        257,
+        258
+      ],
+      "internal": {
+        "bondLength": 1.306223181542879,
+        "bondAngleDeg": 116.87716336880636,
+        "dihedralDeg": 159.51727472669825
+      }
+    },
+    {
+      "index": 261,
+      "name": "CA",
+      "residueIndex": 65,
+      "residueSeq": 66,
+      "residueName": "THR",
+      "position": {
+        "x": 23.212,
+        "y": 32.762,
+        "z": 11.891
+      },
+      "parents": [
+        257,
+        258,
+        260
+      ],
+      "internal": {
+        "bondLength": 1.4682172863714689,
+        "bondAngleDeg": 122.70705112179732,
+        "dihedralDeg": 175.93100832893262
+      }
+    },
+    {
+      "index": 262,
+      "name": "C",
+      "residueIndex": 65,
+      "residueSeq": 66,
+      "residueName": "THR",
+      "position": {
+        "x": 23.509,
+        "y": 32.224,
+        "z": 13.29
+      },
+      "parents": [
+        258,
+        260,
+        261
+      ],
+      "internal": {
+        "bondLength": 1.528022905587479,
+        "bondAngleDeg": 108.70456984289103,
+        "dihedralDeg": -119.1521977269832
+      }
+    },
+    {
+      "index": 263,
+      "name": "O",
+      "residueIndex": 65,
+      "residueSeq": 66,
+      "residueName": "THR",
+      "position": {
+        "x": 22.544,
+        "y": 31.942,
+        "z": 14.034
+      },
+      "parents": [
+        260,
+        261,
+        262
+      ],
+      "internal": {
+        "bondLength": 1.250713796197995,
+        "bondAngleDeg": 118.29754366660234,
+        "dihedralDeg": -50.05570154573495
+      }
+    },
+    {
+      "index": 264,
+      "name": "N",
+      "residueIndex": 66,
+      "residueSeq": 67,
+      "residueName": "LEU",
+      "position": {
+        "x": 24.79,
+        "y": 32.021,
+        "z": 13.618
+      },
+      "parents": [
+        260,
+        261,
+        262
+      ],
+      "internal": {
+        "bondLength": 1.337816878350694,
+        "bondAngleDeg": 117.64638728105493,
+        "dihedralDeg": 126.6733305434092
+      }
+    },
+    {
+      "index": 265,
+      "name": "CA",
+      "residueIndex": 66,
+      "residueSeq": 67,
+      "residueName": "LEU",
+      "position": {
+        "x": 25.149,
+        "y": 31.609,
+        "z": 14.98
+      },
+      "parents": [
+        261,
+        262,
+        264
+      ],
+      "internal": {
+        "bondLength": 1.467538415170111,
+        "bondAngleDeg": 120.29030290254337,
+        "dihedralDeg": 175.07674208080826
+      }
+    },
+    {
+      "index": 266,
+      "name": "C",
+      "residueIndex": 66,
+      "residueSeq": 67,
+      "residueName": "LEU",
+      "position": {
+        "x": 25.698,
+        "y": 32.876,
+        "z": 15.669
+      },
+      "parents": [
+        262,
+        264,
+        265
+      ],
+      "internal": {
+        "bondLength": 1.5431821020216598,
+        "bondAngleDeg": 105.7179198973902,
+        "dihedralDeg": -103.13565310760328
+      }
+    },
+    {
+      "index": 267,
+      "name": "O",
+      "residueIndex": 66,
+      "residueSeq": 67,
+      "residueName": "LEU",
+      "position": {
+        "x": 26.158,
+        "y": 33.73,
+        "z": 14.894
+      },
+      "parents": [
+        264,
+        265,
+        266
+      ],
+      "internal": {
+        "bondLength": 1.2415880959480885,
+        "bondAngleDeg": 114.69839168306811,
+        "dihedralDeg": -24.630763451010296
+      }
+    },
+    {
+      "index": 268,
+      "name": "N",
+      "residueIndex": 67,
+      "residueSeq": 68,
+      "residueName": "HIS",
+      "position": {
+        "x": 25.621,
+        "y": 32.945,
+        "z": 16.95
+      },
+      "parents": [
+        264,
+        265,
+        266
+      ],
+      "internal": {
+        "bondLength": 1.2851657480652048,
+        "bondAngleDeg": 117.89148921962389,
+        "dihedralDeg": 154.6116974948854
+      }
+    },
+    {
+      "index": 269,
+      "name": "CA",
+      "residueIndex": 67,
+      "residueSeq": 68,
+      "residueName": "HIS",
+      "position": {
+        "x": 26.179,
+        "y": 34.127,
+        "z": 17.65
+      },
+      "parents": [
+        265,
+        266,
+        268
+      ],
+      "internal": {
+        "bondLength": 1.48272991471812,
+        "bondAngleDeg": 119.3947727277884,
+        "dihedralDeg": 177.9764662690878
+      }
+    },
+    {
+      "index": 270,
+      "name": "C",
+      "residueIndex": 67,
+      "residueSeq": 68,
+      "residueName": "HIS",
+      "position": {
+        "x": 27.475,
+        "y": 33.651,
+        "z": 18.304
+      },
+      "parents": [
+        266,
+        268,
+        269
+      ],
+      "internal": {
+        "bondLength": 1.5277133238929372,
+        "bondAngleDeg": 105.84128911597497,
+        "dihedralDeg": -105.5833406421657
+      }
+    },
+    {
+      "index": 271,
+      "name": "O",
+      "residueIndex": 67,
+      "residueSeq": 68,
+      "residueName": "HIS",
+      "position": {
+        "x": 27.507,
+        "y": 32.587,
+        "z": 18.958
+      },
+      "parents": [
+        268,
+        269,
+        270
+      ],
+      "internal": {
+        "bondLength": 1.2493342226962327,
+        "bondAngleDeg": 120.74250666610065,
+        "dihedralDeg": -47.209431772429994
+      }
+    },
+    {
+      "index": 272,
+      "name": "N",
+      "residueIndex": 68,
+      "residueSeq": 69,
+      "residueName": "LEU",
+      "position": {
+        "x": 28.525,
+        "y": 34.447,
+        "z": 18.189
+      },
+      "parents": [
+        268,
+        269,
+        270
+      ],
+      "internal": {
+        "bondLength": 1.3226265534911934,
+        "bondAngleDeg": 116.66200152900278,
+        "dihedralDeg": 135.67028451355003
+      }
+    },
+    {
+      "index": 273,
+      "name": "CA",
+      "residueIndex": 68,
+      "residueSeq": 69,
+      "residueName": "LEU",
+      "position": {
+        "x": 29.801,
+        "y": 34.145,
+        "z": 18.829
+      },
+      "parents": [
+        269,
+        270,
+        272
+      ],
+      "internal": {
+        "bondLength": 1.459102463845497,
+        "bondAngleDeg": 122.11015350911117,
+        "dihedralDeg": 176.57580570389135
+      }
+    },
+    {
+      "index": 274,
+      "name": "C",
+      "residueIndex": 68,
+      "residueSeq": 69,
+      "residueName": "LEU",
+      "position": {
+        "x": 30.052,
+        "y": 35.042,
+        "z": 20.004
+      },
+      "parents": [
+        270,
+        272,
+        273
+      ],
+      "internal": {
+        "bondLength": 1.4994115512426867,
+        "bondAngleDeg": 111.4874022297057,
+        "dihedralDeg": -106.97380836435525
+      }
+    },
+    {
+      "index": 275,
+      "name": "O",
+      "residueIndex": 68,
+      "residueSeq": 69,
+      "residueName": "LEU",
+      "position": {
+        "x": 30.105,
+        "y": 36.305,
+        "z": 19.788
+      },
+      "parents": [
+        272,
+        273,
+        274
+      ],
+      "internal": {
+        "bondLength": 1.2824328442456532,
+        "bondAngleDeg": 117.65194426535028,
+        "dihedralDeg": -60.04296561305157
+      }
+    },
+    {
+      "index": 276,
+      "name": "N",
+      "residueIndex": 69,
+      "residueSeq": 70,
+      "residueName": "VAL",
+      "position": {
+        "x": 30.124,
+        "y": 34.533,
+        "z": 21.191
+      },
+      "parents": [
+        272,
+        273,
+        274
+      ],
+      "internal": {
+        "bondLength": 1.2935354653042932,
+        "bondAngleDeg": 119.53896564400344,
+        "dihedralDeg": 115.7755591882219
+      }
+    },
+    {
+      "index": 277,
+      "name": "CA",
+      "residueIndex": 69,
+      "residueSeq": 70,
+      "residueName": "VAL",
+      "position": {
+        "x": 30.479,
+        "y": 35.369,
+        "z": 22.374
+      },
+      "parents": [
+        273,
+        274,
+        276
+      ],
+      "internal": {
+        "bondLength": 1.4914456074560671,
+        "bondAngleDeg": 121.36888275720365,
+        "dihedralDeg": 175.07704087030393
+      }
+    },
+    {
+      "index": 278,
+      "name": "C",
+      "residueIndex": 69,
+      "residueSeq": 70,
+      "residueName": "VAL",
+      "position": {
+        "x": 31.901,
+        "y": 34.91,
+        "z": 22.728
+      },
+      "parents": [
+        274,
+        276,
+        277
+      ],
+      "internal": {
+        "bondLength": 1.5356044412543246,
+        "bondAngleDeg": 103.63420808783746,
+        "dihedralDeg": -108.11510208814472
+      }
+    },
+    {
+      "index": 279,
+      "name": "O",
+      "residueIndex": 69,
+      "residueSeq": 70,
+      "residueName": "VAL",
+      "position": {
+        "x": 32.19,
+        "y": 33.696,
+        "z": 22.635
+      },
+      "parents": [
+        276,
+        277,
+        278
+      ],
+      "internal": {
+        "bondLength": 1.2513856320095718,
+        "bondAngleDeg": 119.1240162548939,
+        "dihedralDeg": -38.706412873877426
+      }
+    },
+    {
+      "index": 280,
+      "name": "N",
+      "residueIndex": 70,
+      "residueSeq": 71,
+      "residueName": "LEU",
+      "position": {
+        "x": 32.763,
+        "y": 35.831,
+        "z": 23.09
+      },
+      "parents": [
+        276,
+        277,
+        278
+      ],
+      "internal": {
+        "bondLength": 1.3123753274120966,
+        "bondAngleDeg": 117.51974338417456,
+        "dihedralDeg": 139.93379713312294
+      }
+    },
+    {
+      "index": 281,
+      "name": "CA",
+      "residueIndex": 70,
+      "residueSeq": 71,
+      "residueName": "LEU",
+      "position": {
+        "x": 34.145,
+        "y": 35.472,
+        "z": 23.481
+      },
+      "parents": [
+        277,
+        278,
+        280
+      ],
+      "internal": {
+        "bondLength": 1.4804343957095893,
+        "bondAngleDeg": 121.05254791024937,
+        "dihedralDeg": 178.43713159046405
+      }
+    },
+    {
+      "index": 282,
+      "name": "C",
+      "residueIndex": 70,
+      "residueSeq": 71,
+      "residueName": "LEU",
+      "position": {
+        "x": 34.239,
+        "y": 35.353,
+        "z": 24.979
+      },
+      "parents": [
+        278,
+        280,
+        281
+      ],
+      "internal": {
+        "bondLength": 1.5056563352903582,
+        "bondAngleDeg": 109.88994936079278,
+        "dihedralDeg": -96.01973444560198
+      }
+    },
+    {
+      "index": 283,
+      "name": "O",
+      "residueIndex": 70,
+      "residueSeq": 71,
+      "residueName": "LEU",
+      "position": {
+        "x": 33.707,
+        "y": 36.197,
+        "z": 25.728
+      },
+      "parents": [
+        280,
+        281,
+        282
+      ],
+      "internal": {
+        "bondLength": 1.247541983261486,
+        "bondAngleDeg": 121.14694704127027,
+        "dihedralDeg": -43.93579561020233
+      }
+    },
+    {
+      "index": 284,
+      "name": "N",
+      "residueIndex": 71,
+      "residueSeq": 72,
+      "residueName": "ARG",
+      "position": {
+        "x": 34.93,
+        "y": 34.384,
+        "z": 25.451
+      },
+      "parents": [
+        280,
+        281,
+        282
+      ],
+      "internal": {
+        "bondLength": 1.280322615593432,
+        "bondAngleDeg": 117.40609226981908,
+        "dihedralDeg": 138.79983772696843
+      }
+    },
+    {
+      "index": 285,
+      "name": "CA",
+      "residueIndex": 71,
+      "residueSeq": 72,
+      "residueName": "ARG",
+      "position": {
+        "x": 35.161,
+        "y": 34.174,
+        "z": 26.896
+      },
+      "parents": [
+        281,
+        282,
+        284
+      ],
+      "internal": {
+        "bondLength": 1.478338932721452,
+        "bondAngleDeg": 123.51713035618235,
+        "dihedralDeg": 177.24239042851713
+      }
+    },
+    {
+      "index": 286,
+      "name": "C",
+      "residueIndex": 71,
+      "residueSeq": 72,
+      "residueName": "ARG",
+      "position": {
+        "x": 36.671,
+        "y": 34.296,
+        "z": 27.089
+      },
+      "parents": [
+        282,
+        284,
+        285
+      ],
+      "internal": {
+        "bondLength": 1.5271650205527865,
+        "bondAngleDeg": 105.46680864047048,
+        "dihedralDeg": -117.61947139092578
+      }
+    },
+    {
+      "index": 287,
+      "name": "O",
+      "residueIndex": 71,
+      "residueSeq": 72,
+      "residueName": "ARG",
+      "position": {
+        "x": 37.305,
+        "y": 33.233,
+        "z": 26.795
+      },
+      "parents": [
+        284,
+        285,
+        286
+      ],
+      "internal": {
+        "bondLength": 1.2721481831925099,
+        "bondAngleDeg": 113.37882305957396,
+        "dihedralDeg": -81.21289986877017
+      }
+    },
+    {
+      "index": 288,
+      "name": "N",
+      "residueIndex": 72,
+      "residueSeq": 73,
+      "residueName": "LEU",
+      "position": {
+        "x": 37.197,
+        "y": 35.397,
+        "z": 27.513
+      },
+      "parents": [
+        284,
+        285,
+        286
+      ],
+      "internal": {
+        "bondLength": 1.2917635232502906,
+        "bondAngleDeg": 120.80975792596413,
+        "dihedralDeg": 98.81099473608715
+      }
+    },
+    {
+      "index": 289,
+      "name": "CA",
+      "residueIndex": 72,
+      "residueSeq": 73,
+      "residueName": "LEU",
+      "position": {
+        "x": 38.668,
+        "y": 35.502,
+        "z": 27.68
+      },
+      "parents": [
+        285,
+        286,
+        288
+      ],
+      "internal": {
+        "bondLength": 1.4841681171619305,
+        "bondAngleDeg": 120.05391283093265,
+        "dihedralDeg": -179.31217935590178
+      }
+    },
+    {
+      "index": 290,
+      "name": "C",
+      "residueIndex": 72,
+      "residueSeq": 73,
+      "residueName": "LEU",
+      "position": {
+        "x": 39.076,
+        "y": 34.931,
+        "z": 29.031
+      },
+      "parents": [
+        286,
+        288,
+        289
+      ],
+      "internal": {
+        "bondLength": 1.5224013925374624,
+        "bondAngleDeg": 109.81217700327176,
+        "dihedralDeg": -83.72430142977711
+      }
+    },
+    {
+      "index": 291,
+      "name": "O",
+      "residueIndex": 72,
+      "residueSeq": 73,
+      "residueName": "LEU",
+      "position": {
+        "x": 38.297,
+        "y": 34.946,
+        "z": 29.996
+      },
+      "parents": [
+        288,
+        289,
+        290
+      ],
+      "internal": {
+        "bondLength": 1.2402785977352044,
+        "bondAngleDeg": 121.17085942551988,
+        "dihedralDeg": -28.183795340202995
+      }
+    },
+    {
+      "index": 292,
+      "name": "N",
+      "residueIndex": 73,
+      "residueSeq": 74,
+      "residueName": "ARG",
+      "position": {
+        "x": 40.294,
+        "y": 34.412,
+        "z": 29.045
+      },
+      "parents": [
+        288,
+        289,
+        290
+      ],
+      "internal": {
+        "bondLength": 1.3240396519742108,
+        "bondAngleDeg": 113.76187944717024,
+        "dihedralDeg": 150.3940186275867
+      }
+    },
+    {
+      "index": 293,
+      "name": "CA",
+      "residueIndex": 73,
+      "residueSeq": 74,
+      "residueName": "ARG",
+      "position": {
+        "x": 40.873,
+        "y": 33.802,
+        "z": 30.253
+      },
+      "parents": [
+        289,
+        290,
+        292
+      ],
+      "internal": {
+        "bondLength": 1.4719391971137925,
+        "bondAngleDeg": 122.20688977655134,
+        "dihedralDeg": -179.63611498524787
+      }
+    },
+    {
+      "index": 294,
+      "name": "C",
+      "residueIndex": 73,
+      "residueSeq": 74,
+      "residueName": "ARG",
+      "position": {
+        "x": 41.765,
+        "y": 34.829,
+        "z": 30.944
+      },
+      "parents": [
+        290,
+        292,
+        293
+      ],
+      "internal": {
+        "bondLength": 1.5257371988648656,
+        "bondAngleDeg": 108.82652538066813,
+        "dihedralDeg": -97.66054958550185
+      }
+    },
+    {
+      "index": 295,
+      "name": "O",
+      "residueIndex": 73,
+      "residueSeq": 74,
+      "residueName": "ARG",
+      "position": {
+        "x": 42.945,
+        "y": 34.994,
+        "z": 30.583
+      },
+      "parents": [
+        292,
+        293,
+        294
+      ],
+      "internal": {
+        "bondLength": 1.2449682726881033,
+        "bondAngleDeg": 120.79794370393194,
+        "dihedralDeg": -83.97807414225717
+      }
+    },
+    {
+      "index": 296,
+      "name": "N",
+      "residueIndex": 74,
+      "residueSeq": 75,
+      "residueName": "GLY",
+      "position": {
+        "x": 41.165,
+        "y": 35.531,
+        "z": 31.898
+      },
+      "parents": [
+        292,
+        293,
+        294
+      ],
+      "internal": {
+        "bondLength": 1.3277499764639427,
+        "bondAngleDeg": 114.65187756944628,
+        "dihedralDeg": 93.8796345042728
+      }
+    },
+    {
+      "index": 297,
+      "name": "CA",
+      "residueIndex": 74,
+      "residueSeq": 75,
+      "residueName": "GLY",
+      "position": {
+        "x": 41.845,
+        "y": 36.55,
+        "z": 32.686
+      },
+      "parents": [
+        293,
+        294,
+        296
+      ],
+      "internal": {
+        "bondLength": 1.456607359585965,
+        "bondAngleDeg": 123.20343566690809,
+        "dihedralDeg": 179.34214150864418
+      }
+    },
+    {
+      "index": 298,
+      "name": "C",
+      "residueIndex": 74,
+      "residueSeq": 75,
+      "residueName": "GLY",
+      "position": {
+        "x": 41.251,
+        "y": 37.941,
+        "z": 32.588
+      },
+      "parents": [
+        294,
+        296,
+        297
+      ],
+      "internal": {
+        "bondLength": 1.5156915913206144,
+        "bondAngleDeg": 115.09287263233242,
+        "dihedralDeg": 120.41486690341966
+      }
+    },
+    {
+      "index": 299,
+      "name": "O",
+      "residueIndex": 74,
+      "residueSeq": 75,
+      "residueName": "GLY",
+      "position": {
+        "x": 41.102,
+        "y": 38.523,
+        "z": 31.5
+      },
+      "parents": [
+        296,
+        297,
+        298
+      ],
+      "internal": {
+        "bondLength": 1.2428471346066672,
+        "bondAngleDeg": 122.23142339832599,
+        "dihedralDeg": -56.021812272750154
+      }
+    },
+    {
+      "index": 300,
+      "name": "N",
+      "residueIndex": 75,
+      "residueSeq": 76,
+      "residueName": "GLY",
+      "position": {
+        "x": 40.946,
+        "y": 38.472,
+        "z": 33.757
+      },
+      "parents": [
+        296,
+        297,
+        298
+      ],
+      "internal": {
+        "bondLength": 1.3196768543851904,
+        "bondAngleDeg": 113.7389146129009,
+        "dihedralDeg": 125.55800499946768
+      }
+    },
+    {
+      "index": 301,
+      "name": "CA",
+      "residueIndex": 75,
+      "residueSeq": 76,
+      "residueName": "GLY",
+      "position": {
+        "x": 40.373,
+        "y": 39.813,
+        "z": 33.944
+      },
+      "parents": [
+        297,
+        298,
+        300
+      ],
+      "internal": {
+        "bondLength": 1.470230934241286,
+        "bondAngleDeg": 124.73254671092015,
+        "dihedralDeg": 179.221818798256
+      }
+    },
+    {
+      "index": 302,
+      "name": "C",
+      "residueIndex": 75,
+      "residueSeq": 76,
+      "residueName": "GLY",
+      "position": {
+        "x": 40.031,
+        "y": 39.992,
+        "z": 35.432
+      },
+      "parents": [
+        298,
+        300,
+        301
+      ],
+      "internal": {
+        "bondLength": 1.5372537201125895,
+        "bondAngleDeg": 108.42289604885245,
+        "dihedralDeg": 174.1601408047402
+      }
+    },
+    {
+      "index": 303,
+      "name": "O",
+      "residueIndex": 75,
+      "residueSeq": 76,
+      "residueName": "GLY",
+      "position": {
+        "x": 38.933,
+        "y": 40.525,
+        "z": 35.687
+      },
+      "parents": [
+        300,
+        301,
+        302
+      ],
+      "internal": {
+        "bondLength": 1.2468833145086178,
+        "bondAngleDeg": 116.33650887665209,
+        "dihedralDeg": -136.70918806622797
+      }
+    }
+  ]
+}
