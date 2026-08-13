@@ -3,6 +3,95 @@
 A running record of what was built at each stage, why, and what was learned.
 Stages follow the build order in `claude.md`.
 
+Read this section to pick the work back up; the stage entries below are the
+reasoning behind each decision, in the order they were made.
+
+---
+
+## Where things stand
+
+**Last completed:** Stage 5 — editable residue list (commit `37d76c2`).
+**Next:** Stage 6 — reference-frame / origin control. Plan at the bottom of this file.
+
+**Steps 1–5 of the `claude.md` build order are done.** The math is validated
+against real PDB data, the chain builder recomputes only the affected suffix, and
+the app is a working Desmos-style editor over a live 3D viewport.
+
+```
+npm run dev        # http://localhost:5173 (no port is configured; --port 5273 was used ad hoc)
+npm test           # 115 tests, all passing
+npm run typecheck  # tsc -b, strict + noUncheckedIndexedAccess + exactOptionalPropertyTypes
+npm run lint       # oxlint
+npm run build      # tsc -b && vite build
+npm run fixture    # regenerate tests/fixtures from tests/fixtures/1UBQ.pdb
+```
+
+### File map
+
+Pure, framework-free, unit-tested — no React or Three.js imports anywhere in `lib/`:
+
+| File | What it owns |
+| --- | --- |
+| `lib/constants.ts` | Engh & Huber ideal bond lengths/angles. The only place geometric numbers live. |
+| `lib/nerf.ts` | Vector helpers and `placeAtom` — the NeRF placement itself. |
+| `lib/types.ts` | `Residue` (the source of truth) and `Atom` (derived output). |
+| `lib/chain.ts` | `buildBackbone`, `rebuildFrom`, `firstChangedIndex`, the canonical seed frame. |
+| `lib/bonds.ts` | `backboneBonds` — bond topology from an atom list, by index, no distance cutoff. |
+| `lib/framing.ts` | `boundingSphere`, `fitDistance`, `frameCamera` — moves the camera, never the structure. |
+| `lib/edits.ts` | Residue-list edit operations, `wrapDegrees`, id generation. |
+
+React layer:
+
+| File | What it owns |
+| --- | --- |
+| `src/useChain.ts` | The app's only state. Holds `residues`; derives `atoms` incrementally. |
+| `src/editor/ResidueList.tsx` | The expression list: rows, add button, blank state, Enter-to-insert. |
+| `src/editor/ResidueRow.tsx` | One row. Memoised. Marks the angles that have no geometric effect. |
+| `src/editor/AngleField.tsx` | One dihedral input. Commits per keystroke; holds an uncommitted draft. |
+| `src/viewer/StructureViewport.tsx` | Canvas, lights, `OrbitControls`, `FitCamera`. |
+| `src/viewer/BackboneStructure.tsx` | Instanced ball-and-stick. Two draw calls at any chain length. |
+| `src/viewer/atomStyle.ts` | CPK colours and display radii. Render-only; deliberately not in `lib/`. |
+| `src/sampleChains.ts` | Example chains, loaded into the editable list. |
+| `src/App.tsx` | Wires the editor to the viewport. Owns `fitToken`. |
+
+Tests: `nerf.test.ts` (25), `render-data.test.ts` (22), `chain.test.ts` (21),
+`edits.test.ts` (47). Fixture: `tests/fixtures/1ubq-backbone.json`, generated from
+the deposited `1UBQ.pdb` by `scripts/build-fixture.ts`.
+
+### Invariants a later change must not break
+
+These are the load-bearing rules. Each one has tests behind it; if a change makes
+a test fail, the test is probably right.
+
+1. **Angles are the source of truth; coordinates are derived.** There is no
+   `setAtoms` anywhere and no atom position is ever written back into a `Residue`.
+2. **No geometry post-processing.** No energy minimisation, clash relaxation, or
+   smoothing — deterministic reconstruction from angles is the entire premise. If
+   output should "look better", the fix is rendering or camera, never geometry.
+3. **`lib/` imports no framework.** Verified structurally by `tsconfig.lib.json`,
+   which typechecks `lib/` with no DOM lib at all.
+4. **Residue 1 is seeded from the canonical frame, not derived by NeRF.** NeRF
+   needs three prior atoms and residue 1 has none.
+5. **An edit at residue *i* recomputes exactly the suffix from *i* onward**, and
+   the reused prefix is the *same atom objects*, not equal copies.
+6. **Framing moves the camera, never the structure.** Repositioning the structure
+   is a separate feature (stage 6) and a separate code path.
+7. **No side-chain or χ code** until the backbone is fully validated — it is, but
+   side chains remain a distinct later phase, not something to interleave.
+
+### Known rough edges
+
+- The fixed view direction in `StructureViewport.tsx` (0.45, 0.3, 1) happens to
+  look close to along the helix axis, so a from-scratch α-helix reads as a tangle
+  until you orbit. A framing fix (e.g. a direction perpendicular to the
+  structure's longest axis), never a geometry one.
+- No React component tests. The editor's logic lives in pure modules that are
+  well covered, and the UI was verified by driving a real browser over CDP, but
+  there is no automated regression net on the components themselves. Adding one
+  means `@testing-library/react` + jsdom.
+- `dist/` bundle is ~1.1 MB (305 kB gzipped), almost entirely Three.js. Fine for
+  now; code-splitting is the fix if it ever matters.
+
 ---
 
 ## Stage 0 — Project scaffolding
@@ -474,17 +563,40 @@ away. The suffix recompute is visible on screen.
 
 ---
 
-## Next
+## Next — Stage 6: reference-frame / origin control
 
-Step 6: the reference-frame / origin control — reposition Cα of residue 1 by
-typing x/y/z and an orientation, AutoCAD-UCS-style. It must be a rigid transform
-applied to the finished atom list *after* NeRF construction, never a change to the
-angle inputs, and the two systems stay decoupled. `useChain` is the seam: the
-transform composes onto its derived atoms without touching the residue state or
-the cache.
+Let the user place Cα of residue 1 anywhere, with any orientation — AutoCAD's UCS
+origin (product.md §5, §5.1). Collapsible panel, numeric x/y/z plus orientation,
+defaulting to Cα at (0, 0, 0) in the canonical orientation.
 
-Known rough edge, not a step-5 regression: the fixed view direction in
-`StructureViewport.tsx` (0.45, 0.3, 1) happens to look close to along the helix
-axis, so a from-scratch α-helix reads as a tangle until you orbit. It's a framing
-choice, so the fix is a better default direction (e.g. perpendicular to the
-structure's longest axis) — a rendering change, never a geometry one.
+**The one constraint that matters:** it is a rigid transform (translation +
+rotation) applied to the finished atom list *after* NeRF construction. It never
+touches the angle inputs and never enters `lib/chain.ts`. Keeping these decoupled
+is what prevents a whole class of bugs where origin edits corrupt angle-driven
+geometry — and it's why the transform is trivially correct: a rigid motion cannot
+change a bond length, a bond angle, or a dihedral.
+
+Suggested shape:
+
+1. `lib/transform.ts` — pure. A `RigidTransform` (translation + rotation, probably
+   as a quaternion or three Euler angles to match what the UI types), `compose`,
+   `identity`, `applyToPoint`, and `applyToAtoms`. Constants for any defaults go in
+   `lib/constants.ts`, per the no-magic-numbers rule.
+2. `tests/transform.test.ts` — the invariant is the test: apply an arbitrary
+   transform to the 1UBQ backbone and assert every bond length, bond angle and
+   dihedral is unchanged to ~1e-9, i.e. that recovered φ/ψ/ω round-trip to the
+   fixture values. Plus the specifics: identity is a no-op, the transform puts Cα
+   of residue 1 exactly where it was asked to, composition is associative,
+   inverse-then-forward returns the original coordinates.
+3. Wire into `useChain` — or better, a layer *above* it, so the hook stays purely
+   about angles → atoms. The transform is applied to the derived atom list, so it
+   must not invalidate the suffix cache: moving the origin should be O(n) matrix
+   work, not a chain rebuild. Worth asserting in a test that changing the origin
+   leaves `firstChangedIndex` reporting no geometric change.
+4. UI — a collapsible section in the sidebar; a drag gizmo in the viewport is the
+   stretch version and can wait.
+
+After that, in `claude.md`'s order: live Ramachandran plot linked both ways to the
+3D view (the strongest remaining feature for grading — it ties the abstract plot to
+the concrete structure), then PDB export, then idealised side chains as a separate
+phase.
