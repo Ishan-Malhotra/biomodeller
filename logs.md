@@ -266,10 +266,92 @@ implementation of the same placement rules, so the two cross-check each other.
 
 ---
 
+## Stage 4 — Static 3D viewport
+
+**Date:** 2026-08-13
+
+First UI. Added `three`, `@react-three/fiber`, `@react-three/drei`, `@types/three`.
+The template React app in `src/` was replaced; its unused assets were deleted.
+
+### Two more pure modules, because they are derived data too
+
+Bond topology and camera framing are computed from the atom list, so by the same
+rule that governs coordinates they belong in `lib/` with tests, not inside a
+component.
+
+`lib/bonds.ts` — `backboneBonds(atoms)` returns `{a, b, kind}` index pairs:
+`BACKBONE` for N–CA, CA–C and the peptide C–N, `CARBONYL` for C=O. **No distance
+cutoff anywhere.** A bond exists because the chain says so, not because two atoms
+happen to be close. That is deliberate: a distance-based renderer would quietly
+hide a bad reconstruction by dropping the bonds it stretched, and the tool's whole
+premise is that bad angles should *look* bad. A test pins this by asserting an
+all-cis, eclipsed chain has byte-identical topology to a clean helix.
+
+`lib/framing.ts` — `boundingSphere`, `fitDistance` (`r / sin(fov/2)`), and
+`frameCamera`. The camera adapts to the structure; the structure never adapts to
+the camera. One test exists purely to state that: it frames 1UBQ and then asserts
+every atom position is bit-identical afterwards.
+
+### `src/viewer/`
+
+- `atomStyle.ts` — CPK colours and display radii. Kept out of `lib/constants.ts`
+  on purpose: that file is the geometric definition of the reconstruction, and
+  mixing render radii into it would blur a line worth keeping sharp. Ball radii
+  (~0.3 Å) are far below van der Waals size so the chain path stays readable.
+- `BackboneStructure.tsx` — instanced ball-and-stick. Two draw calls total
+  regardless of chain length, which matters because step 5 re-renders this on
+  every keystroke. Each bond is split at its midpoint into two half-cylinders
+  coloured by their own atom, the standard convention; it makes the N/C/O
+  alternation legible without labels. Zero atoms renders nothing at all.
+- `StructureViewport.tsx` — canvas, lights, `OrbitControls`, and `FitCamera`.
+
+**Framing is applied on mount and on explicit request (a `fitToken` prop), not on
+every geometry change.** Once the residue list is editable, a camera that
+re-framed on each keystroke would fight the user's own orbiting. A `minDistance`
+floor of 9 Å handles the near-empty cases — a single residue has a ~1 Å radius and
+would otherwise put the camera inside it.
+
+### `src/App.tsx` and `src/sampleChains.ts` — scaffolding, explicitly temporary
+
+Six fixed presets (empty, one residue, α-helix, β-strand, helix–turn–helix,
+polyproline II) chosen because their shapes are known in advance, so the render
+can be checked by eye against what the conformation *must* look like. Step 5
+replaces this picker with the editable residue list. Atom positions are derived
+via `useMemo` on the residue list and never stored — the state rule holds even in
+throwaway code.
+
+### Tests — `tests/render-data.test.ts`, 22 cases (68 total)
+
+Bond counts (4n − 1), correct atom pairs across all 76 residues of 1UBQ, bond
+lengths equal to the ideal constants to 9 decimals, every atom covered by at least
+one bond (no orphans on screen), topology independent of geometry. For framing:
+enclosure of the deposited 1UBQ coordinates, radius exactly touching the furthest
+atom (no hidden padding), box-centred centre, translation-equivariance and
+order-independence, `asin(r/d) = fov/2`, monotonic recession as the chain grows,
+determinism, `minDistance` behaviour, degenerate-input throws.
+
+### Verified in the browser, not just in tests
+
+Ran the dev server and screenshotted headless Chrome for each preset:
+
+- **α-helix** — coils right-handed, ~3.6 residues/turn. 18 residues, 72 atoms.
+- **β-strand** — nearly straight and visibly pleated. 12 residues, 48 atoms.
+- **One residue** — N–Cα–C at the ideal ~111° with the carbonyl branching off C,
+  i.e. exactly the canonical seed frame.
+- **Helix–turn–helix** — two distinct helical segments hinged by the linker.
+- **Empty** — blank canvas, no WebGL errors.
+
+One fix came out of looking: framing padding started at 1.35 and the structure
+read as adrift in a mostly-empty frame. A bounding *sphere* is already a loose fit
+for something as elongated as a helix, so generous padding compounds. Now 1.08.
+
+**Status: 68/68 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
 ## Next
 
-Step 4: a minimal static react-three-fiber viewport rendering the `Atom[]` from
-`buildBackbone`. No interactivity — just confirming the pipeline renders. Note
-that the builder outputs in the canonical frame, so the viewport will need to
-frame the camera on the structure's extent (a view-only concern; it must not
-move the geometry).
+Step 5: the Desmos-style editable residue list — add, remove, reorder, live
+update, opening on an empty canvas. `rebuildFrom` and `firstChangedIndex` from
+stage 3 are the update path; the preset picker goes away. `fitToken` is already in
+place so editing won't move the camera.
