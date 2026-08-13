@@ -183,10 +183,93 @@ step 2 is the gate before any further work — it is now green.
 
 ---
 
+## Stage 3 — Chain builder
+
+**Date:** 2026-08-13
+
+### `lib/types.ts`
+
+The data model. `Residue` (id, aminoAcid, φ, ψ, ω) is the source of truth;
+`Atom` (name, element, position, residueIndex, residueId, aminoAcid) is derived
+output that is never fed back into state. `AminoAcidCode` is a union of the 20
+PDB three-letter codes.
+
+Documented in the type itself: φ of the first residue has no geometric effect
+(no preceding C to rotate about), and ψ/ω of the last residue only orient its own
+carbonyl O. Both are still kept in state so adding a residue at either end
+doesn't discard a value the user typed.
+
+### `lib/chain.ts`
+
+Pure, framework-free, and only sequences NeRF placements — no geometry of its own.
+
+- `canonicalSeedFrame()` — N at the origin, CA along +x, C in the xy-plane at the
+  ideal N-CA-C angle. Arbitrary but fixed; the choice doesn't matter because
+  repositioning is a rigid transform applied later (step 6), which NeRF geometry
+  is invariant under.
+- `seedFirstResidue(residue)` — residue 1, which NeRF can't derive.
+- `extendChain(tip, residue, index)` — three placements, each driven by exactly
+  one dihedral: N(i) ← ψ(i−1), CA(i) ← ω(i−1), C(i) ← φ(i); then O(i) from ψ(i).
+- `buildBackbone(residues)` — full build. Empty list → empty atom list, which is
+  the blank-canvas initial state rather than an error.
+- `rebuildFrom(previousAtoms, residues, fromIndex)` — the update path.
+- `firstChangedIndex(previous, next)` — derives `fromIndex` by diffing two
+  residue lists, for callers that don't track which edit happened.
+
+The suffix-recompute design `claude.md` asks for rests on one observation: the
+only state needed to continue the chain is the previous residue's N/CA/C plus its
+ψ and ω (the `ChainTip` type). So an edit at index i invalidates exactly residue i
+onward. `rebuildFrom` returns the untouched prefix atoms **by reference**, so
+downstream memoisation and React reconciliation can use identity to skip work.
+Over-invalidating is safe — passing 0 always gives the right answer, just slower.
+
+### Tests — `tests/chain.test.ts`, 21 cases (46 total)
+
+- **Degenerate/single residue:** empty chain → no atoms; residue 1 lands exactly
+  on the canonical seed frame; changing φ of residue 1 changes nothing while
+  changing its ψ moves its O; residue identity propagates to every derived atom.
+- **Full 1UBQ:** 304 atoms in N/CA/C/O order matching the fixture; **every input
+  φ/ψ/ω reproduced to 9 decimals**; every bond length and bond angle exactly
+  ideal. Superposed on residue 1 alone, drift against the deposited structure
+  stays within the bound documented in stage 2, confirming the builder adds no
+  error of its own beyond the seed difference.
+- **Suffix recomputation:** `rebuildFrom` is bit-identical to a full rebuild from
+  every index 0…n; prefix atoms are reference-identical; an angle edit at i leaves
+  everything before i untouched and moves only i onward; append, mid-list insert,
+  mid-list delete, truncation, and a swap all agree with a full rebuild at the
+  index `firstChangedIndex` reports.
+- **`firstChangedIndex`** unit cases, including amino-acid substitution and
+  truncation.
+
+`tests/nerf.test.ts` keeps its own small `buildIdealBackbone` helper rather than
+importing the new builder. Left deliberately: it's an independent second
+implementation of the same placement rules, so the two cross-check each other.
+
+### Two test expectations that had to be corrected — both real, neither a bug
+
+1. **First-5-residue drift is 1.56 Å, not the 0.63 Å from stage 2.** The stage-2
+   test seeds on the *deposited* N/CA/C of Met1 — residue 1's real triangle —
+   while the builder seeds an ideal one. The small seed-frame orientation
+   difference is levered along the chain. The builder's number is the one that
+   reflects actual app behaviour.
+2. **The reconstruction clashes with itself.** N21 and CA55 land 0.85 Å apart:
+   after ~28 Å of accumulated drift, segments distant in sequence interpenetrate.
+   Rather than loosen the check, this is now pinned as an *expected* result with
+   a comment explaining that if it ever starts passing a no-clash assertion,
+   something is quietly relaxing the geometry and the premise of the tool is
+   broken. A separate assertion does require sequence-local sanity: nothing
+   within a 10-residue window comes closer than 1.5 Å (measured 1.69 Å, against
+   2.37 Å in the deposited structure). Radius of gyration is also checked
+   (9–20 Å; ubiquitin's backbone is ~11.7 Å).
+
+**Status: 46/46 tests pass, `tsc -b` clean.**
+
+---
+
 ## Next
 
-Step 3: the chain builder over `Residue[]`, producing the derived `Atom[]`.
-Note that `tests/nerf.test.ts` contains a test-local `buildIdealBackbone` helper
-that already encodes the per-residue placement rules (N from ψ(i−1), Cα from
-ω(i−1), C from φ(i), O from ψ(i) + 180°); the real builder should supersede it,
-with the recompute-the-suffix design `claude.md` calls for.
+Step 4: a minimal static react-three-fiber viewport rendering the `Atom[]` from
+`buildBackbone`. No interactivity — just confirming the pipeline renders. Note
+that the builder outputs in the canonical frame, so the viewport will need to
+frame the camera on the structure's extent (a view-only concern; it must not
+move the geometry).
