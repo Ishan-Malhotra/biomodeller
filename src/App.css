@@ -724,6 +724,44 @@
   cursor: crosshair;
 }
 
+/* ---- hover tooltip ---- */
+
+.atom-tooltip {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.3rem 0.45rem;
+  pointer-events: none;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+}
+
+.tooltip-name {
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.tooltip-coords {
+  font-size: 0.68rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The 2D view's hover affordances. */
+.atom-halo {
+  fill: none;
+  stroke-width: 2;
+}
+
+.atom-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
 .empty {
   position: absolute;
   inset: 0;

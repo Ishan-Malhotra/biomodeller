@@ -16,10 +16,11 @@ import { useMemo } from 'react'
 import { Quaternion, Vector3 } from 'three'
 
 import { backboneBonds } from '../../lib/bonds.ts'
+import { atomKey } from '../../lib/naming.ts'
 import { add, distance, scale, sub, type Vec3 } from '../../lib/nerf.ts'
 import type { Atom } from '../../lib/types.ts'
 import type { Theme } from '../theme.ts'
-import { BOND_RADIUS, ELEMENT_COLOR, ELEMENT_RADIUS } from './atomStyle.ts'
+import { BOND_RADIUS, ELEMENT_COLOR, ELEMENT_RADIUS, HIGHLIGHT_COLOR } from './atomStyle.ts'
 
 /** Three.js cylinders are built along +Y; bond orientations are measured from it. */
 const CYLINDER_AXIS = new Vector3(0, 1, 0)
@@ -79,16 +80,21 @@ function sticksOf(atoms: readonly Atom[], theme: Theme): Stick[] {
   return sticks
 }
 
-/** What an atom click reports. Enough to address the atom, not its position. */
+/** What an atom click or hover reports. Enough to address the atom, not its position. */
 export interface AtomRef {
   readonly residueIndex: number
   readonly atomName: string
 }
 
+/** How much bigger a hovered atom is drawn. Enough to notice, not enough to distort. */
+const HIGHLIGHT_SCALE = 1.6
+
 export function BackboneStructure({
   atoms,
   theme,
   onPickAtom,
+  onHoverAtom,
+  highlightKey,
 }: {
   atoms: readonly Atom[]
   theme: Theme
@@ -97,8 +103,13 @@ export function BackboneStructure({
    * non-null, so the raycaster does no work in the normal case.
    */
   onPickAtom?: ((atom: AtomRef) => void) | undefined
+  /** Called with the atom under the pointer, or null when it leaves. */
+  onHoverAtom?: ((atom: AtomRef | null) => void) | undefined
+  /** `residueIndex:atomName` to draw emphasised — set by either view's hover. */
+  highlightKey?: string | null | undefined
 }) {
   const sticks = useMemo(() => sticksOf(atoms, theme), [atoms, theme])
+  const highlightColor = HIGHLIGHT_COLOR[theme]
 
   // The blank canvas: nothing computed, nothing drawn.
   if (atoms.length === 0) return null
@@ -108,24 +119,38 @@ export function BackboneStructure({
       <Instances key={`atoms-${atoms.length}`} limit={atoms.length}>
         <sphereGeometry args={[1, 24, 16]} />
         <meshStandardMaterial roughness={0.35} metalness={0.05} />
-        {atoms.map((atom, i) => (
-          <Instance
-            key={`${atom.residueId}-${atom.name}-${i}`}
-            position={toTuple(atom.position)}
-            scale={ELEMENT_RADIUS[atom.element]}
-            color={ELEMENT_COLOR[theme][atom.element]}
-            {...(onPickAtom
-              ? {
-                  onClick: (event: { stopPropagation: () => void }) => {
-                    // Without this the click also reaches whatever is behind the
-                    // atom, and the furthest atom along the ray would win.
-                    event.stopPropagation()
-                    onPickAtom({ residueIndex: atom.residueIndex, atomName: atom.name })
-                  },
-                }
-              : {})}
-          />
-        ))}
+        {atoms.map((atom, i) => {
+          const highlighted = highlightKey === atomKey(atom.residueIndex, atom.name)
+          return (
+            <Instance
+              key={`${atom.residueId}-${atom.name}-${i}`}
+              position={toTuple(atom.position)}
+              scale={ELEMENT_RADIUS[atom.element] * (highlighted ? HIGHLIGHT_SCALE : 1)}
+              color={highlighted ? highlightColor : ELEMENT_COLOR[theme][atom.element]}
+              {...(onPickAtom
+                ? {
+                    onClick: (event: { stopPropagation: () => void }) => {
+                      // Without this the click also reaches whatever is behind the
+                      // atom, and the furthest atom along the ray would win.
+                      event.stopPropagation()
+                      onPickAtom({ residueIndex: atom.residueIndex, atomName: atom.name })
+                    },
+                  }
+                : {})}
+              {...(onHoverAtom
+                ? {
+                    onPointerOver: (event: { stopPropagation: () => void }) => {
+                      // Same reason as the click: without this, every atom along the
+                      // ray reports and the last one wins rather than the nearest.
+                      event.stopPropagation()
+                      onHoverAtom({ residueIndex: atom.residueIndex, atomName: atom.name })
+                    },
+                    onPointerOut: () => onHoverAtom(null),
+                  }
+                : {})}
+            />
+          )
+        })}
       </Instances>
 
       <Instances key={`bonds-${sticks.length}`} limit={Math.max(sticks.length, 1)}>

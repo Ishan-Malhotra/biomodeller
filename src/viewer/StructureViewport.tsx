@@ -85,6 +85,8 @@ export function StructureViewport({
   fitToken = 0,
   grid,
   onPickAtom,
+  onHoverAtom,
+  highlightKey,
 }: {
   atoms: readonly Atom[]
   theme: Theme
@@ -92,6 +94,8 @@ export function StructureViewport({
   /** Gridlines and the axis triad, when the coordinate frame is being controlled. */
   grid?: { readonly spacing: number } | undefined
   onPickAtom?: ((atom: AtomRef) => void) | undefined
+  onHoverAtom?: ((atom: AtomRef | null) => void) | undefined
+  highlightKey?: string | null | undefined
 }) {
   const lighting = SCENE_LIGHTING[theme]
 
@@ -106,7 +110,13 @@ export function StructureViewport({
 
       {grid && <OriginGrid spacing={grid.spacing} theme={theme} />}
 
-      <BackboneStructure atoms={atoms} theme={theme} onPickAtom={onPickAtom} />
+      <BackboneStructure
+        atoms={atoms}
+        theme={theme}
+        onPickAtom={onPickAtom}
+        onHoverAtom={onHoverAtom}
+        highlightKey={highlightKey}
+      />
 
       <OrbitControls makeDefault enableDamping dampingFactor={0.12} />
       <FitCamera atoms={atoms} fitToken={fitToken} />

@@ -50,10 +50,14 @@ export function TopBar({
   theme,
   onToggleTheme,
   residues,
+  highlightKey,
+  onHoverAtom,
 }: {
   theme: Theme
   onToggleTheme: () => void
   residues: readonly Residue[]
+  highlightKey?: string | null | undefined
+  onHoverAtom?: ((atom: { residueIndex: number; atomName: string } | null) => void) | undefined
 }) {
   const lit = theme === 'light'
   // Collapsible, because a long chain's diagram is tall and the 3D view is the
@@ -69,7 +73,12 @@ export function TopBar({
 
       {open && (
         <div className="topbar-depiction">
-          <Depiction2D residues={residues} theme={theme} />
+          <Depiction2D
+            residues={residues}
+            theme={theme}
+            highlightKey={highlightKey}
+            onHoverAtom={onHoverAtom}
+          />
         </div>
       )}
 

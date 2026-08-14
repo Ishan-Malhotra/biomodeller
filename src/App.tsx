@@ -16,6 +16,11 @@
  * Note what is *not* stored here: atom positions. They are derived on render, as
  * claude.md requires.
  *
+ * The hovered atom lives here too, because two views share it: hovering in either
+ * the 3D viewport or the 2D depiction highlights the same atom in both. It is
+ * deliberately *not* in `useChain` — it is view state, and putting it there would
+ * make a mouse movement capable of triggering a chain rebuild.
+ *
  * The camera is framed on explicit request rather than on every edit. Re-framing
  * per keystroke would fight the user's own orbiting, and it would also hide the
  * thing worth seeing: when you change φ of residue 5, everything before it stays
@@ -25,6 +30,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+import { atomKey } from '../lib/naming.ts'
 import './App.css'
 import { EXAMPLE_CHAINS } from './sampleChains.ts'
 import { TopBar } from './TopBar.tsx'
@@ -33,8 +39,9 @@ import { useChain } from './useChain.ts'
 import { useOrigin } from './useOrigin.ts'
 import { CoordinatePanel } from './editor/CoordinatePanel.tsx'
 import { ResidueList } from './editor/ResidueList.tsx'
-import { StructureViewport } from './viewer/StructureViewport.tsx'
+import { AtomTooltip, type HoverPoint } from './viewer/AtomTooltip.tsx'
 import type { AtomRef } from './viewer/BackboneStructure.tsx'
+import { StructureViewport } from './viewer/StructureViewport.tsx'
 
 function App() {
   const editor = useChain()
@@ -42,6 +49,8 @@ function App() {
   const { theme, toggle: toggleTheme } = useTheme()
   const [fitToken, setFitToken] = useState(0)
   const [pickArmed, setPickArmed] = useState(false)
+  const [hovered, setHovered] = useState<AtomRef | null>(null)
+  const [pointer, setPointer] = useState<HoverPoint | null>(null)
   const fit = () => setFitToken((token) => token + 1)
 
   const { residues, stats } = editor
@@ -54,6 +63,15 @@ function App() {
     frame.setAnchor({ kind: 'atom', residueIndex: atom.residueIndex, atomName: atom.atomName })
     setPickArmed(false)
   }
+
+  const highlightKey = hovered ? atomKey(hovered.residueIndex, hovered.atomName) : null
+  // Resolved against the transformed atoms, so the tooltip's coordinates are the
+  // ones the coordinate panel shows rather than the canonical ones.
+  const hoveredAtom = hovered
+    ? (atoms.find(
+        (atom) => atom.residueIndex === hovered.residueIndex && atom.name === hovered.atomName,
+      ) ?? null)
+    : null
 
   // The one automatic framing: going from blank canvas to a first residue. The
   // camera has nothing to aim at while the list is empty, so it sits at its
@@ -68,7 +86,13 @@ function App() {
 
   return (
     <div className="app">
-      <TopBar theme={theme} onToggleTheme={toggleTheme} residues={residues} />
+      <TopBar
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        residues={residues}
+        highlightKey={highlightKey}
+        onHoverAtom={setHovered}
+      />
 
       <aside className="panel">
         <ResidueList editor={editor} />
@@ -127,14 +151,26 @@ function App() {
         </section>
       </aside>
 
-      <main className={pickArmed ? 'viewport picking' : 'viewport'}>
+      <main
+        className={pickArmed ? 'viewport picking' : 'viewport'}
+        // Tracked on the container rather than per atom: the tooltip follows the
+        // cursor, and an instanced mesh's own events don't fire on every move.
+        onPointerMove={(event) => {
+          const box = event.currentTarget.getBoundingClientRect()
+          setPointer({ x: event.clientX - box.left, y: event.clientY - box.top })
+        }}
+        onPointerLeave={() => setHovered(null)}
+      >
         <StructureViewport
           atoms={atoms}
           theme={theme}
           fitToken={fitToken}
           grid={frame.spec.enabled && frame.spec.showGrid ? { spacing: frame.spec.gridSpacing } : undefined}
           onPickAtom={pickArmed ? pickAtom : undefined}
+          onHoverAtom={setHovered}
+          highlightKey={highlightKey}
         />
+        {hoveredAtom && pointer && <AtomTooltip atom={hoveredAtom} at={pointer} />}
         {atoms.length === 0 && (
           <p className="empty">Blank canvas — add a residue to place the seed frame.</p>
         )}

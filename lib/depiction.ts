@@ -25,6 +25,7 @@
  *    structure does not place.
  */
 
+import { atomKey } from './naming.ts'
 import { SIDE_CHAIN_TOPOLOGY } from './sidechainTopology.ts'
 import { elementOf } from './sidechains.ts'
 import type { AminoAcidCode, Element, Residue } from './types.ts'
@@ -40,7 +41,7 @@ const SIDE_CHAIN_RISE = 1
 const BRANCH_SPREAD = 0.85
 
 export interface DepictionNode {
-  /** `${residueIndex}:${atomName}` — the key stage 10 highlights by. */
+  /** From `atomKey` — how the 3D view and the hover linking address this atom. */
   readonly key: string
   readonly residueIndex: number
   /** The PDB atom name, or a synthetic name for a terminus cap. */
@@ -172,7 +173,7 @@ function layOutSideChain(
   const edges: DepictionEdge[] = []
   const placedRings = new Set<string>()
 
-  const key = (name: string) => `${residueIndex}:${name}`
+  const key = (name: string) => atomKey(residueIndex, name)
 
   const emit = (name: string, x: number, y: number) => {
     position.set(name, { x, y })
@@ -288,7 +289,7 @@ export function depict(residues: readonly Residue[]): Depiction {
 
   const nodes: DepictionNode[] = []
   const edges: DepictionEdge[] = []
-  const key = (residueIndex: number, name: string) => `${residueIndex}:${name}`
+  const key = atomKey
 
   residues.forEach((residue, i) => {
     const baseX = i * RESIDUE_WIDTH

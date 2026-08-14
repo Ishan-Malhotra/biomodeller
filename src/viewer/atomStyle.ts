@@ -52,6 +52,19 @@ export const ELEMENT_RADIUS: Record<Element, number> = {
   S: 0.36,
 }
 
+/**
+ * The colour a hovered atom takes.
+ *
+ * Deliberately outside the CPK palette: an atom under the pointer has to be
+ * distinguishable from every element, and re-tinting it a *lighter blue* would make
+ * a hovered carbon look like a nitrogen. Amber is the one hue the palette doesn't
+ * already use for an element in either theme.
+ */
+export const HIGHLIGHT_COLOR: Record<Theme, string> = {
+  light: '#e08a1e',
+  dark: '#ffb340',
+}
+
 /** Bond stick radii in ångströms. */
 export const BOND_RADIUS = {
   BACKBONE: 0.11,

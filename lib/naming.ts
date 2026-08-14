@@ -54,6 +54,17 @@ export function atomDisplayName(name: string): string {
 }
 
 /**
+ * The key that identifies one atom across views: `'3:CG1'`.
+ *
+ * Shared by the 3D structure, the 2D depiction and the hover linking between them,
+ * so it lives here rather than in either renderer. `residueIndex` is 0-based, as
+ * everywhere in the code.
+ */
+export function atomKey(residueIndex: number, atomName: string): string {
+  return `${residueIndex}:${atomName}`
+}
+
+/**
  * A label identifying one atom in one residue, e.g. `'Cα · ALA 4'`.
  *
  * Residue numbering is 1-based for display, matching the residue list, while
