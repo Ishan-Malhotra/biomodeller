@@ -19,6 +19,8 @@ import { useEffect } from 'react'
 import { frameCamera } from '../../lib/framing.ts'
 import { vec3 } from '../../lib/nerf.ts'
 import type { Atom } from '../../lib/types.ts'
+import type { Theme } from '../theme.ts'
+import { SCENE_LIGHTING } from './atomStyle.ts'
 import { BackboneStructure } from './BackboneStructure.tsx'
 
 /** Vertical field of view, degrees. Must match what `frameCamera` is told. */
@@ -78,19 +80,25 @@ function FitCamera({ atoms, fitToken }: { atoms: readonly Atom[]; fitToken: numb
 
 export function StructureViewport({
   atoms,
+  theme,
   fitToken = 0,
 }: {
   atoms: readonly Atom[]
+  theme: Theme
   fitToken?: number
 }) {
-  return (
-    <Canvas camera={{ fov: VERTICAL_FOV, near: 0.1, far: 5000 }} dpr={[1, 2]}>
-      <ambientLight intensity={0.55} />
-      <hemisphereLight intensity={0.35} groundColor="#20242c" />
-      <directionalLight position={[1, 2, 3]} intensity={1.6} />
-      <directionalLight position={[-2, -1, -2]} intensity={0.4} />
+  const lighting = SCENE_LIGHTING[theme]
 
-      <BackboneStructure atoms={atoms} />
+  return (
+    // The canvas is transparent, so the viewport's own --canvas token shows
+    // through as the background and follows the theme for free.
+    <Canvas camera={{ fov: VERTICAL_FOV, near: 0.1, far: 5000 }} dpr={[1, 2]}>
+      <ambientLight intensity={lighting.ambient} />
+      <hemisphereLight intensity={lighting.hemisphere} groundColor={lighting.hemisphereGround} />
+      <directionalLight position={[1, 2, 3]} intensity={lighting.key} />
+      <directionalLight position={[-2, -1, -2]} intensity={lighting.fill} />
+
+      <BackboneStructure atoms={atoms} theme={theme} />
 
       <OrbitControls makeDefault enableDamping dampingFactor={0.12} />
       <FitCamera atoms={atoms} fitToken={fitToken} />

@@ -20,12 +20,15 @@ import { useEffect, useRef, useState } from 'react'
 
 import './App.css'
 import { EXAMPLE_CHAINS } from './sampleChains.ts'
+import { TopBar } from './TopBar.tsx'
+import { useTheme } from './theme.ts'
 import { useChain } from './useChain.ts'
 import { ResidueList } from './editor/ResidueList.tsx'
 import { StructureViewport } from './viewer/StructureViewport.tsx'
 
 function App() {
   const editor = useChain()
+  const { theme, toggle: toggleTheme } = useTheme()
   const [fitToken, setFitToken] = useState(0)
   const fit = () => setFitToken((token) => token + 1)
 
@@ -44,12 +47,9 @@ function App() {
 
   return (
     <div className="app">
-      <aside className="panel">
-        <header>
-          <h1>Protein Structure Builder</h1>
-          <p className="subtitle">Backbone reconstructed from φ/ψ/ω by NeRF.</p>
-        </header>
+      <TopBar theme={theme} onToggleTheme={toggleTheme} />
 
+      <aside className="panel">
         <ResidueList editor={editor} />
 
         <section className="examples">
@@ -100,7 +100,7 @@ function App() {
       </aside>
 
       <main className="viewport">
-        <StructureViewport atoms={atoms} fitToken={fitToken} />
+        <StructureViewport atoms={atoms} theme={theme} fitToken={fitToken} />
         {atoms.length === 0 && (
           <p className="empty">Blank canvas — add a residue to place the seed frame.</p>
         )}

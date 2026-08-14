@@ -18,6 +18,7 @@ import { Quaternion, Vector3 } from 'three'
 import { backboneBonds } from '../../lib/bonds.ts'
 import { add, distance, scale, sub, type Vec3 } from '../../lib/nerf.ts'
 import type { Atom } from '../../lib/types.ts'
+import type { Theme } from '../theme.ts'
 import { BOND_RADIUS, ELEMENT_COLOR, ELEMENT_RADIUS } from './atomStyle.ts'
 
 /** Three.js cylinders are built along +Y; bond orientations are measured from it. */
@@ -40,8 +41,9 @@ interface Stick {
  * the standard ball-and-stick convention, and it makes the N/C/O alternation
  * along the chain legible without labels.
  */
-function sticksOf(atoms: readonly Atom[]): Stick[] {
+function sticksOf(atoms: readonly Atom[], theme: Theme): Stick[] {
   const sticks: Stick[] = []
+  const colorOf = ELEMENT_COLOR[theme]
 
   for (const bond of backboneBonds(atoms)) {
     const a = atoms[bond.a]
@@ -69,7 +71,7 @@ function sticksOf(atoms: readonly Atom[]): Stick[] {
         quaternion,
         length: half,
         radius,
-        color: ELEMENT_COLOR[end.element],
+        color: colorOf[end.element],
       })
     }
   }
@@ -77,8 +79,14 @@ function sticksOf(atoms: readonly Atom[]): Stick[] {
   return sticks
 }
 
-export function BackboneStructure({ atoms }: { atoms: readonly Atom[] }) {
-  const sticks = useMemo(() => sticksOf(atoms), [atoms])
+export function BackboneStructure({
+  atoms,
+  theme,
+}: {
+  atoms: readonly Atom[]
+  theme: Theme
+}) {
+  const sticks = useMemo(() => sticksOf(atoms, theme), [atoms, theme])
 
   // The blank canvas: nothing computed, nothing drawn.
   if (atoms.length === 0) return null
@@ -93,7 +101,7 @@ export function BackboneStructure({ atoms }: { atoms: readonly Atom[] }) {
             key={`${atom.residueId}-${atom.name}-${i}`}
             position={toTuple(atom.position)}
             scale={ELEMENT_RADIUS[atom.element]}
-            color={ELEMENT_COLOR[atom.element]}
+            color={ELEMENT_COLOR[theme][atom.element]}
           />
         ))}
       </Instances>

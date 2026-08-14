@@ -10,12 +10,15 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 5 — editable residue list (commit `37d76c2`).
-**Next:** Stage 6 — reference-frame / origin control. Plan at the bottom of this file.
+**Last completed:** Stage 6 — light/dark theme + top bar shell.
+**Next:** Stage 7 — Cartesian coordinates, origin control, gridlines. Plan at the bottom.
 
-**Steps 1–5 of the `claude.md` build order are done.** The math is validated
-against real PDB data, the chain builder recomputes only the affected suffix, and
-the app is a working Desmos-style editor over a live 3D viewport.
+**Steps 1–5 of the `claude.md` build order are done**, plus a theme. The math is
+validated against real PDB data, the chain builder recomputes only the affected
+suffix, and the app is a working Desmos-style editor over a live 3D viewport.
+
+Stages 6–10 implement a five-feature request; the full plan is in
+`~/.claude/plans/compressed-shimmying-hinton.md`.
 
 ```
 npm run dev        # http://localhost:5173 (no port is configured; --port 5273 was used ad hoc)
@@ -44,6 +47,8 @@ React layer:
 
 | File | What it owns |
 | --- | --- |
+| `src/theme.ts` | `useTheme` — light/dark resolution, persistence, and the `data-theme` attribute. |
+| `src/TopBar.tsx` | Title strip and the lightbulb toggle. Stage 9 fills the middle with the 2D view. |
 | `src/useChain.ts` | The app's only state. Holds `residues`; derives `atoms` incrementally. |
 | `src/editor/ResidueList.tsx` | The expression list: rows, add button, blank state, Enter-to-insert. |
 | `src/editor/ResidueRow.tsx` | One row. Memoised. Marks the angles that have no geometric effect. |
@@ -563,11 +568,86 @@ away. The suffix recompute is visible on screen.
 
 ---
 
-## Next — Stage 6: reference-frame / origin control
+## Stage 6 — Light/dark theme and the top bar
+
+**Date:** 2026-08-15
+
+First of five stages implementing a feature request (theme toggle, side chains,
+2D depiction, hover linking, coordinate/origin control). No new dependencies.
+
+### The theme is a token swap, and that was already true before this stage
+
+Every colour in `App.css` already resolved through a custom property in
+`index.css`, so adding a theme meant adding a block of values under
+`[data-theme='dark']` and nothing else — no component changed to support it. Two
+tokens were added (`--danger`, `--field`) to absorb the only two literals left in
+`App.css`; there are now no hex colours outside the token definitions.
+
+The dark palette is **not an inversion** of the light one. The panel is *lighter*
+than the canvas in dark mode and *darker* than it in light mode, because a raised
+surface reads as raised by contrast with its surround in either direction. Inputs
+get their own recessed `--field` fill in dark mode, which light mode doesn't need
+since white-on-white is already the convention for an editable box.
+
+`color-scheme` is set per theme, which is what makes the native `<select>` and the
+number-input spinners follow along without being restyled.
+
+### `src/theme.ts` — resolution order is the interesting part
+
+Stored choice → OS preference. **Only explicit choices are persisted**, and while
+none exists the hook subscribes to `prefers-color-scheme` and follows it live.
+Someone who has never touched the toggle therefore keeps tracking their system as
+it changes, rather than being frozen into whatever it happened to be on their
+first visit. `localStorage` access is wrapped — private-browsing modes can throw,
+and a theme is not worth failing a render over.
+
+### The 3D scene is the one thing that can't read the tokens
+
+WebGL materials take literal colours, so `src/viewer/atomStyle.ts` now keys its
+palette by the same two theme names. Two things needed care:
+
+- **Carbon has to invert** (near-black → light grey); it's the only element whose
+  colour is about contrast with the background rather than identity. Nitrogen and
+  oxygen keep their hue and only gain luminance — blue-for-N and red-for-O are
+  conventions a chemist reads, not design choices.
+- **Light intensities are theme-dependent.** A dark background reflects nothing
+  back into the model, so the intensities tuned for white leave the structure
+  looking sooty. Ambient and hemisphere terms come up; the key light stays roughly
+  put so the shading that makes the balls read as spheres survives.
+
+The `<Canvas>` is transparent, so the viewport's `--canvas` token shows through as
+the scene background and follows the theme for free.
+
+### Verified in the browser
+
+Drove two fresh Chrome profiles over CDP with `prefers-color-scheme` emulated:
+
+- OS dark, fresh profile → opens dark. OS light, fresh profile → opens light.
+- Toggling inside the dark-OS profile switches to light, writes `light` to
+  storage, and **survives a reload** — the persistence path, not just the toggle.
+- Screenshotted all four combinations. Panel, fields, borders, examples and the
+  structure are legible in both; the bulb is lit with rays in light mode and
+  outlined in dark.
+- No console exceptions in either profile.
+
+**Status: 115/115 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Next — Stage 7: Cartesian coordinates, origin control, gridlines
 
 Let the user place Cα of residue 1 anywhere, with any orientation — AutoCAD's UCS
 origin (product.md §5, §5.1). Collapsible panel, numeric x/y/z plus orientation,
 defaulting to Cα at (0, 0, 0) in the canonical orientation.
+
+**Two origin modes, both confirmed in scope**, and both the same machinery:
+*place* (type x/y/z + orientation; the structure rigid-transforms so Cα1 lands
+there) and *pick* (click any atom to make it (0, 0, 0); coordinates are reported
+relative to it). Re-definable at any time, with a reset to the canonical frame.
+Plus a per-atom x/y/z table in the panel, and toggleable gridlines with a spacing
+control drawn on the plane through the current origin — rendering only, and it
+must not affect framing, since `lib/framing.ts` reads atoms and grid lines are not
+atoms.
 
 **The one constraint that matters:** it is a rigid transform (translation +
 rotation) applied to the finished atom list *after* NeRF construction. It never
@@ -596,7 +676,12 @@ Suggested shape:
 4. UI — a collapsible section in the sidebar; a drag gizmo in the viewport is the
    stretch version and can wait.
 
-After that, in `claude.md`'s order: live Ramachandran plot linked both ways to the
-3D view (the strongest remaining feature for grading — it ties the abstract plot to
-the concrete structure), then PDB export, then idealised side chains as a separate
-phase.
+Then stages 8–10, per the plan: **side chains and χ angles** (the big one — it
+makes `ATOMS_PER_RESIDUE` variable, so `lib/chain.ts` moves to per-residue atom
+groups and `lib/bonds.ts` loses its index arithmetic; needs a second PDB fixture
+because 1UBQ has no CYS or TRP), then the **2D chemical depiction** in the top bar,
+then **hover linking** between the two views.
+
+After that, still outstanding from `claude.md`'s "everything else" tier: the live
+Ramachandran plot linked both ways to the 3D view (the strongest remaining feature
+for grading — it ties the abstract plot to the concrete structure) and PDB export.

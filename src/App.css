@@ -1,17 +1,69 @@
-/* A fixed side panel holding the expression list, and a viewport that takes the
-   rest. The list is the part that gets the care: it is where all the interaction
-   happens, so rows are dense enough to see a dozen residues at once but still
-   have real hit targets. */
+/* A top bar, a fixed side panel holding the expression list, and a viewport that
+   takes the rest. The list is the part that gets the care: it is where all the
+   interaction happens, so rows are dense enough to see a dozen residues at once
+   but still have real hit targets.
+
+   Every colour here resolves through a token from index.css — nothing is a
+   literal — which is what makes the theme a token swap rather than an edit here. */
 
 .app {
   display: grid;
   grid-template-columns: 23rem 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'topbar topbar'
+    'panel  viewport';
   height: 100vh;
   overflow: hidden;
 }
 
+/* ---- top bar ---- */
+
+.topbar {
+  display: flex;
+  grid-area: topbar;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.topbar-title h1 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.topbar-title p {
+  margin: 0.1rem 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.theme-toggle {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--muted);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+}
+
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 .panel {
   display: flex;
+  grid-area: panel;
   flex-direction: column;
   gap: 1.5rem;
   padding: 1.25rem 1rem;
@@ -20,25 +72,12 @@
   background: var(--panel);
 }
 
-.panel h1 {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
 .panel h2 {
   margin: 0;
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
-.subtitle {
-  margin: 0.35rem 0 0;
-  font-size: 0.8rem;
   color: var(--muted);
 }
 
@@ -142,7 +181,7 @@
   align-items: center;
   gap: 0.1rem;
   padding: 0.15rem 0.25rem;
-  background: var(--panel);
+  background: var(--field);
   border: 1px solid var(--line);
   border-radius: 0.3rem;
 }
@@ -227,8 +266,8 @@
 }
 
 .row-actions button.danger:hover:not(:disabled) {
-  color: #c2382f;
-  border-color: #c2382f;
+  color: var(--danger);
+  border-color: var(--danger);
 }
 
 .row-actions button:disabled {
