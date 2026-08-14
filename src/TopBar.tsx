@@ -1,12 +1,16 @@
 /**
- * The top bar.
+ * The top bar: the title, the 2D chemical depiction, and the theme toggle.
  *
- * Currently the title and the theme toggle. Stage 9 fills the space between them
- * with the 2D chemical depiction, which is why this is its own component and its
- * own grid row rather than a header inside the sidebar.
+ * The depiction lives here rather than beside the 3D view because it is a *second
+ * reading of the same molecule* — a strip across the top that stays legible while
+ * the 3D view is orbited, and the thing stage 10's hover highlights into.
  */
 
+import { useState } from 'react'
+
+import type { Residue } from '../lib/types.ts'
 import type { Theme } from './theme.ts'
+import { Depiction2D } from './viewer/Depiction2D.tsx'
 
 /**
  * A lightbulb. Filled with rays when lit (light mode), outlined and dark when off.
@@ -42,15 +46,43 @@ function LightbulbIcon({ lit }: { lit: boolean }) {
   )
 }
 
-export function TopBar({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => void }) {
+export function TopBar({
+  theme,
+  onToggleTheme,
+  residues,
+}: {
+  theme: Theme
+  onToggleTheme: () => void
+  residues: readonly Residue[]
+}) {
   const lit = theme === 'light'
+  // Collapsible, because a long chain's diagram is tall and the 3D view is the
+  // main event. Open by default so the feature is discoverable.
+  const [open, setOpen] = useState(true)
 
   return (
-    <header className="topbar">
+    <header className={open ? 'topbar open' : 'topbar'}>
       <div className="topbar-title">
         <h1>Protein Structure Builder</h1>
-        <p>Backbone reconstructed from φ/ψ/ω by NeRF.</p>
+        <p>Structure reconstructed from φ/ψ/ω and χ by NeRF.</p>
       </div>
+
+      {open && (
+        <div className="topbar-depiction">
+          <Depiction2D residues={residues} theme={theme} />
+        </div>
+      )}
+
+      <button
+        type="button"
+        className="depiction-toggle"
+        aria-expanded={open}
+        aria-label={`${open ? 'Hide' : 'Show'} the 2D structural formula`}
+        title={`${open ? 'Hide' : 'Show'} the 2D formula`}
+        onClick={() => setOpen((current) => !current)}
+      >
+        2D
+      </button>
 
       <button
         type="button"

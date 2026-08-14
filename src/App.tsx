@@ -68,7 +68,7 @@ function App() {
 
   return (
     <div className="app">
-      <TopBar theme={theme} onToggleTheme={toggleTheme} />
+      <TopBar theme={theme} onToggleTheme={toggleTheme} residues={residues} />
 
       <aside className="panel">
         <ResidueList editor={editor} />

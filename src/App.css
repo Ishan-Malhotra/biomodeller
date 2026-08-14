@@ -24,10 +24,129 @@
   grid-area: topbar;
   gap: 1rem;
   align-items: center;
-  justify-content: space-between;
   padding: 0.6rem 1rem;
   border-bottom: 1px solid var(--line);
   background: var(--panel);
+}
+
+.topbar-title {
+  flex: none;
+}
+
+/* The depiction takes the slack and scrolls internally, so a long chain widens the
+   diagram rather than the bar. Capped so a tall side chain can't push the 3D
+   viewport off the bottom of the screen. */
+.topbar-depiction {
+  flex: 1;
+  min-width: 0;
+}
+
+.depiction-toggle {
+  flex: none;
+  height: 2rem;
+  padding: 0 0.5rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+}
+
+.depiction-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.depiction-toggle[aria-expanded='true'] {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* ---- 2D depiction ---- */
+
+.depiction {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.empty-depiction {
+  padding: 0.5rem 0;
+}
+
+.depiction-head {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.formula {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.depiction-tally {
+  font-size: 0.68rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+ /* Horizontal only: the diagram is scaled to fit vertically, because side chains
+    grow upward and a vertical scrollbar would hide the backbone. */
+.depiction-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.depiction-scroll svg {
+  display: block;
+}
+
+/* Bonds. The main chain is heaviest so the chain's path reads first, exactly as in
+   the 3D view's stick radii. */
+.bond {
+  stroke: var(--text);
+  stroke-linecap: round;
+}
+
+.bond-backbone {
+  stroke-width: 1.7;
+}
+
+.bond-carbonyl {
+  stroke-width: 1.2;
+}
+
+.bond-sidechain {
+  stroke-width: 1.2;
+  opacity: 0.75;
+}
+
+/* The termini caps stand for atoms the structure doesn't place, so their bonds are
+   dashed — the diagram shouldn't claim they were computed. */
+.bond-cap {
+  stroke-width: 1.2;
+  stroke-dasharray: 3 2;
+  opacity: 0.5;
+}
+
+.atom-label {
+  font-weight: 600;
+  fill: var(--panel);
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  user-select: none;
+}
+
+.atom.cap circle {
+  opacity: 0.45;
 }
 
 .topbar-title h1 {
