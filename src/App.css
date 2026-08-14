@@ -136,7 +136,8 @@
   grid-template-columns: 1.1rem 3.6rem 1fr;
   grid-template-areas:
     'index acid angles'
-    '.     .    actions';
+    '.     .    chi'
+    '.     .    controls';
   align-items: center;
   gap: 0.25rem 0.35rem;
   padding: 0.35rem 0.4rem;
@@ -232,9 +233,57 @@
   color: var(--muted);
 }
 
+/* The χ fields, revealed per row. Same grid as the backbone angles so the columns
+   line up and χ1 sits under φ — they are the same kind of control. */
+.row-chi {
+  display: grid;
+  grid-area: chi;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.chi-toggle {
+  height: 1.4rem;
+  padding: 0 0.35rem;
+  font: inherit;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+}
+
+.chi-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.chi-toggle.open {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* Holds the χ disclosure (always visible) and the row actions (hover-revealed).
+   Two different visibility rules, so two elements — trying to express both on one
+   flex row meant fighting `:disabled { opacity }` on the move buttons, which won
+   on specificity and left a ghost arrow on the first and last rows. */
+.row-controls {
+  display: flex;
+  grid-area: controls;
+  gap: 0.3rem;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 1.4rem;
+  margin-top: 0.25rem;
+}
+
 .row-actions {
   display: flex;
-  grid-area: actions;
   gap: 0.15rem;
   justify-content: flex-end;
   opacity: 0;

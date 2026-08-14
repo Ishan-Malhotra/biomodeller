@@ -12,6 +12,7 @@
  */
 
 import { OMEGA_TRANS } from '../lib/constants.ts'
+import { chiFor } from '../lib/edits.ts'
 import type { AminoAcidCode, Residue } from '../lib/types.ts'
 
 interface Segment {
@@ -35,6 +36,8 @@ function chainOf(segments: readonly Segment[]): Residue[] {
         phi: segment.phi,
         psi: segment.psi,
         omega: OMEGA_TRANS,
+        // Default rotamers for whatever side chain this amino acid has.
+        chi: chiFor(segment.aminoAcid),
       })
     }
   }
@@ -71,6 +74,17 @@ export const EXAMPLE_CHAINS: readonly ExampleChain[] = [
       { length: 4, ...BETA_STRAND, aminoAcid: 'GLY' },
       { length: 10, ...ALPHA_HELIX, aminoAcid: 'LEU' },
     ]),
+  },
+  {
+    name: 'Side chains',
+    description: 'GLY·ALA·SER·VAL·PHE·TRP·LYS·ARG — every size of R group, in one helix.',
+    residues: chainOf(
+      (['GLY', 'ALA', 'SER', 'VAL', 'PHE', 'TRP', 'LYS', 'ARG'] as const).map((aminoAcid) => ({
+        length: 1,
+        ...ALPHA_HELIX,
+        aminoAcid,
+      })),
+    ),
   },
   {
     name: 'Polyproline II',

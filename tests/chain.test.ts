@@ -25,6 +25,7 @@ import {
   vec3,
   type Vec3,
 } from '../lib/nerf.ts'
+import { chiFor } from '../lib/edits.ts'
 import type { Atom, Residue } from '../lib/types.ts'
 import fixture from './fixtures/1ubq-backbone.json' with { type: 'json' }
 
@@ -44,6 +45,7 @@ const residue = (i: number, phi: number, psi: number, omega = 180): Residue => (
   phi,
   psi,
   omega,
+  chi: [],
 })
 
 /** 1UBQ's real backbone angles as a Residue[]. */
@@ -55,9 +57,25 @@ const ubiquitin: Residue[] = fixture.residues.map((r) => ({
   phi: r.phi ?? 0,
   psi: r.psi ?? 0,
   omega: r.omega ?? 180,
+  // Default rotamers. These fixtures record backbone angles only, and these tests
+  // are about the backbone — side chains ride along and must not disturb it.
+  chi: chiFor(r.residueName as Residue['aminoAcid']),
 }))
 
 const positionsOf = (atoms: readonly Atom[]): Vec3[] => atoms.map((atom) => atom.position)
+
+/**
+ * Just the N, CA, C, O atoms, in order.
+ *
+ * The 1UBQ fixture records backbone atoms only, and these tests are about the
+ * backbone: whether NeRF reproduces the main chain from φ/ψ/ω. Side chains now ride
+ * along in the builder's output, so comparisons against that fixture filter them
+ * out. Nothing about the assertions themselves changed — see tests/sidechains.test.ts
+ * for the side chains' own validation.
+ */
+const BACKBONE_NAMES = new Set(['N', 'CA', 'C', 'O'])
+const backboneOnly = (atoms: readonly Atom[]): Atom[] =>
+  atoms.filter((atom) => BACKBONE_NAMES.has(atom.name))
 
 /**
  * A residue's four backbone atoms, found by name.
@@ -124,7 +142,7 @@ describe('buildAtoms — degenerate and single-residue cases', () => {
   })
 
   it('seeds residue 1 in the canonical frame', () => {
-    const atoms = buildAtoms([residue(1, -57, -47)])
+    const atoms = backboneOnly(buildAtoms([residue(1, -57, -47)]))
     const [seedN, seedCA, seedC] = canonicalSeedFrame()
 
     expect(atoms).toHaveLength(BACKBONE_ATOM_COUNT)
@@ -148,15 +166,26 @@ describe('buildAtoms — degenerate and single-residue cases', () => {
   })
 
   it('carries residue identity onto every derived atom', () => {
-    const atoms = buildAtoms([residue(1, -57, -47), { ...residue(2, -57, -47), aminoAcid: 'GLY' }])
-    expect(atoms.map((a) => a.residueIndex)).toEqual([0, 0, 0, 0, 1, 1, 1, 1])
-    expect(atoms.map((a) => a.residueId)).toEqual(['r1', 'r1', 'r1', 'r1', 'r2', 'r2', 'r2', 'r2'])
-    expect(new Set(atoms.slice(4).map((a) => a.aminoAcid))).toEqual(new Set(['GLY']))
+    const residues = [residue(1, -57, -47), { ...residue(2, -57, -47), aminoAcid: 'GLY' as const }]
+    const atoms = buildAtoms(residues)
+    // Asserted against the residue list rather than against a fixed atom count,
+    // because the count depends on the amino acid: alanine contributes a Cβ and
+    // glycine contributes nothing beyond the backbone.
+    for (const atom of atoms) {
+      const own = residues[atom.residueIndex]!
+      expect(atom.residueId).toBe(own.id)
+      expect(atom.aminoAcid).toBe(own.aminoAcid)
+    }
+    expect(atoms.filter((a) => a.residueIndex === 0)).toHaveLength(5) // ALA: backbone + Cβ
+    expect(atoms.filter((a) => a.residueIndex === 1)).toHaveLength(4) // GLY: backbone only
+    // Indices are non-decreasing, i.e. each residue's atoms are contiguous.
+    const indices = atoms.map((a) => a.residueIndex)
+    expect(indices).toEqual([...indices].sort((x, y) => x - y))
   })
 })
 
 describe('buildAtoms — full 1UBQ backbone', () => {
-  const atoms = buildAtoms(ubiquitin)
+  const atoms = backboneOnly(buildAtoms(ubiquitin))
 
   it('produces four atoms per residue in N, CA, C, O order', () => {
     expect(atoms).toHaveLength(fixture.atoms.length)

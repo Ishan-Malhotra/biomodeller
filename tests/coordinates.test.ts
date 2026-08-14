@@ -16,8 +16,8 @@ import type { Residue } from '../lib/types.ts'
  */
 
 const residues: Residue[] = [
-  { id: 'a', aminoAcid: 'ALA', phi: -57, psi: -47, omega: 180 },
-  { id: 'b', aminoAcid: 'GLY', phi: -57, psi: -47, omega: 180 },
+  { id: 'a', aminoAcid: 'ALA', phi: -57, psi: -47, omega: 180, chi: [] },
+  { id: 'b', aminoAcid: 'GLY', phi: -57, psi: -47, omega: 180, chi: [] },
 ]
 const atoms = buildAtoms(residues)
 
@@ -93,10 +93,11 @@ describe('coordinateRows', () => {
   it('emits one row per atom, in chain order', () => {
     const rows = coordinateRows(atoms)
     expect(rows).toHaveLength(atoms.length)
-    expect(rows.map((r) => r.atomName)).toEqual(['N', 'CA', 'C', 'O', 'N', 'CA', 'C', 'O'])
-    expect(rows.map((r) => r.residueNumber)).toEqual([1, 1, 1, 1, 2, 2, 2, 2])
+    // Alanine contributes a Cβ after its backbone; glycine contributes nothing.
+    expect(rows.map((r) => r.atomName)).toEqual(['N', 'CA', 'C', 'O', 'CB', 'N', 'CA', 'C', 'O'])
+    expect(rows.map((r) => r.residueNumber)).toEqual([1, 1, 1, 1, 1, 2, 2, 2, 2])
     expect(rows.map((r) => r.aminoAcid)).toEqual([
-      'ALA', 'ALA', 'ALA', 'ALA', 'GLY', 'GLY', 'GLY', 'GLY',
+      'ALA', 'ALA', 'ALA', 'ALA', 'ALA', 'GLY', 'GLY', 'GLY', 'GLY',
     ])
   })
 

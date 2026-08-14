@@ -53,6 +53,11 @@ export function ResidueList({ editor }: { editor: ChainEditor }) {
     [editor],
   )
 
+  const updateChi = useCallback(
+    (index: number, chiIndex: number, degrees: number) => editor.setChi(index, chiIndex, degrees),
+    [editor],
+  )
+
   return (
     <section className="residues">
       <div className="residues-head">
@@ -80,6 +85,7 @@ export function ResidueList({ editor }: { editor: ChainEditor }) {
               isLast={index === residues.length - 1}
               autoFocus={focusIndex === index}
               onUpdate={update}
+              onUpdateChi={updateChi}
               onInsertAfter={insertAfter}
               onDuplicate={duplicate}
               onRemove={editor.remove}

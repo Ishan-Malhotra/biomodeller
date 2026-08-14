@@ -11,6 +11,7 @@ import {
 import { OMEGA_TRANS } from '../lib/constants.ts'
 import {
   appendResidue,
+  chiFor,
   DEFAULT_ANGLES,
   duplicateResidue,
   insertResidue,
@@ -47,6 +48,9 @@ const ubiquitin: Residue[] = fixture.residues.map((r) => ({
   phi: r.phi ?? 0,
   psi: r.psi ?? 0,
   omega: r.omega ?? 180,
+  // Default rotamers. These fixtures record backbone angles only, and these tests
+  // are about the backbone — side chains ride along and must not disturb it.
+  chi: chiFor(r.residueName as Residue['aminoAcid']),
 }))
 
 /** A short prefix, for tests where 76 residues would only slow things down. */
@@ -125,8 +129,8 @@ describe('wrapDegrees', () => {
     // 200° and −160° are the same dihedral, so they must build the same atom.
     const at = (omega: number) =>
       buildAtoms([
-        { id: 'a', aminoAcid: 'ALA', phi: -57, psi: -47, omega },
-        { id: 'b', aminoAcid: 'ALA', phi: -57, psi: -47, omega: 180 },
+        { id: 'a', aminoAcid: 'ALA', phi: -57, psi: -47, omega, chi: [] },
+        { id: 'b', aminoAcid: 'ALA', phi: -57, psi: -47, omega: 180, chi: [] },
       ])
     const wrapped = at(wrapDegrees(200))
     const raw = at(200)
@@ -349,14 +353,29 @@ describe('incremental rebuild matches a full rebuild', () => {
     expectIncrementalMatchesFullRebuild(ubiquitin, updateResidue(ubiquitin, 15, { omega: 0 }), 15)
   })
 
-  it('for an amino-acid substitution, which moves no atom but re-emits them', () => {
+  it('for an amino-acid substitution, which changes the side chain but not the backbone', () => {
     const after = updateResidue(ubiquitin, 15, { aminoAcid: 'TRP' })
     expectIncrementalMatchesFullRebuild(ubiquitin, after, 15)
-    // Identity does not affect backbone geometry — only the labels change.
-    const before = buildAtoms(ubiquitin)
-    buildAtoms(after).forEach((atom, i) => {
+
+    // The substitution replaces one side chain with another, so the atom list is a
+    // different length and different atoms exist — that is the whole point of the
+    // feature. What must *not* change is the backbone: side chains hang off Cα as
+    // leaves and never enter the chain tip, so every N/CA/C/O in the structure is
+    // bit-identical before and after.
+    const isBackbone = (atom: { name: string }) => ['N', 'CA', 'C', 'O'].includes(atom.name)
+    const before = buildAtoms(ubiquitin).filter(isBackbone)
+    const now = buildAtoms(after).filter(isBackbone)
+    expect(now).toHaveLength(before.length)
+    now.forEach((atom, i) => {
       expect(atom.position).toEqual(before[i]!.position)
     })
+
+    // And the side chain really did change: ubiquitin 16 is a glutamate (5 heavy
+    // side-chain atoms); tryptophan has 10.
+    const sideChainOf = (list: readonly { residueIndex: number; name: string }[]) =>
+      list.filter((a) => a.residueIndex === 15 && !isBackbone(a)).map((a) => a.name)
+    expect(sideChainOf(buildAtoms(ubiquitin))).not.toEqual(sideChainOf(buildAtoms(after)))
+    expect(sideChainOf(buildAtoms(after))).toHaveLength(10)
   })
 
   it('for a reorder, detected at the first moved position', () => {

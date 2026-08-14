@@ -5,6 +5,7 @@ import { buildAtoms } from '../lib/chain.ts'
 import { BOND_LENGTH } from '../lib/constants.ts'
 import { boundingSphere, fitDistance, frameCamera } from '../lib/framing.ts'
 import { distance, norm, scale, sub, vec3, type Vec3 } from '../lib/nerf.ts'
+import { chiFor } from '../lib/edits.ts'
 import type { Atom, Residue } from '../lib/types.ts'
 import fixture from './fixtures/1ubq-backbone.json' with { type: 'json' }
 
@@ -18,12 +19,24 @@ import fixture from './fixtures/1ubq-backbone.json' with { type: 'json' }
  * never the structure. Every assertion here reads atoms; none produces new ones.
  */
 
+/**
+ * Just the N, CA, C, O atoms.
+ *
+ * The bond-count claims below ("4n − 1") and the 1UBQ comparisons are about the
+ * backbone; side chains get their own bond tests in tests/sidechains.test.ts.
+ * Filtering keeps these assertions saying exactly what they said before.
+ */
+const BACKBONE_NAMES = new Set(['N', 'CA', 'C', 'O'])
+const backboneOnly = (atoms: readonly Atom[]): Atom[] =>
+  atoms.filter((atom) => BACKBONE_NAMES.has(atom.name))
+
 const residue = (i: number, phi: number, psi: number, omega = 180): Residue => ({
   id: `r${i}`,
   aminoAcid: 'ALA',
   phi,
   psi,
   omega,
+  chi: [],
 })
 
 /** 1UBQ's real backbone angles, as in tests/chain.test.ts. */
@@ -33,6 +46,9 @@ const ubiquitin: Residue[] = fixture.residues.map((r) => ({
   phi: r.phi ?? 0,
   psi: r.psi ?? 0,
   omega: r.omega ?? 180,
+  // Default rotamers. These fixtures record backbone angles only, and these tests
+  // are about the backbone — side chains ride along and must not disturb it.
+  chi: chiFor(r.residueName as Residue['aminoAcid']),
 }))
 
 /** Atoms carrying the deposited 1UBQ coordinates, bypassing the builder. */
@@ -51,7 +67,7 @@ describe('backboneBonds', () => {
   })
 
   it('gives a single residue its three intra-residue bonds and no peptide bond', () => {
-    const bonds = backboneBonds(buildAtoms([residue(1, -57, -47)]))
+    const bonds = backboneBonds(backboneOnly(buildAtoms([residue(1, -57, -47)])))
     expect(bonds).toEqual([
       { a: 0, b: 1, kind: 'BACKBONE' },
       { a: 1, b: 2, kind: 'BACKBONE' },
@@ -62,12 +78,12 @@ describe('backboneBonds', () => {
   it('counts 4n - 1 bonds: three per residue plus one peptide bond per link', () => {
     for (const n of [1, 2, 5, 76]) {
       const residues = Array.from({ length: n }, (_, i) => residue(i, -57, -47))
-      expect(backboneBonds(buildAtoms(residues))).toHaveLength(4 * n - 1)
+      expect(backboneBonds(backboneOnly(buildAtoms(residues)))).toHaveLength(4 * n - 1)
     }
   })
 
   it('bonds only chemically-bonded atom pairs, in every residue of 1UBQ', () => {
-    const atoms = buildAtoms(ubiquitin)
+    const atoms = backboneOnly(buildAtoms(ubiquitin))
     const expected: Record<string, string> = {
       'N-CA': 'BACKBONE',
       'CA-C': 'BACKBONE',
@@ -86,7 +102,7 @@ describe('backboneBonds', () => {
   })
 
   it('produces bonds whose lengths are the ideal bond lengths', () => {
-    const atoms = buildAtoms(ubiquitin)
+    const atoms = backboneOnly(buildAtoms(ubiquitin))
     const expected: Record<string, number> = {
       'N-CA': BOND_LENGTH.N_CA,
       'CA-C': BOND_LENGTH.CA_C,
@@ -101,7 +117,7 @@ describe('backboneBonds', () => {
   })
 
   it('spans every atom, so nothing renders as an orphan', () => {
-    const atoms = buildAtoms(ubiquitin)
+    const atoms = backboneOnly(buildAtoms(ubiquitin))
     const touched = new Set<number>()
     for (const bond of backboneBonds(atoms)) {
       touched.add(bond.a)
@@ -116,8 +132,8 @@ describe('backboneBonds', () => {
     // screen rather than quietly dropping bonds.
     const straight = Array.from({ length: 8 }, (_, i) => residue(i, -57, -47, 180))
     const distorted = Array.from({ length: 8 }, (_, i) => residue(i, 0, 0, 0))
-    expect(backboneBonds(buildAtoms(distorted))).toEqual(
-      backboneBonds(buildAtoms(straight)),
+    expect(backboneBonds(backboneOnly(buildAtoms(distorted)))).toEqual(
+      backboneBonds(backboneOnly(buildAtoms(straight))),
     )
   })
 })
@@ -144,7 +160,7 @@ describe('boundingSphere', () => {
   })
 
   it('centres on the bounding-box midpoint', () => {
-    const atoms = buildAtoms(ubiquitin)
+    const atoms = backboneOnly(buildAtoms(ubiquitin))
     const axes = ['x', 'y', 'z'] as const
     const { center } = boundingSphere(atoms)
     for (const axis of axes) {
@@ -154,7 +170,7 @@ describe('boundingSphere', () => {
   })
 
   it('translates with the structure and is unchanged by atom order', () => {
-    const atoms = buildAtoms(ubiquitin)
+    const atoms = backboneOnly(buildAtoms(ubiquitin))
     const offset = vec3(10, -20, 30)
     const moved = atoms.map((a) => ({ ...a, position: sub(a.position, offset) }))
     const base = boundingSphere(atoms)
@@ -204,7 +220,7 @@ describe('frameCamera', () => {
   const fov = 50
 
   it('looks at the structure centre from the requested direction', () => {
-    const atoms = buildAtoms(ubiquitin)
+    const atoms = backboneOnly(buildAtoms(ubiquitin))
     const { center, radius } = boundingSphere(atoms)
     const { position, target } = frameCamera(atoms, {
       verticalFovDeg: fov,
@@ -220,7 +236,7 @@ describe('frameCamera', () => {
   })
 
   it('normalizes the direction, so its magnitude does not change the distance', () => {
-    const atoms = buildAtoms(ubiquitin)
+    const atoms = backboneOnly(buildAtoms(ubiquitin))
     const shortDir = vec3(1, 1, 1)
     const longDir = scale(shortDir, 100)
     const a = frameCamera(atoms, { verticalFovDeg: fov, direction: shortDir })
@@ -229,7 +245,7 @@ describe('frameCamera', () => {
   })
 
   it('honours minDistance when the structure is a single point', () => {
-    const one = buildAtoms([residue(1, -57, -47)])
+    const one = backboneOnly(buildAtoms([residue(1, -57, -47)]))
     const { center } = boundingSphere(one)
     const framed = frameCamera(one, { verticalFovDeg: fov, minDistance: 12 })
     // A 4-atom residue has a real but tiny radius; the floor should dominate.
@@ -244,7 +260,7 @@ describe('frameCamera', () => {
   it('backs off as the chain grows, and is deterministic for equal input', () => {
     const grow = (n: number) =>
       frameCamera(
-        buildAtoms(Array.from({ length: n }, (_, i) => residue(i, -139, 135))),
+        backboneOnly(buildAtoms(Array.from({ length: n }, (_, i) => residue(i, -139, 135)))),
         { verticalFovDeg: fov },
       )
     const distances = [2, 4, 8, 16, 32].map((n) => {
@@ -258,7 +274,7 @@ describe('frameCamera', () => {
   })
 
   it('does not touch the atoms it frames', () => {
-    const atoms = buildAtoms(ubiquitin)
+    const atoms = backboneOnly(buildAtoms(ubiquitin))
     const before: Vec3[] = atoms.map((a) => ({ ...a.position }))
     frameCamera(atoms, { verticalFovDeg: fov, padding: 1.4 })
     atoms.forEach((atom, i) => {

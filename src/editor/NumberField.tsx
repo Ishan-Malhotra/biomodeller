@@ -46,6 +46,7 @@ export function NumberField({
   className = 'numfield',
   inert = false,
   inertReason,
+  title,
   ariaLabel,
 }: {
   /** Short prefix shown in the field, e.g. `φ` or `x`. */
@@ -71,6 +72,8 @@ export function NumberField({
    */
   inert?: boolean
   inertReason?: string
+  /** Explanatory tooltip for a field that is perfectly live — e.g. what a χ rotates. */
+  title?: string
   ariaLabel?: string
 }) {
   const [draft, setDraft] = useState<string | null>(null)
@@ -85,7 +88,10 @@ export function NumberField({
   }
 
   return (
-    <label className={inert ? `${className} inert` : className} title={inert ? inertReason : undefined}>
+    <label
+      className={inert ? `${className} inert` : className}
+      title={(inert ? inertReason : undefined) ?? title}
+    >
       <span className={`${className}-label`} aria-hidden="true">
         {label}
       </span>

@@ -38,6 +38,7 @@ import {
   moveResidue,
   newResidue,
   removeResidue,
+  updateChi,
   updateResidue,
 } from '../lib/edits.ts'
 import type { Atom, Residue } from '../lib/types.ts'
@@ -68,6 +69,8 @@ export interface ChainEditor {
   readonly duplicate: (index: number) => void
   readonly remove: (index: number) => void
   readonly update: (index: number, patch: Partial<Omit<Residue, 'id'>>) => void
+  /** Set one χ of a residue, by 1-based index. */
+  readonly setChi: (index: number, chiIndex: number, degrees: number) => void
   readonly move: (index: number, to: number) => void
   /** Load a whole chain at once, e.g. an example. */
   readonly replaceAll: (residues: readonly Residue[]) => void
@@ -110,6 +113,8 @@ export function useChain(initial: readonly Residue[] = []): ChainEditor {
       remove: (index: number) => setResidues((current) => removeResidue(current, index)),
       update: (index: number, patch: Partial<Omit<Residue, 'id'>>) =>
         setResidues((current) => updateResidue(current, index, patch)),
+      setChi: (index: number, chiIndex: number, degrees: number) =>
+        setResidues((current) => updateChi(current, index, chiIndex, degrees)),
       move: (index: number, to: number) => setResidues((current) => moveResidue(current, index, to)),
       replaceAll: (next: readonly Residue[]) => setResidues([...next]),
       clear: () => setResidues([]),

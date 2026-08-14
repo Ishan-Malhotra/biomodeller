@@ -16,7 +16,8 @@
  * Angles are stored in degrees, normalised to (−180°, 180°].
  */
 
-import { OMEGA_TRANS } from './constants.ts'
+import { DEFAULT_CHI, OMEGA_TRANS } from './constants.ts'
+import { CHI_COUNT } from './sidechainTopology.ts'
 import type { AminoAcidCode, Residue } from './types.ts'
 
 /**
@@ -32,6 +33,21 @@ export const DEFAULT_ANGLES = { phi: -57, psi: -47, omega: OMEGA_TRANS } as cons
 
 /** The amino acid a new row starts as — glycine, the one with no side chain. */
 export const DEFAULT_AMINO_ACID: AminoAcidCode = 'GLY'
+
+/**
+ * The χ array an amino acid should have: one entry per rotatable dihedral.
+ *
+ * Values are carried over positionally from `existing` where they exist, so
+ * switching LEU → ILE keeps the χ1 the user set rather than resetting it, and
+ * switching LYS → ALA and back does lose χ2–χ4 (there is nowhere to keep them
+ * that wouldn't be a hidden second copy of the truth).
+ */
+export function chiFor(aminoAcid: AminoAcidCode, existing: readonly number[] = []): number[] {
+  const defaults = DEFAULT_CHI[aminoAcid] ?? []
+  return Array.from({ length: CHI_COUNT[aminoAcid] }, (_, i) =>
+    wrapDegrees(existing[i] ?? defaults[i] ?? 0),
+  )
+}
 
 /**
  * Normalise a dihedral to (−180°, 180°].
@@ -76,11 +92,13 @@ export function newResidue(
   residues: readonly Residue[],
   overrides: Partial<Omit<Residue, 'id'>> = {},
 ): Residue {
+  const aminoAcid = overrides.aminoAcid ?? DEFAULT_AMINO_ACID
   return {
     id: nextResidueId(residues),
-    aminoAcid: DEFAULT_AMINO_ACID,
+    aminoAcid,
     ...DEFAULT_ANGLES,
     ...overrides,
+    chi: chiFor(aminoAcid, overrides.chi ?? []),
   }
 }
 
@@ -151,14 +169,45 @@ export function updateResidue(
 ): Residue[] {
   requireIndex(residues, index, 'updateResidue')
   const current = residues[index]!
+  const aminoAcid = patch.aminoAcid ?? current.aminoAcid
+
+  // Changing the amino acid resizes χ, since the count is a property of the
+  // residue's identity: glycine has none, lysine has four. **This is the line that
+  // makes the atom count move when you pick a different amino acid** — resize χ and
+  // the side-chain template it drives changes with it.
+  const chi = chiFor(aminoAcid, patch.chi ?? current.chi)
+
   const updated: Residue = {
     ...current,
     ...patch,
+    aminoAcid,
     phi: wrapDegrees(patch.phi ?? current.phi),
     psi: wrapDegrees(patch.psi ?? current.psi),
     omega: wrapDegrees(patch.omega ?? current.omega),
+    chi,
   }
   return [...residues.slice(0, index), updated, ...residues.slice(index + 1)]
+}
+
+/**
+ * Set one χ of a residue, by 1-based index.
+ *
+ * Separate from `updateResidue` because χ lives in an array and a patch-style API
+ * would make the caller rebuild it — which is exactly where an off-by-one would
+ * live. Out-of-range indices are ignored rather than throwing: a stale UI event
+ * arriving after an amino-acid change is not an error.
+ */
+export function updateChi(
+  residues: readonly Residue[],
+  index: number,
+  chiIndex: number,
+  degrees: number,
+): Residue[] {
+  requireIndex(residues, index, 'updateChi')
+  const current = residues[index]!
+  if (chiIndex < 1 || chiIndex > current.chi.length) return [...residues]
+  const chi = current.chi.map((value, i) => (i === chiIndex - 1 ? wrapDegrees(degrees) : value))
+  return [...residues.slice(0, index), { ...current, chi }, ...residues.slice(index + 1)]
 }
 
 /**

@@ -25,8 +25,9 @@
  * rigid transform applied afterwards (lib/transform.ts) and never enters this file.
  */
 
-import { BOND_ANGLE, BOND_LENGTH, PSI_TO_O_DIHEDRAL_OFFSET } from './constants.ts'
+import { BOND_ANGLE, BOND_LENGTH, DEFAULT_CHI, PSI_TO_O_DIHEDRAL_OFFSET } from './constants.ts'
 import { add, degToRad, placeAtom, scale, vec3, type Vec3 } from './nerf.ts'
+import { sideChainPlacements } from './sidechains.ts'
 import type { Atom, BackboneAtomName, Element, Residue } from './types.ts'
 
 /** N, CA, C, O — the backbone atoms every residue contributes, before side chains. */
@@ -45,6 +46,78 @@ export interface ResidueAtoms {
 }
 
 const ELEMENT_OF: Record<BackboneAtomName, Element> = { N: 'N', CA: 'C', C: 'C', O: 'O' }
+
+/**
+ * The χ value driving a side-chain atom, falling back to the default rotamer.
+ *
+ * A residue whose `chi` is shorter than its amino acid needs — hand-built, or
+ * mid-substitution — still places a complete side chain rather than throwing or
+ * dropping atoms.
+ */
+function chiValue(residue: Residue, index: number): number {
+  const own = residue.chi[index - 1]
+  if (own !== undefined) return own
+  return DEFAULT_CHI[residue.aminoAcid]?.[index - 1] ?? 0
+}
+
+/**
+ * Place a residue's side chain onto its already-placed backbone.
+ *
+ * Side chains are *leaves*: they hang off Cα and no side-chain atom is ever a
+ * reference for the next residue. That is what keeps them incapable of affecting
+ * backbone geometry — `ChainTip` reads only N, CA and C — and it is why adding this
+ * left every existing backbone test passing unchanged.
+ *
+ * No ring closure is enforced. Proline's Cδ–N bond and the aromatic rings are
+ * placed outward from ideal parameters and simply drawn; with ideal geometry they
+ * do not close perfectly. Correcting that would mean minimisation, which claude.md
+ * forbids — the deviation is a true consequence of ideal-geometry reconstruction
+ * and is left visible.
+ */
+export function placeSideChain(
+  backbone: Readonly<Record<'N' | 'CA' | 'C' | 'O', Vec3>>,
+  residue: Residue,
+  residueIndex: number,
+): Atom[] {
+  const placements = sideChainPlacements(residue.aminoAcid)
+  if (placements.length === 0) return []
+
+  const placed = new Map<string, Vec3>(Object.entries(backbone))
+  const atoms: Atom[] = []
+
+  for (const placement of placements) {
+    const [aName, bName, cName] = placement.refs
+    const a = placed.get(aName)
+    const b = placed.get(bName)
+    const c = placed.get(cName)
+    if (!a || !b || !c) {
+      throw new Error(
+        `Cannot place ${residue.aminoAcid} ${placement.name}: reference atom missing ` +
+          `(needs ${aName}, ${bName}, ${cName}).`,
+      )
+    }
+
+    const dihedral =
+      placement.dihedral.kind === 'fixed'
+        ? placement.dihedral.degrees
+        : placement.dihedral.kind === 'chi'
+          ? chiValue(residue, placement.dihedral.index)
+          : chiValue(residue, placement.dihedral.index) + placement.dihedral.degrees
+
+    const position = placeAtom(a, b, c, placement.length, placement.angle, dihedral)
+    placed.set(placement.name, position)
+    atoms.push({
+      name: placement.name,
+      element: placement.element,
+      position,
+      residueIndex,
+      residueId: residue.id,
+      aminoAcid: residue.aminoAcid,
+    })
+  }
+
+  return atoms
+}
 
 /**
  * The three main-chain atoms of the preceding residue, plus the angles of that
@@ -77,13 +150,19 @@ export function canonicalSeedFrame(): readonly [Vec3, Vec3, Vec3] {
   return [n, ca, c]
 }
 
+/**
+ * Wrap a residue's four backbone positions as atoms, then append its side chain.
+ *
+ * Backbone first, in placement order, so `ChainTip` and the bond builder can find
+ * N, CA and C without caring how many side-chain atoms follow.
+ */
 function toAtoms(
   positions: readonly [Vec3, Vec3, Vec3, Vec3],
   residue: Residue,
   residueIndex: number,
 ): Atom[] {
   const names: readonly BackboneAtomName[] = ['N', 'CA', 'C', 'O']
-  return names.map((name, i) => ({
+  const backbone: Atom[] = names.map((name, i) => ({
     name,
     element: ELEMENT_OF[name],
     position: positions[i]!,
@@ -91,6 +170,8 @@ function toAtoms(
     residueId: residue.id,
     aminoAcid: residue.aminoAcid,
   }))
+  const [n, ca, c, o] = positions
+  return [...backbone, ...placeSideChain({ N: n, CA: ca, C: c, O: o }, residue, residueIndex)]
 }
 
 /**
@@ -240,9 +321,17 @@ export function firstChangedIndex(
     if (a.id !== b.id || a.phi !== b.phi || a.psi !== b.psi || a.omega !== b.omega) {
       return i
     }
-    // A residue's identity doesn't move its backbone atoms, but the atoms carry
-    // it, so a substitution still has to re-emit them.
+    // A residue's identity doesn't move its backbone atoms, but it selects the
+    // side-chain template, so a substitution changes which atoms exist.
     if (a.aminoAcid !== b.aminoAcid) return i
+    // χ moves only this residue's own side chain, never the backbone or anything
+    // downstream — but it does move atoms, so it still invalidates from here.
+    // Compared element-wise: the arrays are rebuilt on every edit, so a reference
+    // check would report a change on every keystroke to any field.
+    if (a.chi.length !== b.chi.length) return i
+    for (let k = 0; k < a.chi.length; k++) {
+      if (a.chi[k] !== b.chi[k]) return i
+    }
   }
   // Truncation invalidates nothing that remains; extension starts at the join,
   // where the new residue depends on the previous one's ψ/ω.

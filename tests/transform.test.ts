@@ -19,6 +19,7 @@ import {
   rotate,
   type RigidTransform,
 } from '../lib/transform.ts'
+import { chiFor } from '../lib/edits.ts'
 import type { Residue } from '../lib/types.ts'
 import fixture from './fixtures/1ubq-backbone.json' with { type: 'json' }
 
@@ -39,6 +40,9 @@ const ubiquitin: Residue[] = fixture.residues.map((r) => ({
   phi: r.phi ?? 0,
   psi: r.psi ?? 0,
   omega: r.omega ?? 180,
+  // Default rotamers. These fixtures record backbone angles only, and these tests
+  // are about the backbone — side chains ride along and must not disturb it.
+  chi: chiFor(r.residueName as Residue['aminoAcid']),
 }))
 
 const atoms = buildAtoms(ubiquitin)
@@ -156,13 +160,15 @@ describe('the transform cannot change the reconstruction', () => {
     // Measure φ/ψ/ω back out of the *transformed* structure and compare to the
     // fixture's published values, not just to the untransformed build.
     const moved = applyToAtoms(arbitrary, atoms)
+    // Looked up by name, not by a stride: residues contribute different numbers of
+    // atoms now that side chains exist, so `i * 4` no longer addresses residue i.
+    const at = (residueIndex: number, name: string) =>
+      moved.find((a) => a.residueIndex === residueIndex && a.name === name)!.position
     for (let i = 1; i < ubiquitin.length; i++) {
-      const prev = i - 1
-      const cPrev = moved[prev * 4 + 2]!.position
-      const n = moved[i * 4]!.position
-      const ca = moved[i * 4 + 1]!.position
-      const c = moved[i * 4 + 2]!.position
-      expectSameAngle(dihedral(cPrev, n, ca, c), ubiquitin[i]!.phi)
+      expectSameAngle(
+        dihedral(at(i - 1, 'C'), at(i, 'N'), at(i, 'CA'), at(i, 'C')),
+        ubiquitin[i]!.phi,
+      )
     }
   })
 
@@ -191,6 +197,7 @@ describe('the transform cannot change the reconstruction', () => {
       phi: -57,
       psi: -47,
       omega: 180,
+      chi: [],
     }))
     const built = buildAtoms(helix)
     const moved = applyToAtoms(arbitrary, built)

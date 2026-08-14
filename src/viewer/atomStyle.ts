@@ -28,11 +28,13 @@ export const ELEMENT_COLOR: Record<Theme, Record<Element, string>> = {
     C: '#3f4652',
     N: '#3b6fd4',
     O: '#d9453c',
+    S: '#c8961e',
   },
   dark: {
     C: '#aab2c0',
     N: '#5b8def',
     O: '#ef5f54',
+    S: '#e0b13c',
   },
 }
 
@@ -45,12 +47,17 @@ export const ELEMENT_RADIUS: Record<Element, number> = {
   C: 0.32,
   N: 0.3,
   O: 0.3,
+  // Sulfur is the largest of the four; drawn slightly bigger so Cys and Met read
+  // at a glance, still far below its ~1.8 Å van der Waals radius.
+  S: 0.36,
 }
 
 /** Bond stick radii in ångströms. */
 export const BOND_RADIUS = {
   BACKBONE: 0.11,
   CARBONYL: 0.085,
+  /** Thinner than the main chain, so the backbone's path stays readable through it. */
+  SIDECHAIN: 0.075,
 } as const
 
 /**

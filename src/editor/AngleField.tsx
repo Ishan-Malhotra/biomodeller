@@ -25,6 +25,7 @@ export function AngleField({
   inputRef,
   inert = false,
   inertReason,
+  title,
 }: {
   /** The symbol shown in the field's prefix: φ, ψ, ω or χ. */
   label: string
@@ -34,6 +35,7 @@ export function AngleField({
   inputRef?: RefObject<HTMLInputElement | null>
   inert?: boolean
   inertReason?: string
+  title?: string
 }) {
   return (
     <NumberField
@@ -48,7 +50,8 @@ export function AngleField({
       {...(inputRef ? { inputRef } : {})}
       inert={inert}
       {...(inertReason ? { inertReason } : {})}
-      ariaLabel={`${label}, degrees${inert && inertReason ? ` — ${inertReason}` : ''}`}
+      {...(title ? { title } : {})}
+      ariaLabel={`${label}, degrees${inert && inertReason ? ` — ${inertReason}` : title ? ` — ${title}` : ''}`}
     />
   )
 }
