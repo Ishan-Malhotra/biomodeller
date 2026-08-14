@@ -10,24 +10,26 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 7 — Cartesian coordinates, origin control, gridlines.
-**Next:** Stage 8 — side chains and χ angles. Plan at the bottom.
+**Last completed:** Stage 8 — side chains and χ angles.
+**Next:** Stage 9 — 2D chemical depiction in the top bar. Plan at the bottom.
 
-**Steps 1–6 of the `claude.md` build order are done**, plus a theme. The math is
-validated against real PDB data, the chain builder recomputes only the affected
-suffix, the app is a working Desmos-style editor over a live 3D viewport, and the
-coordinate frame is user-definable.
+**Steps 1–6 of the `claude.md` build order are done**, plus a theme and side
+chains. The math is validated against real PDB data, the chain builder recomputes
+only the affected suffix, the app is a working Desmos-style editor over a live 3D
+viewport, the coordinate frame is user-definable, and all 20 amino acids build
+their side chains from χ angles.
 
 Stages 6–10 implement a five-feature request; the full plan is in
 `~/.claude/plans/compressed-shimmying-hinton.md`.
 
 ```
 npm run dev        # http://localhost:5173 (no port is configured; --port 5273 was used ad hoc)
-npm test           # 160 tests, all passing
+npm test           # 224 tests, all passing
 npm run typecheck  # tsc -b, strict + noUncheckedIndexedAccess + exactOptionalPropertyTypes
 npm run lint       # oxlint
 npm run build      # tsc -b && vite build
-npm run fixture    # regenerate tests/fixtures from tests/fixtures/1UBQ.pdb
+npm run fixture             # regenerate the backbone fixture from 1UBQ.pdb
+npm run fixture:sidechains  # regenerate the side-chain fixture from 4LZT.pdb
 ```
 
 ### File map
@@ -39,8 +41,10 @@ Pure, framework-free, unit-tested — no React or Three.js imports anywhere in `
 | `lib/constants.ts` | Engh & Huber ideal bond lengths/angles. The only place geometric numbers live. |
 | `lib/nerf.ts` | Vector helpers and `placeAtom` — the NeRF placement itself. |
 | `lib/types.ts` | `Residue` (the source of truth) and `Atom` (derived output). |
-| `lib/chain.ts` | `buildBackbone`, `rebuildFrom`, `firstChangedIndex`, the canonical seed frame. |
-| `lib/bonds.ts` | `backboneBonds` — bond topology from an atom list, by index, no distance cutoff. |
+| `lib/chain.ts` | `buildChain`, `rebuildChainFrom`, `placeSideChain`, `firstChangedIndex`, the seed frame. |
+| `lib/sidechainTopology.ts` | The hand-written bond graph and χ definitions for all 20 amino acids. |
+| `lib/sidechains.ts` | Derives NeRF reference triples and dihedral sources from that graph. |
+| `lib/bonds.ts` | Bond topology from an atom list, grouped by `residueIndex`, no distance cutoff. |
 | `lib/framing.ts` | `boundingSphere`, `fitDistance`, `frameCamera` — moves the camera, never the structure. |
 | `lib/edits.ts` | Residue-list edit operations, `wrapDegrees`, id generation. |
 | `lib/transform.ts` | Rigid transforms (quaternion + translation). `frameOn` is both origin modes. |
@@ -67,10 +71,17 @@ React layer:
 | `src/sampleChains.ts` | Example chains, loaded into the editable list. |
 | `src/App.tsx` | Wires the editor to the viewport. Owns `fitToken`. |
 
-Tests: `nerf.test.ts` (25), `render-data.test.ts` (22), `chain.test.ts` (21),
-`edits.test.ts` (47), `transform.test.ts` (30), `coordinates.test.ts` (15).
-Fixture: `tests/fixtures/1ubq-backbone.json`, generated from the deposited
-`1UBQ.pdb` by `scripts/build-fixture.ts`.
+Tests: `edits.test.ts` (47), `sidechains.test.ts` (64), `transform.test.ts` (30),
+`nerf.test.ts` (25), `render-data.test.ts` (22), `chain.test.ts` (21),
+`coordinates.test.ts` (15).
+
+Two fixtures, both generated from committed PDB files so their provenance is
+auditable and the tests never touch the network:
+
+- `1ubq-backbone.json` — ubiquitin, 1.8 Å. Backbone only. The reference for φ/ψ/ω.
+- `4lzt-sidechains.json` — hen lysozyme, 0.95 Å. All 20 amino acids, 484
+  side-chain atoms. The reference for side-chain geometry, and the source of the
+  idealised constants in `lib/constants.ts`.
 
 ### Invariants a later change must not break
 
@@ -95,8 +106,11 @@ a test fail, the test is probably right.
 7. **Derived state flows one way:** `residues → useChain → canonical atoms →
    useOrigin → atoms in the user's frame`. The origin layer cannot invalidate the
    chain's suffix cache, and a test asserts it doesn't.
-8. **Side chains hang off Cα as leaves** and never enter `ChainTip`, so they
-   cannot affect backbone geometry (stage 8 onward).
+8. **Side chains hang off Cα as leaves** and never enter `ChainTip`, so they cannot
+   affect backbone geometry. Adding them left every pre-existing backbone
+   assertion passing unchanged, and that is the regression net to keep.
+9. **Atoms-per-residue is variable.** Never write `i * atomsPerResidue`; use
+   `atomOffsets(groups)[i]`, or find atoms by name via `Atom.residueIndex`.
 
 ### Known rough edges
 
@@ -770,68 +784,190 @@ than a display preference, and because stages 9 and 10 need the same answer.
 
 ---
 
-## Next — Stage 8: side chains and χ angles
+## Stage 8 — Side chains and χ angles
 
-The big one, and the phase `claude.md` gated behind "no side-chain/chi-angle code
-until the backbone path is fully validated against real PDB fixtures". It is
-validated, so the gate is open. Idealised mode per product.md §4.2(a): the user
-sets χ, the tool places atoms with the same NeRF math. No rotamer library, no
-realism claims.
+**Date:** 2026-08-15
 
-**Do the model refactor first, on its own, and confirm the existing tests still
-pass before adding any chemistry.** `ATOMS_PER_RESIDUE = 4` is currently a hard
-constant driving the prefix arithmetic in `rebuildFrom` and every index computation
-in `lib/bonds.ts`. Side chains make atoms-per-residue variable — which is exactly
-what makes the atom count respond to the amino acid picked, i.e. the point of the
-request. Replace the fixed stride with per-residue atom groups:
+The phase `claude.md` gated behind "no side-chain/chi-angle code until the backbone
+path is fully validated against real PDB fixtures". It was validated, so the gate
+opened. Idealised mode per product.md §4.2(a): the user sets χ, the tool places
+atoms with the same NeRF math. No rotamer library, no realism claims.
 
-```ts
-interface ResidueAtoms {
-  readonly residueIndex: number
-  readonly residueId: string
-  readonly atoms: readonly Atom[]   // N, CA, C, O, then side chain in template order
-}
-```
+Split into three commits, because the first is a refactor whose whole value is that
+it changes no behaviour.
 
-`rebuildFrom` then reuses `groups.slice(0, fromIndex)` by reference, with no
-arithmetic at all — which makes the suffix invariant structural rather than
-computed. `ChainTip` is unchanged: side chains are leaves off Cα and never continue
-the main chain, so **every existing backbone assertion must pass untouched**. That
-is the regression net for the whole refactor.
+### 8a — Per-residue atom groups (commit `080c017`)
 
-Then the chemistry, in `lib/sidechains.ts`: per amino acid, an ordered list of atom
-templates naming three already-placed reference atoms, a bond length, a bond angle,
-and which dihedral drives the placement (a χ index, a fixed value for ring and
-branch atoms, or an offset from a χ). Cβ from (C, N, Cα) with a fixed improper; Cγ
-from (N, Cα, Cβ) driven by χ1; outward from there. Lengths and angles are **named
-constants in `lib/constants.ts`**, same rule the backbone follows. Also `CHI_COUNT`
-per amino acid, `DEFAULT_CHI` from the most common rotamer so that *selecting* an
-amino acid immediately gives a sensible structure without typing four numbers, and
-`RING_CLOSURE_BONDS` for the cyclic side chains. `Element` gains `'S'`.
+`ATOMS_PER_RESIDUE = 4` drove the prefix arithmetic in `rebuildFrom` and every
+index computation in `bonds.ts`. Residues contribute different numbers of atoms
+once side chains exist — four for a glycine backbone, fourteen for a tryptophan —
+so that constant was about to be wrong for every chain that isn't pure glycine.
 
-Two special cases to **document rather than fix**: proline's Cδ bonds back to the
-backbone N, and with ideal parameters the ring will not close perfectly — draw the
-closure bond and leave it, because minimisation is forbidden by invariant 2. Same
-for the aromatic rings, placed with fixed planar dihedrals.
+`chain.ts` now returns `ResidueAtoms[]`, and `rebuildChainFrom` reuses the prefix
+with `groups.slice(0, fromIndex)`. **No atom-index arithmetic at all**, which turns
+the suffix-reuse invariant from something computed into something structural.
 
-State and UI: `Residue` gains `chi: readonly number[]`; `firstChangedIndex` must
-compare it element-wise; and **changing the amino acid must resize the χ array** to
-the new `CHI_COUNT`, filling from `DEFAULT_CHI` — that is the line that makes the
-atom count move when you pick TRP. `ResidueRow` grows 0–4 χ fields behind a per-row
-expander, reusing `AngleField` unchanged.
+`bonds.ts` dropped the stride by grouping on `Atom.residueIndex`, which the atoms
+already carried, and looking main-chain atoms up by name. Its signature never
+changed and it was correct for variable atom counts before side chains existed.
 
-**Fixtures: 1UBQ has only 18 of the 20 amino acids** (no CYS, no TRP). Commit one
-more small structure containing both (1LYZ lysozyme) and extend
-`scripts/build-fixture.ts`, which already measures real internals from deposited
-coordinates, to emit side-chain atoms and measured χ. One download; tests stay
-offline. The primary test mirrors the backbone one: feed each residue's *measured* χ
-through the placement and reproduce the deposited side-chain coordinates.
+**Committed with no chemistry changes so the existing suite was a clean regression
+net.** All 160 tests passed, and because they validate against deposited 1UBQ
+coordinates to 1e-9 rather than against each other, that proved the geometry
+identical rather than merely self-consistent.
 
-Then **stage 9** (2D chemical depiction in the top bar: `lib/depiction.ts` for a
-deterministic skeletal layout, `lib/formula.ts` for the empirical formula with
-hydrogens computed from per-amino-acid formulas minus (n−1) H₂O) and **stage 10**
-(hover an atom → label with its name and coordinates, highlighting the matching
-node in the 2D view, both directions).
+### 8b — Only the bond graph is written by hand
+
+`lib/sidechainTopology.ts` lists, per residue, each heavy atom and the single atom
+nearer Cα that it bonds to, plus ring closures and the χ definitions. That is data
+checkable against a textbook.
+
+**Reference triples are derived, not listed.** NeRF places D from (a, b, c) with c
+bonded to D, so walking two bonds back from the parent gives the triple:
+`refs(X) = (parent(parent(P)), parent(P), P)`, with the chain continuing into the
+backbone as Cβ → Cα → N. Writing out ~100 triples by hand would have been a hundred
+chances to transpose two atom names, and **a transposed triple produces a
+plausible-looking side chain rather than an obvious error** — the kind of bug that
+survives to submission. Deriving them means the bond graph is the only thing that
+can be wrong, and the tests check it against real coordinates for all 20 residues.
+
+Cβ is the one exception: the walk would run off the end of the backbone at N, so it
+is placed from (N, C, Cα) — an improper dihedral rather than a torsion about a bond.
+
+### 8b — The fixture, and one rejected structure
+
+1UBQ has **no cysteine and no tryptophan**, so it cannot validate those two side
+chains. The replacement had to contain all 20.
+
+**1LYZ was tried first and rejected.** It is hen lysozyme with all 20 amino acids,
+which is what it was picked for — but it is a 1975 real-space refinement at 2.0 Å,
+and measuring it gave bond lengths of 1.652 ± 0.181 Å where the true value is
+~1.53 Å. The measurement error was an order of magnitude larger than the effect
+being measured; using it would have enshrined bad geometry as "ideal".
+
+**4LZT** is the same protein at 0.95 Å (Walsh et al., 1998). Re-measured: bond
+lengths scatter by 0.01–0.03 Å and angles by 1–4°. That is a reference.
+
+Constants are **medians, not means**. One disordered arginine in 4LZT has a Cζ bond
+angle of 172° against a cluster at 122–136°, and a mean would carry that outlier
+into the reference. `mad` rather than standard deviation for the same reason.
+
+### 8b — The dihedrals were measured, not assumed
+
+Every non-χ dihedral in all 20 side chains collapsed to one of four values, and
+this was read off the data rather than decided in advance:
+
+| | Measured | Constant |
+| --- | --- | --- |
+| Cβ improper (N-C-Cα-Cβ) | 120.7°–127.4° | `CB_IMPROPER_DIHEDRAL` = 122.5° |
+| Proline's Cβ improper | 114.7° | `PRO_CB_IMPROPER_DIHEDRAL` — the ring pulls it ~8° off |
+| Second branch, tetrahedral centre | ±120.8°–126.5° | `±TETRAHEDRAL_BRANCH_OFFSET` = 122.5° |
+| Second branch, planar centre | 174°–180° | `PLANAR_TRANS` = 180° |
+| Ring continuations | −1.9°–0.3°, ±177°–180° | `PLANAR_CIS` / `PLANAR_TRANS` |
+
+The signs of the tetrahedral offsets differ per residue (ILE −, LEU +, THR −,
+VAL +) and live in the geometry table, because they encode which branch the PDB
+naming convention calls "1". A test asserts no placement uses any dihedral outside
+that set, so a fifth magic number cannot creep in.
+
+Proline earns its extra constant: there is a test that its measured Cβ improper is
+*more* than 5° from the shared value, so if it ever falls within tolerance the
+constant is dead weight and should go.
+
+### 8c — Tests: `sidechains.test.ts`, 64 cases (224 total)
+
+**The primary test feeds each residue's measured internals back through
+`placeAtom` and reproduces the deposited coordinates** — one case per amino acid so
+a failure names the residue, chaining from each *reconstructed* position rather
+than the deposited one so error compounds instead of being silently reset. 484
+side-chain atoms across 129 residues, to 1e-6 Å. That is what validates the
+topology.
+
+The idealised constants are checked **separately and more loosely** against the
+same distribution (0.05 Å, 4°, 8° for the shared dihedral offsets), because
+"the topology is right" and "the constants are close to reality" are different
+claims and collapsing them would weaken both.
+
+Then: every χ is the dihedral its topology names, measured back out of the built
+structure at several values; χ2 leaves N/CA/CB/CG fixed and moves Cδ outward; no
+side-chain atom is left unbonded for any residue; the ring closures are drawn;
+atom counts match `heavyAtomCount` and the deposited counts in 4LZT.
+
+### What the tests forced me to correct
+
+- **A clash diagnostic, before trusting anything.** The existing "not a tangle"
+  test dropped to 0.58 Å once side chains existed. Rather than relax it, I checked
+  whether the clashes were intra- or inter-residue: **0 intra-residue, 71
+  inter-residue**, and two of those were backbone-only pairs that predated side
+  chains entirely (`ASP21.N ↔ THR55.CA` at 0.85 Å, already documented as ideal-
+  geometry drift over 76 residues). Templates sound; the test's scope was the
+  issue.
+- **Two test premises that had genuinely become false.** An amino-acid
+  substitution no longer "moves no atom" — it replaces one side chain with
+  another. Rewritten to the stronger true claim: the backbone is bit-identical and
+  the side chain differs, with the atom count checked. And the self-overlap check
+  now covers the three staggered rotamer wells, with a separate test pinning that
+  a **fully eclipsed arginine folds into itself** (Nε 0.64 Å from the backbone N) —
+  correct output for input no protein adopts, and the tool builds what it is asked
+  for.
+- **Backbone tests filter to N/CA/C/O.** The 1UBQ fixture is backbone-only, and
+  those tests are about whether NeRF reproduces the main chain. Every assertion is
+  unchanged; only the input is narrowed.
+
+### The line that answers the request
+
+> "the R group remains the same regardless of the amino acid chosen … I should be
+> able to see the change in the no of molecules"
+
+`updateResidue` resizes χ when `aminoAcid` changes, via `chiFor`. Resize χ and the
+side-chain template it drives changes with it, so the atom count follows. Verified
+in the browser: GLY 4 → ALA 5 → SER 6 → VAL 7 → PHE 11 → TRP 14 → LYS 9 → ARG 11,
+every count matching the topology exactly, with the χ badge on each row showing
+how many dihedrals that residue has.
+
+### Two things left deliberately broken
+
+- **Proline's ring does not close.** Placed outward from ideal parameters, the
+  Cδ–N closure lands off its ideal 1.47 Å. The bond is drawn and the gap is left
+  visible, with a test pinning it — closing it would mean minimisation, which
+  claude.md forbids. The aromatics fare much better (all their dihedrals are 0° or
+  180°, so their rings close to within a few hundredths of an ångström).
+- **Idealised geometry still drifts.** Nothing here changed that; side chains ride
+  on a backbone that already diverges over 76 residues.
+
+### One CSS regression, caught by looking
+
+The χ disclosure button and the hover-revealed row actions were on one flex row
+with opposite visibility rules. `.row-actions button:disabled { opacity: 0.3 }` won
+on specificity over the hide rule, leaving a ghost ↑ on the first row and a ghost ↓
+on the last. Two different visibility rules needed two elements.
+
+**Status: 224/224 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Next — Stage 9: the 2D chemical depiction
+
+A skeletal structural diagram plus the empirical formula, in the top bar (which
+stage 6 built as a shell for exactly this).
+
+1. `lib/depiction.ts` — pure, and derived data in the same sense `lib/bonds.ts` is.
+   Takes the residue groups, returns `{nodes, edges}` with 2D coordinates.
+   Deterministic layout, no physics: backbone as a horizontal zig-zag, carbonyl O
+   below each C, side chains stacked upward from Cβ, H₂N and OH caps at the
+   termini. Node keys are `residueIndex` + atom name so stage 10 can address them.
+2. `lib/formula.ts` — the empirical formula. Hydrogens are **not placed in 3D**, so
+   they are computed rather than measured: sum the per-amino-acid free formulas and
+   subtract (n−1) H₂O for the peptide bonds. Testable against known peptides.
+3. `src/viewer/Depiction2D.tsx` — SVG, horizontally scrollable, collapsible.
+4. Tests: node count equals heavy-atom count plus caps, no two nodes overlap, and
+   **the edge set matches `bonds.ts` exactly** — the 2D view must not be able to
+   invent or lose a bond relative to the 3D one.
+
+Then **stage 10**: hover an atom in 3D for a label with its name (`Cα`) and its
+coordinates in the current origin frame, highlighting the matching node in the 2D
+view, and the reverse. `onPointerOver` on the drei `<Instance>` elements —
+already verified feasible, since stage 7's click-to-pick uses the same mechanism.
 
 Still outstanding from `claude.md`'s "everything else" tier after that: the live
 Ramachandran plot linked both ways to the 3D view, and PDB export.
