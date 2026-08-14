@@ -21,7 +21,8 @@ import { vec3 } from '../../lib/nerf.ts'
 import type { Atom } from '../../lib/types.ts'
 import type { Theme } from '../theme.ts'
 import { SCENE_LIGHTING } from './atomStyle.ts'
-import { BackboneStructure } from './BackboneStructure.tsx'
+import { BackboneStructure, type AtomRef } from './BackboneStructure.tsx'
+import { OriginGrid } from './OriginGrid.tsx'
 
 /** Vertical field of view, degrees. Must match what `frameCamera` is told. */
 const VERTICAL_FOV = 45
@@ -82,10 +83,15 @@ export function StructureViewport({
   atoms,
   theme,
   fitToken = 0,
+  grid,
+  onPickAtom,
 }: {
   atoms: readonly Atom[]
   theme: Theme
   fitToken?: number
+  /** Gridlines and the axis triad, when the coordinate frame is being controlled. */
+  grid?: { readonly spacing: number } | undefined
+  onPickAtom?: ((atom: AtomRef) => void) | undefined
 }) {
   const lighting = SCENE_LIGHTING[theme]
 
@@ -98,7 +104,9 @@ export function StructureViewport({
       <directionalLight position={[1, 2, 3]} intensity={lighting.key} />
       <directionalLight position={[-2, -1, -2]} intensity={lighting.fill} />
 
-      <BackboneStructure atoms={atoms} theme={theme} />
+      {grid && <OriginGrid spacing={grid.spacing} theme={theme} />}
+
+      <BackboneStructure atoms={atoms} theme={theme} onPickAtom={onPickAtom} />
 
       <OrbitControls makeDefault enableDamping dampingFactor={0.12} />
       <FitCamera atoms={atoms} fitToken={fitToken} />

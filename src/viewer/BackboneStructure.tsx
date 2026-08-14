@@ -79,12 +79,24 @@ function sticksOf(atoms: readonly Atom[], theme: Theme): Stick[] {
   return sticks
 }
 
+/** What an atom click reports. Enough to address the atom, not its position. */
+export interface AtomRef {
+  readonly residueIndex: number
+  readonly atomName: string
+}
+
 export function BackboneStructure({
   atoms,
   theme,
+  onPickAtom,
 }: {
   atoms: readonly Atom[]
   theme: Theme
+  /**
+   * Set while the coordinate panel is waiting for an anchor. Only wired up when
+   * non-null, so the raycaster does no work in the normal case.
+   */
+  onPickAtom?: ((atom: AtomRef) => void) | undefined
 }) {
   const sticks = useMemo(() => sticksOf(atoms, theme), [atoms, theme])
 
@@ -102,6 +114,16 @@ export function BackboneStructure({
             position={toTuple(atom.position)}
             scale={ELEMENT_RADIUS[atom.element]}
             color={ELEMENT_COLOR[theme][atom.element]}
+            {...(onPickAtom
+              ? {
+                  onClick: (event: { stopPropagation: () => void }) => {
+                    // Without this the click also reaches whatever is behind the
+                    // atom, and the furthest atom along the ray would win.
+                    event.stopPropagation()
+                    onPickAtom({ residueIndex: atom.residueIndex, atomName: atom.name })
+                  },
+                }
+              : {})}
           />
         ))}
       </Instances>

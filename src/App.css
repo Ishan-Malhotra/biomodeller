@@ -336,6 +336,167 @@
   white-space: nowrap;
 }
 
+/* ---- coordinate / origin panel ---- */
+
+.coords {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.coords-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.switch {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  font-size: 0.72rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.switch input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.coords-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.coords-label {
+  font-size: 0.7rem;
+  color: var(--muted);
+  cursor: help;
+}
+
+.radios {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.radios label {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.radios input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.hint.armed {
+  color: var(--accent);
+}
+
+/* The three x/y/z inputs. Same .angle styling as a dihedral field — they are the
+   same kind of control, and looking alike is correct rather than lazy. */
+.triple {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.25rem;
+}
+
+.grid-switch {
+  color: inherit;
+  font-size: 0.76rem;
+}
+
+.spacings {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.2rem;
+}
+
+.spacing {
+  padding: 0.2rem 0;
+  font: inherit;
+  font-size: 0.7rem;
+  color: var(--muted);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.3rem;
+}
+
+.spacing:hover {
+  border-color: var(--accent);
+}
+
+.spacing.selected {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* Capped and scrollable: a 76-residue chain is 304 rows, and the panel still has
+   a residue list above it that has to stay reachable. */
+.coord-table {
+  max-height: 14rem;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+}
+
+.coord-table table {
+  width: 100%;
+  font-size: 0.7rem;
+  border-collapse: collapse;
+}
+
+.coord-table thead th {
+  position: sticky;
+  top: 0;
+  padding: 0.3rem 0.4rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: right;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+
+.coord-table thead th:first-child {
+  text-align: left;
+}
+
+.coord-table tbody th {
+  display: flex;
+  gap: 0.35rem;
+  align-items: baseline;
+  padding: 0.2rem 0.4rem;
+  font-weight: 400;
+  text-align: left;
+}
+
+.coord-table td {
+  padding: 0.2rem 0.4rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.coord-table tbody tr:hover {
+  background: var(--accent-soft);
+}
+
+.coord-atom {
+  font-weight: 500;
+}
+
+.coord-residue {
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
 /* ---- readout ---- */
 
 .readout dl {
@@ -385,7 +546,14 @@
 
 .viewport {
   position: relative;
+  grid-area: viewport;
   background: var(--canvas);
+}
+
+/* Armed for an origin pick: a crosshair over the canvas says "click a thing",
+   which a default cursor over an orbit-and-zoom view does not. */
+.viewport.picking canvas {
+  cursor: crosshair;
 }
 
 .empty {

@@ -1,13 +1,20 @@
 /**
- * Step 5: the editable residue list.
+ * Wiring: the residue list, the coordinate frame, and the viewport.
  *
  * The app opens on a blank canvas — no molecule, no default chain — and the user
- * builds one row at a time. All of the state lives in `useChain`, which holds the
- * residue list and derives atoms from it; this component only wires that to the
- * list and the viewport.
+ * builds one row at a time.
  *
- * Note what is *not* stored here: atom positions. They are derived from the
- * residue list on render, as claude.md requires.
+ * Two layers of derived state, in this order and only this order:
+ *
+ *   residues --useChain--> canonical atoms --useOrigin--> atoms in the user's frame
+ *
+ * `useChain` turns angles into coordinates; `useOrigin` moves those coordinates
+ * rigidly. The second cannot reach the first, which is how claude.md's requirement
+ * that origin edits never touch the NeRF inputs is enforced — by the direction of
+ * the dependency rather than by discipline.
+ *
+ * Note what is *not* stored here: atom positions. They are derived on render, as
+ * claude.md requires.
  *
  * The camera is framed on explicit request rather than on every edit. Re-framing
  * per keystroke would fight the user's own orbiting, and it would also hide the
@@ -23,16 +30,30 @@ import { EXAMPLE_CHAINS } from './sampleChains.ts'
 import { TopBar } from './TopBar.tsx'
 import { useTheme } from './theme.ts'
 import { useChain } from './useChain.ts'
+import { useOrigin } from './useOrigin.ts'
+import { CoordinatePanel } from './editor/CoordinatePanel.tsx'
 import { ResidueList } from './editor/ResidueList.tsx'
 import { StructureViewport } from './viewer/StructureViewport.tsx'
+import type { AtomRef } from './viewer/BackboneStructure.tsx'
 
 function App() {
   const editor = useChain()
+  const frame = useOrigin(editor.atoms)
   const { theme, toggle: toggleTheme } = useTheme()
   const [fitToken, setFitToken] = useState(0)
+  const [pickArmed, setPickArmed] = useState(false)
   const fit = () => setFitToken((token) => token + 1)
 
-  const { residues, atoms, stats } = editor
+  const { residues, stats } = editor
+  // What the viewport draws and the coordinate table reports: the canonical atoms
+  // after the origin transform. Identical to `editor.atoms` by reference while the
+  // frame is untouched.
+  const atoms = frame.atoms
+
+  const pickAtom = (atom: AtomRef) => {
+    frame.setAnchor({ kind: 'atom', residueIndex: atom.residueIndex, atomName: atom.atomName })
+    setPickArmed(false)
+  }
 
   // The one automatic framing: going from blank canvas to a first residue. The
   // camera has nothing to aim at while the list is empty, so it sits at its
@@ -74,6 +95,13 @@ function App() {
           ))}
         </section>
 
+        <CoordinatePanel
+          frame={frame}
+          atoms={atoms}
+          pickArmed={pickArmed}
+          onArmPick={setPickArmed}
+        />
+
         <section className="readout">
           <h2>Derived</h2>
           <dl>
@@ -99,8 +127,14 @@ function App() {
         </section>
       </aside>
 
-      <main className="viewport">
-        <StructureViewport atoms={atoms} theme={theme} fitToken={fitToken} />
+      <main className={pickArmed ? 'viewport picking' : 'viewport'}>
+        <StructureViewport
+          atoms={atoms}
+          theme={theme}
+          fitToken={fitToken}
+          grid={frame.spec.enabled && frame.spec.showGrid ? { spacing: frame.spec.gridSpacing } : undefined}
+          onPickAtom={pickArmed ? pickAtom : undefined}
+        />
         {atoms.length === 0 && (
           <p className="empty">Blank canvas — add a residue to place the seed frame.</p>
         )}

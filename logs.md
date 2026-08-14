@@ -10,19 +10,20 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 6 — light/dark theme + top bar shell.
-**Next:** Stage 7 — Cartesian coordinates, origin control, gridlines. Plan at the bottom.
+**Last completed:** Stage 7 — Cartesian coordinates, origin control, gridlines.
+**Next:** Stage 8 — side chains and χ angles. Plan at the bottom.
 
-**Steps 1–5 of the `claude.md` build order are done**, plus a theme. The math is
+**Steps 1–6 of the `claude.md` build order are done**, plus a theme. The math is
 validated against real PDB data, the chain builder recomputes only the affected
-suffix, and the app is a working Desmos-style editor over a live 3D viewport.
+suffix, the app is a working Desmos-style editor over a live 3D viewport, and the
+coordinate frame is user-definable.
 
 Stages 6–10 implement a five-feature request; the full plan is in
 `~/.claude/plans/compressed-shimmying-hinton.md`.
 
 ```
 npm run dev        # http://localhost:5173 (no port is configured; --port 5273 was used ad hoc)
-npm test           # 115 tests, all passing
+npm test           # 160 tests, all passing
 npm run typecheck  # tsc -b, strict + noUncheckedIndexedAccess + exactOptionalPropertyTypes
 npm run lint       # oxlint
 npm run build      # tsc -b && vite build
@@ -42,6 +43,9 @@ Pure, framework-free, unit-tested — no React or Three.js imports anywhere in `
 | `lib/bonds.ts` | `backboneBonds` — bond topology from an atom list, by index, no distance cutoff. |
 | `lib/framing.ts` | `boundingSphere`, `fitDistance`, `frameCamera` — moves the camera, never the structure. |
 | `lib/edits.ts` | Residue-list edit operations, `wrapDegrees`, id generation. |
+| `lib/transform.ts` | Rigid transforms (quaternion + translation). `frameOn` is both origin modes. |
+| `lib/naming.ts` | `'CA'` → `'Cα'`. Naming, not geometry; three views need the same answer. |
+| `lib/coordinates.ts` | The per-atom x/y/z readout rows. Fixed-decimal formatting. |
 
 React layer:
 
@@ -49,7 +53,11 @@ React layer:
 | --- | --- |
 | `src/theme.ts` | `useTheme` — light/dark resolution, persistence, and the `data-theme` attribute. |
 | `src/TopBar.tsx` | Title strip and the lightbulb toggle. Stage 9 fills the middle with the 2D view. |
-| `src/useChain.ts` | The app's only state. Holds `residues`; derives `atoms` incrementally. |
+| `src/useChain.ts` | The chain state. Holds `residues`; derives canonical `atoms` incrementally. |
+| `src/useOrigin.ts` | The origin frame. Consumes `useChain`'s atoms and moves them rigidly. |
+| `src/editor/NumberField.tsx` | The draft/commit numeric input. `AngleField` is a wrapper over it. |
+| `src/editor/CoordinatePanel.tsx` | Origin anchor, target, orientation, gridlines, coordinate table. |
+| `src/viewer/OriginGrid.tsx` | Gridlines and the X/Y/Z axis triad. Reference overlay only. |
 | `src/editor/ResidueList.tsx` | The expression list: rows, add button, blank state, Enter-to-insert. |
 | `src/editor/ResidueRow.tsx` | One row. Memoised. Marks the angles that have no geometric effect. |
 | `src/editor/AngleField.tsx` | One dihedral input. Commits per keystroke; holds an uncommitted draft. |
@@ -60,8 +68,9 @@ React layer:
 | `src/App.tsx` | Wires the editor to the viewport. Owns `fitToken`. |
 
 Tests: `nerf.test.ts` (25), `render-data.test.ts` (22), `chain.test.ts` (21),
-`edits.test.ts` (47). Fixture: `tests/fixtures/1ubq-backbone.json`, generated from
-the deposited `1UBQ.pdb` by `scripts/build-fixture.ts`.
+`edits.test.ts` (47), `transform.test.ts` (30), `coordinates.test.ts` (15).
+Fixture: `tests/fixtures/1ubq-backbone.json`, generated from the deposited
+`1UBQ.pdb` by `scripts/build-fixture.ts`.
 
 ### Invariants a later change must not break
 
@@ -79,10 +88,15 @@ a test fail, the test is probably right.
    needs three prior atoms and residue 1 has none.
 5. **An edit at residue *i* recomputes exactly the suffix from *i* onward**, and
    the reused prefix is the *same atom objects*, not equal copies.
-6. **Framing moves the camera, never the structure.** Repositioning the structure
-   is a separate feature (stage 6) and a separate code path.
-7. **No side-chain or χ code** until the backbone is fully validated — it is, but
-   side chains remain a distinct later phase, not something to interleave.
+6. **Framing moves the camera; the origin transform moves the structure.** Two
+   separate code paths. `lib/framing.ts` only reads atoms; `lib/transform.ts` only
+   writes positions, and imports nothing from the chain builder, so it has no way
+   to reach an angle.
+7. **Derived state flows one way:** `residues → useChain → canonical atoms →
+   useOrigin → atoms in the user's frame`. The origin layer cannot invalidate the
+   chain's suffix cache, and a test asserts it doesn't.
+8. **Side chains hang off Cα as leaves** and never enter `ChainTip`, so they
+   cannot affect backbone geometry (stage 8 onward).
 
 ### Known rough edges
 
@@ -634,54 +648,190 @@ Drove two fresh Chrome profiles over CDP with `prefers-color-scheme` emulated:
 
 ---
 
-## Next — Stage 7: Cartesian coordinates, origin control, gridlines
+## Stage 7 — Cartesian coordinates, origin control, gridlines
 
-Let the user place Cα of residue 1 anywhere, with any orientation — AutoCAD's UCS
-origin (product.md §5, §5.1). Collapsible panel, numeric x/y/z plus orientation,
-defaulting to Cα at (0, 0, 0) in the canonical orientation.
+**Date:** 2026-08-15
 
-**Two origin modes, both confirmed in scope**, and both the same machinery:
-*place* (type x/y/z + orientation; the structure rigid-transforms so Cα1 lands
-there) and *pick* (click any atom to make it (0, 0, 0); coordinates are reported
-relative to it). Re-definable at any time, with a reset to the canonical frame.
-Plus a per-atom x/y/z table in the panel, and toggleable gridlines with a spacing
-control drawn on the plane through the current origin — rendering only, and it
-must not affect framing, since `lib/framing.ts` reads atoms and grid lines are not
-atoms.
+`claude.md`'s step 6, plus the coordinate readout and gridlines the feature request
+asked for. No new dependencies — drei's `Grid` and `Line` were already available.
 
-**The one constraint that matters:** it is a rigid transform (translation +
-rotation) applied to the finished atom list *after* NeRF construction. It never
-touches the angle inputs and never enters `lib/chain.ts`. Keeping these decoupled
-is what prevents a whole class of bugs where origin edits corrupt angle-driven
-geometry — and it's why the transform is trivially correct: a rigid motion cannot
-change a bond length, a bond angle, or a dihedral.
+### One idea, not two features
 
-Suggested shape:
+The request described two things: type an origin, and click an atom to make it the
+origin. They turned out to be the same operation. An origin is an **anchor** atom, a
+**target** position that anchor should sit at, and an orientation:
 
-1. `lib/transform.ts` — pure. A `RigidTransform` (translation + rotation, probably
-   as a quaternion or three Euler angles to match what the UI types), `compose`,
-   `identity`, `applyToPoint`, and `applyToAtoms`. Constants for any defaults go in
-   `lib/constants.ts`, per the no-magic-numbers rule.
-2. `tests/transform.test.ts` — the invariant is the test: apply an arbitrary
-   transform to the 1UBQ backbone and assert every bond length, bond angle and
-   dihedral is unchanged to ~1e-9, i.e. that recovered φ/ψ/ω round-trip to the
-   fixture values. Plus the specifics: identity is a no-op, the transform puts Cα
-   of residue 1 exactly where it was asked to, composition is associative,
-   inverse-then-forward returns the original coordinates.
-3. Wire into `useChain` — or better, a layer *above* it, so the hook stays purely
-   about angles → atoms. The transform is applied to the derived atom list, so it
-   must not invalidate the suffix cache: moving the origin should be O(n) matrix
-   work, not a chain rebuild. Worth asserting in a test that changing the origin
-   leaves `firstChangedIndex` reporting no geometric change.
-4. UI — a collapsible section in the sidebar; a drag gizmo in the viewport is the
-   stretch version and can wait.
+- "Put the structure at (3, 2, −1)" → anchor = Cα of residue 1, target = typed
+- "Make this atom the origin"      → anchor = the clicked atom, target = (0, 0, 0)
 
-Then stages 8–10, per the plan: **side chains and χ angles** (the big one — it
-makes `ATOMS_PER_RESIDUE` variable, so `lib/chain.ts` moves to per-residue atom
-groups and `lib/bonds.ts` loses its index arithmetic; needs a second PDB fixture
-because 1UBQ has no CYS or TRP), then the **2D chemical depiction** in the top bar,
-then **hover linking** between the two views.
+Both are `frameOn(anchor, target, rotation)`, which solves `R·anchor + d = target`
+for the translation — so the anchor lands on the target *exactly*, not to within a
+tolerance. The panel offers two ways of choosing an anchor, and everything else
+applies identically to both. The rotation is about the anchor rather than the world
+origin, which is what makes typing an orientation feel like turning the molecule in
+place instead of swinging it around the room.
 
-After that, still outstanding from `claude.md`'s "everything else" tier: the live
-Ramachandran plot linked both ways to the 3D view (the strongest remaining feature
-for grading — it ties the abstract plot to the concrete structure) and PDB export.
+The anchor is stored as `{kind: 'first-ca'}` rather than an index, so it survives
+editing: Cα of residue 1 stays the anchor as residues are added, removed and
+reordered. It is also resolved against the **canonical** atoms — resolving it
+against the transformed ones would feed the transform its own output and the
+structure would walk away a little on every render.
+
+### Decoupling by dependency direction
+
+```
+residues --useChain--> canonical atoms --useOrigin--> atoms in the user's frame
+```
+
+`lib/transform.ts` imports nothing from `lib/chain.ts`, and `useOrigin` sits above
+`useChain` and consumes its output. So the requirement that origin edits never
+touch the NeRF inputs is enforced by the direction of the dependency rather than by
+discipline — there is no code path from the origin control to an angle.
+
+`applyToAtoms` returns **its input array unchanged** for the identity transform.
+That isn't a micro-optimisation: the default state of this feature is the identity,
+and the rest of the app leans on atom identity to decide what needs redrawing, so
+an untouched origin must not make every atom look new on every render.
+
+### Quaternions, and why they are normalised everywhere
+
+Rotations are unit quaternions internally, Euler degrees at the UI boundary.
+Every function that produces a quaternion re-normalises, because composing many
+rotations drifts off the unit sphere and **a non-unit quaternion scales the model
+as well as rotating it** — a "rigid" transform that silently changes bond lengths.
+There is a test that squares a quaternion 500 times and checks it is still unit.
+
+Euler convention is stated in the code because there are two dozen of them and a
+panel with three boxes has to mean one: extrinsic XYZ, `R = Rz·Ry·Rx`, i.e. spin
+about each world axis in turn.
+
+### Tests — `transform.test.ts` (30) and `coordinates.test.ts` (15), 160 total
+
+The premise of the feature is that moving the origin cannot corrupt the geometry, so
+that is asserted by **measuring the structure**, not by inspecting the code path: a
+rigid motion cannot change a bond length, a bond angle or a dihedral, so an
+arbitrary transform is applied to the 1UBQ backbone and every internal coordinate is
+compared to the deposited values. The φ angles are measured back out of the
+*transformed* atoms and checked against the fixture's published values.
+
+Two subtleties the tests caught or encode:
+
+- **Dihedral comparison has to be circular.** Two assertions failed at first
+  because a dihedral of exactly 180° came back as −180° — the same angle, off by
+  360. The comparison was wrong, not the geometry; `expectSameAngle` wraps the
+  difference. Bond angles live in [0°, 180°] and need no such care.
+- **Handedness.** A reflection preserves every distance and angle but flips every
+  dihedral's sign, turning a right-handed helix into a left-handed one. There is an
+  explicit test that the sign survives, because "all the distances match" alone
+  would not catch it.
+
+Plus: identity returns the same array, composition is associative and
+inner-first, inverse∘forward restores the structure to 1e-9, `frameOn` lands the
+anchor exactly, and picking any of five different atoms puts that atom at the
+origin.
+
+### Found by looking, again
+
+Two things the browser run turned up:
+
+1. **A mislabelled button.** "Reset to canonical frame" reset to *this panel's*
+   default — Cα of residue 1 at (0, 0, 0) — which is not the canonical NeRF frame,
+   where **N** of residue 1 is the atom at the origin. The screenshot showed N at
+   −1.458 after a "reset to canonical". Renamed to "Reset origin", with the
+   distinction spelled out in a tooltip and a comment; switching the panel off is
+   what returns to the canonical frame.
+2. **A measurement that looked like a bug and wasn't.** Rotating by 45/30/60
+   appeared to change bond lengths by ~2×10⁻⁴ Å. The cause was the test reading
+   distances out of the coordinate *table*, which rounds to 3 decimals — six such
+   coordinates can shift a distance by up to ~1.7×10⁻³. Re-measured across all 71
+   distances: max deviation 1.43×10⁻³, inside the rounding bound and an order of
+   magnitude below what a real 1% bond error would look like. The unit test asserts
+   the actual coordinates to 1e-9.
+
+Also verified: turning the panel on triggers **no** chain recompute (the "Last
+edit" readout is unchanged by any origin operation), placing the anchor at
+(3, 2, −1) is exact, clicking Cα of residue 3 makes it the only atom reading
+(0, 0, 0), gridlines toggle with four spacings, and editing an angle while the
+frame is offset recomputes the chain's suffix while leaving Cα1 pinned.
+
+### Two small refactors it justified
+
+`NumberField` was extracted from `AngleField`, which is now a thin wrapper over
+it. The x/y/z inputs need the same three behaviours — commit per keystroke, keep an
+uncommitted draft for text that isn't yet a number, and discard the draft when the
+value changes underneath it — and that last one was a real bug in stage 5. One copy
+of it is enough.
+
+`lib/naming.ts` renders `'CA'` as `'Cα'` by parsing the PDB position code. It is in
+`lib/` because the Greek position is part of the atom's chemical identity rather
+than a display preference, and because stages 9 and 10 need the same answer.
+
+**Status: 160/160 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Next — Stage 8: side chains and χ angles
+
+The big one, and the phase `claude.md` gated behind "no side-chain/chi-angle code
+until the backbone path is fully validated against real PDB fixtures". It is
+validated, so the gate is open. Idealised mode per product.md §4.2(a): the user
+sets χ, the tool places atoms with the same NeRF math. No rotamer library, no
+realism claims.
+
+**Do the model refactor first, on its own, and confirm the existing tests still
+pass before adding any chemistry.** `ATOMS_PER_RESIDUE = 4` is currently a hard
+constant driving the prefix arithmetic in `rebuildFrom` and every index computation
+in `lib/bonds.ts`. Side chains make atoms-per-residue variable — which is exactly
+what makes the atom count respond to the amino acid picked, i.e. the point of the
+request. Replace the fixed stride with per-residue atom groups:
+
+```ts
+interface ResidueAtoms {
+  readonly residueIndex: number
+  readonly residueId: string
+  readonly atoms: readonly Atom[]   // N, CA, C, O, then side chain in template order
+}
+```
+
+`rebuildFrom` then reuses `groups.slice(0, fromIndex)` by reference, with no
+arithmetic at all — which makes the suffix invariant structural rather than
+computed. `ChainTip` is unchanged: side chains are leaves off Cα and never continue
+the main chain, so **every existing backbone assertion must pass untouched**. That
+is the regression net for the whole refactor.
+
+Then the chemistry, in `lib/sidechains.ts`: per amino acid, an ordered list of atom
+templates naming three already-placed reference atoms, a bond length, a bond angle,
+and which dihedral drives the placement (a χ index, a fixed value for ring and
+branch atoms, or an offset from a χ). Cβ from (C, N, Cα) with a fixed improper; Cγ
+from (N, Cα, Cβ) driven by χ1; outward from there. Lengths and angles are **named
+constants in `lib/constants.ts`**, same rule the backbone follows. Also `CHI_COUNT`
+per amino acid, `DEFAULT_CHI` from the most common rotamer so that *selecting* an
+amino acid immediately gives a sensible structure without typing four numbers, and
+`RING_CLOSURE_BONDS` for the cyclic side chains. `Element` gains `'S'`.
+
+Two special cases to **document rather than fix**: proline's Cδ bonds back to the
+backbone N, and with ideal parameters the ring will not close perfectly — draw the
+closure bond and leave it, because minimisation is forbidden by invariant 2. Same
+for the aromatic rings, placed with fixed planar dihedrals.
+
+State and UI: `Residue` gains `chi: readonly number[]`; `firstChangedIndex` must
+compare it element-wise; and **changing the amino acid must resize the χ array** to
+the new `CHI_COUNT`, filling from `DEFAULT_CHI` — that is the line that makes the
+atom count move when you pick TRP. `ResidueRow` grows 0–4 χ fields behind a per-row
+expander, reusing `AngleField` unchanged.
+
+**Fixtures: 1UBQ has only 18 of the 20 amino acids** (no CYS, no TRP). Commit one
+more small structure containing both (1LYZ lysozyme) and extend
+`scripts/build-fixture.ts`, which already measures real internals from deposited
+coordinates, to emit side-chain atoms and measured χ. One download; tests stay
+offline. The primary test mirrors the backbone one: feed each residue's *measured* χ
+through the placement and reproduce the deposited side-chain coordinates.
+
+Then **stage 9** (2D chemical depiction in the top bar: `lib/depiction.ts` for a
+deterministic skeletal layout, `lib/formula.ts` for the empirical formula with
+hydrogens computed from per-amino-acid formulas minus (n−1) H₂O) and **stage 10**
+(hover an atom → label with its name and coordinates, highlighting the matching
+node in the 2D view, both directions).
+
+Still outstanding from `claude.md`'s "everything else" tier after that: the live
+Ramachandran plot linked both ways to the 3D view, and PDB export.
