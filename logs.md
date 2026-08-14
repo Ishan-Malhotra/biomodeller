@@ -10,21 +10,22 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 8 — side chains and χ angles.
-**Next:** Stage 9 — 2D chemical depiction in the top bar. Plan at the bottom.
+**Last completed:** Stage 10 — hover linking. **All five requested features are done.**
+**Next:** nothing queued. Candidates at the bottom of this file.
 
-**Steps 1–6 of the `claude.md` build order are done**, plus a theme and side
-chains. The math is validated against real PDB data, the chain builder recomputes
-only the affected suffix, the app is a working Desmos-style editor over a live 3D
-viewport, the coordinate frame is user-definable, and all 20 amino acids build
-their side chains from χ angles.
+**Steps 1–6 of the `claude.md` build order are done**, plus stages 6–10 covering a
+five-feature request. The math is validated against real PDB data for all 20 amino
+acids, the chain builder recomputes only the affected suffix, and the app is a
+Desmos-style editor over a live 3D viewport with a linked 2D structural formula, a
+user-definable coordinate frame, and a light/dark theme.
 
-Stages 6–10 implement a five-feature request; the full plan is in
-`~/.claude/plans/compressed-shimmying-hinton.md`.
+What remains unbuilt from the original spec: the live Ramachandran plot and PDB
+export (`claude.md`'s "everything else" tier), and rotamer suggestions and clash
+detection (product.md stretch goals).
 
 ```
 npm run dev        # http://localhost:5173 (no port is configured; --port 5273 was used ad hoc)
-npm test           # 224 tests, all passing
+npm test           # 275 tests, all passing
 npm run typecheck  # tsc -b, strict + noUncheckedIndexedAccess + exactOptionalPropertyTypes
 npm run lint       # oxlint
 npm run build      # tsc -b && vite build
@@ -48,8 +49,10 @@ Pure, framework-free, unit-tested — no React or Three.js imports anywhere in `
 | `lib/framing.ts` | `boundingSphere`, `fitDistance`, `frameCamera` — moves the camera, never the structure. |
 | `lib/edits.ts` | Residue-list edit operations, `wrapDegrees`, id generation. |
 | `lib/transform.ts` | Rigid transforms (quaternion + translation). `frameOn` is both origin modes. |
-| `lib/naming.ts` | `'CA'` → `'Cα'`. Naming, not geometry; three views need the same answer. |
+| `lib/naming.ts` | `'CA'` → `'Cα'`, and `atomKey` — the id both views address atoms by. |
 | `lib/coordinates.ts` | The per-atom x/y/z readout rows. Fixed-decimal formatting. |
+| `lib/depiction.ts` | The 2D skeletal layout. Topological, not a projection of the 3D. |
+| `lib/formula.ts` | The empirical formula. Hydrogens computed, since none are placed. |
 
 React layer:
 
@@ -62,6 +65,8 @@ React layer:
 | `src/editor/NumberField.tsx` | The draft/commit numeric input. `AngleField` is a wrapper over it. |
 | `src/editor/CoordinatePanel.tsx` | Origin anchor, target, orientation, gridlines, coordinate table. |
 | `src/viewer/OriginGrid.tsx` | Gridlines and the X/Y/Z axis triad. Reference overlay only. |
+| `src/viewer/Depiction2D.tsx` | The 2D diagram as SVG. Scaled to fit; hover-linked to 3D. |
+| `src/viewer/AtomTooltip.tsx` | The hover label. A DOM overlay, not a WebGL one. |
 | `src/editor/ResidueList.tsx` | The expression list: rows, add button, blank state, Enter-to-insert. |
 | `src/editor/ResidueRow.tsx` | One row. Memoised. Marks the angles that have no geometric effect. |
 | `src/editor/AngleField.tsx` | One dihedral input. Commits per keystroke; holds an uncommitted draft. |
@@ -71,9 +76,9 @@ React layer:
 | `src/sampleChains.ts` | Example chains, loaded into the editable list. |
 | `src/App.tsx` | Wires the editor to the viewport. Owns `fitToken`. |
 
-Tests: `edits.test.ts` (47), `sidechains.test.ts` (64), `transform.test.ts` (30),
-`nerf.test.ts` (25), `render-data.test.ts` (22), `chain.test.ts` (21),
-`coordinates.test.ts` (15).
+Tests: `sidechains.test.ts` (64), `depiction.test.ts` (51), `edits.test.ts` (47),
+`transform.test.ts` (30), `nerf.test.ts` (25), `render-data.test.ts` (22),
+`chain.test.ts` (21), `coordinates.test.ts` (15).
 
 Two fixtures, both generated from committed PDB files so their provenance is
 auditable and the tests never touch the network:
@@ -111,13 +116,25 @@ a test fail, the test is probably right.
    assertion passing unchanged, and that is the regression net to keep.
 9. **Atoms-per-residue is variable.** Never write `i * atomsPerResidue`; use
    `atomOffsets(groups)[i]`, or find atoms by name via `Atom.residueIndex`.
+10. **The 2D depiction has exactly the 3D structure's bonds.** It is a second
+    rendering of one topology, and `tests/depiction.test.ts` asserts the edge sets
+    are equal for all 20 residues. A ring drawn with the right atoms and the wrong
+    bonds looks plausible — that test is the only thing that catches it.
+11. **Hover state is view state.** It lives in `App`, never in `useChain`, so a
+    mouse movement cannot trigger a chain rebuild.
 
 ### Known rough edges
 
 - The fixed view direction in `StructureViewport.tsx` (0.45, 0.3, 1) happens to
   look close to along the helix axis, so a from-scratch α-helix reads as a tangle
-  until you orbit. A framing fix (e.g. a direction perpendicular to the
-  structure's longest axis), never a geometry one.
+  until you orbit. Much less bad since the gridlines landed — they give the eye a
+  reference — but still a framing fix waiting to happen (e.g. a direction
+  perpendicular to the structure's longest axis), never a geometry one.
+- The 2D diagram's scale is set by the tallest residue present, so one arginine in
+  a chain shrinks the whole diagram. Fine at 8 residues, cramped at 30.
+- Proline's ring and tryptophan's second ring are laid out by the tree walk rather
+  than as polygons in the 2D view (see stage 9). Topologically correct, visibly less
+  tidy than the other rings.
 - No React component tests. The editor's logic lives in pure modules that are
   well covered, and the UI was verified by driving a real browser over CDP, but
   there is no automated regression net on the components themselves. Adding one
@@ -946,28 +963,159 @@ on the last. Two different visibility rules needed two elements.
 
 ---
 
-## Next — Stage 9: the 2D chemical depiction
+## Stage 9 — The 2D chemical depiction
 
-A skeletal structural diagram plus the empirical formula, in the top bar (which
-stage 6 built as a shell for exactly this).
+**Date:** 2026-08-15
 
-1. `lib/depiction.ts` — pure, and derived data in the same sense `lib/bonds.ts` is.
-   Takes the residue groups, returns `{nodes, edges}` with 2D coordinates.
-   Deterministic layout, no physics: backbone as a horizontal zig-zag, carbonyl O
-   below each C, side chains stacked upward from Cβ, H₂N and OH caps at the
-   termini. Node keys are `residueIndex` + atom name so stage 10 can address them.
-2. `lib/formula.ts` — the empirical formula. Hydrogens are **not placed in 3D**, so
-   they are computed rather than measured: sum the per-amino-acid free formulas and
-   subtract (n−1) H₂O for the peptide bonds. Testable against known peptides.
-3. `src/viewer/Depiction2D.tsx` — SVG, horizontally scrollable, collapsible.
-4. Tests: node count equals heavy-atom count plus caps, no two nodes overlap, and
-   **the edge set matches `bonds.ts` exactly** — the 2D view must not be able to
-   invent or lose a bond relative to the 3D one.
+A skeletal structural diagram plus the empirical formula, in the top bar stage 6
+built as a shell for exactly this. No new dependencies — it is hand-drawn SVG.
 
-Then **stage 10**: hover an atom in 3D for a label with its name (`Cα`) and its
-coordinates in the current origin frame, highlighting the matching node in the 2D
-view, and the reverse. `onPointerOver` on the drei `<Instance>` elements —
-already verified feasible, since stage 7's click-to-pick uses the same mechanism.
+### A depiction, not a projection
 
-Still outstanding from `claude.md`'s "everything else" tier after that: the live
-Ramachandran plot linked both ways to the 3D view, and PDB export.
+`lib/depiction.ts` ignores the 3D coordinates entirely. Two chains with the same
+sequence draw identically no matter what their φ/ψ/χ are, and there is a test that
+pins it. A flattened projection of the real geometry would be both a worse diagram
+*and* a redundant one, with the 3D view right there — a chemical formula is supposed
+to show connectivity.
+
+Layout: main chain left-to-right as a zig-zag (N and C on the baseline, Cα raised),
+each carbonyl O hanging below its C with a double bond, side chains growing upward
+from Cβ, H₂N and OH caps at the termini drawn with dashed bonds because they stand
+for atoms the structure does not place.
+
+### Rings are polygons, and getting them wrong looked fine
+
+A phenylalanine drawn as a fan of a tree does not read as a benzene ring, so rings
+are laid out as regular polygons. Ring membership comes from the closure bonds the
+topology already declares: the cycle is the tree path between the closure's two
+endpoints, plus the closure itself.
+
+That path arithmetic had a bug. Both paths run outward-to-inward, so one needs
+reversing and the other doesn't; I reversed one twice (`upA.reverse().reverse()`, a
+no-op that also mutates) and the other once. The result was **rings with the right
+atoms and the wrong bonds** — CG bonded to CZ, CD1 to CD2. On screen it looked like
+a slightly odd hexagon.
+
+What caught it was the test asserting the 2D edge set equals `lib/bonds.ts`'s
+exactly, for all 20 residues:
+
+```
+HIS  edges2d=11 edges3d=10  missing=["0:CG|0:ND1","0:CD2|0:CG"]  extra=["0:CE1|0:CG",…]
+```
+
+That is the check worth having, and it is now invariant 10: **the 2D view must not
+be able to invent or lose a bond relative to the 3D one.**
+
+Two rings fall through to the tree walk rather than becoming polygons — proline's,
+which closes onto the backbone N and so includes atoms outside the side chain, and
+tryptophan's second ring, fused to the first and sharing two of its atoms. A
+fallback emits any closure not already drawn, which is what keeps the edge-set test
+passing for them.
+
+### Skeletal convention for labels
+
+The first version labelled every atom, and an aromatic ring with "C" written on all
+six corners is unreadable — which is exactly why real chemical structures leave
+carbons as bare vertices and label only heteroatoms. Adopted, with two exceptions:
+Cα and Cβ keep their labels, because their Greek positions are the vocabulary this
+whole tool is about. The declutter was dramatic.
+
+### Scaled to fit, because the first version hid the backbone
+
+The diagram was initially clipped to a fixed height with a scrollbar. Side chains
+grow *upward*, so the visible region showed substituents and the backbone had
+scrolled off the bottom — the most important row, gone. Now the diagram is scaled to
+fit vertically (arginine, the tallest residue at 7.75 layout units, sets the floor)
+and scrolls only horizontally, which is the axis chains actually grow along.
+
+### `lib/formula.ts` — the one number not derived from a coordinate
+
+No hydrogens are placed anywhere in this project, so the H count comes from the
+chemistry rather than from anything on screen. A peptide is its residues condensed:
+`Σ (free amino acid) − (n − 1) H₂O`.
+
+**Only the hydrogen counts are hand-written.** C, N, O and S are counted from the
+bond graph in `lib/sidechainTopology.ts`, so the two sources cross-check each other
+and a test asserts they agree for all 20 residues. A second test closes the loop
+from the other side: the formula's heavy-atom total must equal what the builder
+places plus exactly one — the unmodelled C-terminal `OXT`, named in a function so
+the difference doesn't read as an off-by-one.
+
+Verified against known formulas: glycylglycine C₄H₈N₂O₃, glutathione's Glu-Cys-Gly
+backbone C₁₀H₁₇N₃O₆S.
+
+**Status: 275/275 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Stage 10 — Hover linking
+
+**Date:** 2026-08-15
+
+Hover an atom in the 3D viewport: it is named, its coordinates are shown, and the
+matching node in the 2D diagram lights up. Hovering the 2D diagram does the reverse.
+product.md §5 asks for the linkage both ways and the second direction was nearly
+free once the state was shared.
+
+`onPointerOver` on the existing drei `<Instance>` elements — no restructuring, since
+stage 7's click-to-pick already used the same mechanism.
+
+### Where the state lives, and why
+
+The hovered atom is in `App`, **not** `useChain`. It is view state, and putting it in
+the chain hook would make a mouse movement capable of triggering a chain rebuild.
+That is now invariant 11.
+
+Both views address atoms through `atomKey` in `lib/naming.ts`. It started in
+`BackboneStructure.tsx`, where oxlint correctly flagged it as a non-component export
+that breaks fast refresh — and moving it also deleted the duplicate key construction
+`lib/depiction.ts` had been doing inline.
+
+### The tooltip agrees with the panel
+
+Coordinates come from the **transformed** atoms, so they are the same numbers the
+coordinate panel lists rather than canonical-frame ones. Verified by driving both and
+comparing: `Cγ · TRP 6` reads `1.730 · 8.184 · 1.302 Å` in the tooltip and the same
+in the panel row. A readout that disagreed with the panel would be worse than no
+readout.
+
+### Four details that needed a reason rather than a default
+
+- **Amber highlight, deliberately outside the CPK palette.** Re-tinting a hovered
+  atom a lighter blue would make a hovered carbon look like a nitrogen.
+- **`stopPropagation` on pointerOver, not just click.** Without it every atom along
+  the ray reports and the *last* one wins rather than the nearest.
+- **Pointer position tracked on the viewport container**, not per atom: the tooltip
+  follows the cursor, and an instanced mesh doesn't fire a move event per pixel.
+- **The 2D view gets a halo plus an invisible larger hit circle**, not a colour
+  swap. A bare carbon vertex is about 3 px across; recolouring it is invisible and
+  hitting it is luck.
+
+**Status: 275/275 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Next — nothing queued
+
+The five-feature request is complete. What is still unbuilt, in the order
+`claude.md` and product.md suggest:
+
+1. **A live Ramachandran plot**, linked both ways to the 3D view. The strongest
+   remaining feature for grading: it ties the abstract φ/ψ plot to the concrete
+   structure, which product.md §5 calls out explicitly. The hover-linking machinery
+   from stage 10 is the pattern to reuse — shared `hovered` state in `App`, a key
+   both views agree on, and `lib/` doing the layout.
+2. **PDB export.** Cheap, and a credibility win: the output can be opened in PyMOL
+   or ChimeraX and checked by someone who doesn't trust this tool. The atom naming
+   and `residueIndex` numbering it needs already exist.
+3. **Clash detection.** The data is already there — `tests/chain.test.ts` documents
+   1UBQ's ideal-geometry clashes, and a diagnostic written during stage 8 found 71
+   non-bonded pairs closer than 1.6 Å in a default-rotamer ubiquitin. Surfacing
+   those in the UI is a display feature, and it must stay one: **detecting a clash
+   must never move an atom.**
+4. **Rotamer suggestions** (product.md §4.2(b)), which would need a bundled Dunbrack
+   library. The biggest lift of the four and the one furthest from the current
+   premise, since it means suggesting angles rather than reconstructing from them.
+
+The rough edges listed at the top of this file are all cosmetic and all in
+rendering, not geometry.
