@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
 import {
-  ATOMS_PER_RESIDUE,
-  buildBackbone,
+  atomOffsets,
+  BACKBONE_ATOM_COUNT,
+  buildAtoms,
+  buildChain,
   canonicalSeedFrame,
   firstChangedIndex,
-  rebuildFrom,
+  flattenAtoms,
+  rebuildChainFrom,
 } from '../lib/chain.ts'
 import { BOND_ANGLE, BOND_LENGTH } from '../lib/constants.ts'
 import {
@@ -56,9 +59,16 @@ const ubiquitin: Residue[] = fixture.residues.map((r) => ({
 
 const positionsOf = (atoms: readonly Atom[]): Vec3[] => atoms.map((atom) => atom.position)
 
+/**
+ * A residue's four backbone atoms, found by name.
+ *
+ * By name rather than by a fixed stride: residues contribute different numbers of
+ * atoms once side chains exist, so `i * atomsPerResidue` is not a valid address.
+ */
 const atomsOfResidue = (atoms: readonly Atom[], i: number): [Vec3, Vec3, Vec3, Vec3] => {
-  const [n, ca, c, o] = atoms.slice(i * ATOMS_PER_RESIDUE, (i + 1) * ATOMS_PER_RESIDUE)
-  return [n!.position, ca!.position, c!.position, o!.position]
+  const own = atoms.filter((atom) => atom.residueIndex === i)
+  const at = (name: string) => own.find((atom) => atom.name === name)!.position
+  return [at('N'), at('CA'), at('C'), at('O')]
 }
 
 // --- Rigid alignment, for comparing against deposited coordinates -----------
@@ -108,16 +118,16 @@ function deviationStats(actual: readonly Vec3[], expected: readonly Vec3[]) {
 
 // ---------------------------------------------------------------------------
 
-describe('buildBackbone — degenerate and single-residue cases', () => {
+describe('buildAtoms — degenerate and single-residue cases', () => {
   it('returns nothing for an empty chain (the blank-canvas state)', () => {
-    expect(buildBackbone([])).toEqual([])
+    expect(buildAtoms([])).toEqual([])
   })
 
   it('seeds residue 1 in the canonical frame', () => {
-    const atoms = buildBackbone([residue(1, -57, -47)])
+    const atoms = buildAtoms([residue(1, -57, -47)])
     const [seedN, seedCA, seedC] = canonicalSeedFrame()
 
-    expect(atoms).toHaveLength(ATOMS_PER_RESIDUE)
+    expect(atoms).toHaveLength(BACKBONE_ATOM_COUNT)
     expect(atoms.map((a) => a.name)).toEqual(['N', 'CA', 'C', 'O'])
     expect(atoms.map((a) => a.element)).toEqual(['N', 'C', 'C', 'O'])
     expect(atoms[0]!.position).toEqual(seedN)
@@ -126,31 +136,31 @@ describe('buildBackbone — degenerate and single-residue cases', () => {
   })
 
   it('ignores φ of the first residue, which has no preceding C to rotate about', () => {
-    const a = buildBackbone([residue(1, -57, -47)])
-    const b = buildBackbone([residue(1, 122, -47)])
+    const a = buildAtoms([residue(1, -57, -47)])
+    const b = buildAtoms([residue(1, 122, -47)])
     expect(positionsOf(a)).toEqual(positionsOf(b))
   })
 
   it('still uses ψ of the first residue to orient its carbonyl O', () => {
-    const a = buildBackbone([residue(1, -57, -47)])
-    const b = buildBackbone([residue(1, -57, 135)])
+    const a = buildAtoms([residue(1, -57, -47)])
+    const b = buildAtoms([residue(1, -57, 135)])
     expect(distance(a[3]!.position, b[3]!.position)).toBeGreaterThan(0.5)
   })
 
   it('carries residue identity onto every derived atom', () => {
-    const atoms = buildBackbone([residue(1, -57, -47), { ...residue(2, -57, -47), aminoAcid: 'GLY' }])
+    const atoms = buildAtoms([residue(1, -57, -47), { ...residue(2, -57, -47), aminoAcid: 'GLY' }])
     expect(atoms.map((a) => a.residueIndex)).toEqual([0, 0, 0, 0, 1, 1, 1, 1])
     expect(atoms.map((a) => a.residueId)).toEqual(['r1', 'r1', 'r1', 'r1', 'r2', 'r2', 'r2', 'r2'])
     expect(new Set(atoms.slice(4).map((a) => a.aminoAcid))).toEqual(new Set(['GLY']))
   })
 })
 
-describe('buildBackbone — full 1UBQ backbone', () => {
-  const atoms = buildBackbone(ubiquitin)
+describe('buildAtoms — full 1UBQ backbone', () => {
+  const atoms = buildAtoms(ubiquitin)
 
   it('produces four atoms per residue in N, CA, C, O order', () => {
     expect(atoms).toHaveLength(fixture.atoms.length)
-    expect(atoms).toHaveLength(76 * ATOMS_PER_RESIDUE)
+    expect(atoms).toHaveLength(76 * BACKBONE_ATOM_COUNT)
     for (const [i, atom] of atoms.entries()) {
       expect(atom.name).toBe(fixture.atoms[i]!.name)
       expect(atom.residueIndex).toBe(fixture.atoms[i]!.residueIndex)
@@ -228,7 +238,7 @@ describe('buildBackbone — full 1UBQ backbone', () => {
 
     // Sequence-local packing must be physically sane: nothing within a
     // 10-residue window may collide.
-    const WINDOW = 10 * ATOMS_PER_RESIDUE
+    const WINDOW = 10 * BACKBONE_ATOM_COUNT
     let closestLocal = Infinity
     for (let i = 0; i < positions.length; i++) {
       for (let j = i + 3; j < Math.min(positions.length, i + WINDOW); j++) {
@@ -257,35 +267,44 @@ describe('buildBackbone — full 1UBQ backbone', () => {
   })
 })
 
-describe('rebuildFrom — suffix-only recomputation', () => {
+describe('rebuildChainFrom — suffix-only recomputation', () => {
   const residues = ubiquitin.slice(0, 20)
-  const full = buildBackbone(residues)
+  const fullGroups = buildChain(residues)
+  const full = flattenAtoms(fullGroups)
+  const rebuiltFrom = (list: readonly Residue[], fromIndex: number): Atom[] =>
+    flattenAtoms(rebuildChainFrom(fullGroups, list, fromIndex))
 
   it('gives bit-identical results to a full rebuild, from any index', () => {
     for (let i = 0; i <= residues.length; i++) {
-      expect(positionsOf(rebuildFrom(full, residues, i))).toEqual(positionsOf(full))
+      expect(positionsOf(rebuiltFrom(residues, i))).toEqual(positionsOf(full))
     }
   })
 
   it('reuses the untouched prefix atoms by reference', () => {
     const fromIndex = 7
-    const rebuilt = rebuildFrom(full, residues, fromIndex)
-    for (let i = 0; i < fromIndex * ATOMS_PER_RESIDUE; i++) {
+    const rebuiltGroups = rebuildChainFrom(fullGroups, residues, fromIndex)
+    const rebuilt = flattenAtoms(rebuiltGroups)
+    const boundary = atomOffsets(fullGroups)[fromIndex]!
+    for (let i = 0; i < boundary; i++) {
       // Identity, not equality: nothing before the edit was recomputed.
       expect(rebuilt[i]).toBe(full[i])
     }
-    expect(rebuilt[fromIndex * ATOMS_PER_RESIDUE]).not.toBe(full[fromIndex * ATOMS_PER_RESIDUE])
+    expect(rebuilt[boundary]).not.toBe(full[boundary])
+    // The whole residue group is reused, not just its atoms one by one.
+    for (let i = 0; i < fromIndex; i++) expect(rebuiltGroups[i]).toBe(fullGroups[i])
+    expect(rebuiltGroups[fromIndex]).not.toBe(fullGroups[fromIndex])
   })
 
   it('leaves the prefix in place and moves the suffix when an angle changes', () => {
     const editIndex = 9
     const edited = residues.map((r, i) => (i === editIndex ? { ...r, psi: r.psi + 40 } : r))
-    const rebuilt = rebuildFrom(full, edited, editIndex)
+    const rebuilt = rebuiltFrom(edited, editIndex)
 
     expect(rebuilt).toHaveLength(full.length)
     // ψ(i) places residue i+1, so residue i's own N/CA/C are unmoved; only its
-    // O (which ψ also orients) and everything downstream shift.
-    for (let i = 0; i < editIndex * ATOMS_PER_RESIDUE + 3; i++) {
+    // O (which ψ also orients) and everything downstream shift. N/CA/C are the
+    // first three atoms of the residue, hence the +3.
+    for (let i = 0; i < atomOffsets(fullGroups)[editIndex]! + 3; i++) {
       expect(rebuilt[i]!.position).toEqual(full[i]!.position)
     }
     const moved = rebuilt.filter((atom, i) => distance(atom.position, full[i]!.position) > 1e-9)
@@ -293,13 +312,13 @@ describe('rebuildFrom — suffix-only recomputation', () => {
     expect(Math.min(...moved.map((a) => a.residueIndex))).toBe(editIndex)
 
     // And the suffix-only path agrees with rebuilding everything.
-    expect(positionsOf(rebuilt)).toEqual(positionsOf(buildBackbone(edited)))
+    expect(positionsOf(rebuilt)).toEqual(positionsOf(buildAtoms(edited)))
   })
 
   it('φ(i) moves residue i itself, not just its successors', () => {
     const editIndex = 5
     const edited = residues.map((r, i) => (i === editIndex ? { ...r, phi: r.phi + 30 } : r))
-    const rebuilt = rebuildFrom(full, edited, editIndex)
+    const rebuilt = rebuiltFrom(edited, editIndex)
     const [n, ca, c] = atomsOfResidue(rebuilt, editIndex)
     const [fullN, fullCA, fullC] = atomsOfResidue(full, editIndex)
 
@@ -345,18 +364,18 @@ describe('rebuildFrom — suffix-only recomputation', () => {
     for (const { label, next, from } of cases) {
       expect(firstChangedIndex(residues, next), `${label}: detected edit index`).toBe(from)
       expect(
-        positionsOf(rebuildFrom(full, next, from)),
+        positionsOf(rebuiltFrom(next, from)),
         `${label}: suffix rebuild matches full rebuild`,
-      ).toEqual(positionsOf(buildBackbone(next)))
+      ).toEqual(positionsOf(buildAtoms(next)))
     }
   })
 
   it('is safe when asked to rebuild from further back than it needs to', () => {
     // Over-invalidating must be correct, just wasteful — callers can always
     // pass 0 and get the right answer.
-    expect(positionsOf(rebuildFrom(full, residues, 0))).toEqual(positionsOf(full))
-    expect(positionsOf(rebuildFrom([], residues, 12))).toEqual(positionsOf(full))
-    expect(() => rebuildFrom(full, residues, -1)).toThrow(/non-negative/)
+    expect(positionsOf(rebuiltFrom(residues, 0))).toEqual(positionsOf(full))
+    expect(positionsOf(flattenAtoms(rebuildChainFrom([], residues, 12)))).toEqual(positionsOf(full))
+    expect(() => rebuildChainFrom(fullGroups, residues, -1)).toThrow(/non-negative/)
   })
 })
 

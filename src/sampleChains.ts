@@ -3,7 +3,7 @@
  *
  * These began as step 4 scaffolding for checking the render pipeline — if the
  * α-helix doesn't look right-handed on screen, something between
- * `buildBackbone` and the canvas is wrong — and they keep earning their place
+ * `buildChain` and the canvas is wrong — and they keep earning their place
  * for the same reason at every later step.
  *
  * They are examples, not presets: loading one drops its residues into the

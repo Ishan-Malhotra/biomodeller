@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildBackbone, firstChangedIndex } from '../lib/chain.ts'
+import { buildAtoms, firstChangedIndex } from '../lib/chain.ts'
 import { bondAngle, dihedral, distance, normalizeDegrees, vec3, type Vec3 } from '../lib/nerf.ts'
 import {
   applyToAtoms,
@@ -41,7 +41,7 @@ const ubiquitin: Residue[] = fixture.residues.map((r) => ({
   omega: r.omega ?? 180,
 }))
 
-const atoms = buildBackbone(ubiquitin)
+const atoms = buildAtoms(ubiquitin)
 
 /** A rotation and translation with nothing special about them. */
 const arbitrary: RigidTransform = {
@@ -192,7 +192,7 @@ describe('the transform cannot change the reconstruction', () => {
       psi: -47,
       omega: 180,
     }))
-    const built = buildBackbone(helix)
+    const built = buildAtoms(helix)
     const moved = applyToAtoms(arbitrary, built)
     const signOf = (list: readonly { position: Vec3 }[]) =>
       Math.sign(

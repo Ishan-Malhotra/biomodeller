@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildBackbone } from '../lib/chain.ts'
+import { buildAtoms } from '../lib/chain.ts'
 import { coordinateRows, formatCoordinate } from '../lib/coordinates.ts'
 import { atomDisplayName, atomLabel } from '../lib/naming.ts'
 import { vec3 } from '../lib/nerf.ts'
@@ -19,7 +19,7 @@ const residues: Residue[] = [
   { id: 'a', aminoAcid: 'ALA', phi: -57, psi: -47, omega: 180 },
   { id: 'b', aminoAcid: 'GLY', phi: -57, psi: -47, omega: 180 },
 ]
-const atoms = buildBackbone(residues)
+const atoms = buildAtoms(residues)
 
 describe('atomDisplayName', () => {
   it('renders Greek positions', () => {

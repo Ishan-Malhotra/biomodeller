@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildBackbone, firstChangedIndex, rebuildFrom, ATOMS_PER_RESIDUE } from '../lib/chain.ts'
+import {
+  atomOffsets,
+  buildAtoms,
+  buildChain,
+  firstChangedIndex,
+  flattenAtoms,
+  rebuildChainFrom,
+} from '../lib/chain.ts'
 import { OMEGA_TRANS } from '../lib/constants.ts'
 import {
   appendResidue,
@@ -23,8 +30,8 @@ import fixture from './fixtures/1ubq-backbone.json' with { type: 'json' }
  *
  * The operations themselves are small enough to be obvious, so the weight of
  * this file is on the property that actually matters for correctness of the app:
- * for every edit, `rebuildFrom` at the index `firstChangedIndex` reports must
- * produce byte-identical geometry to `buildBackbone` from scratch. That is the
+ * for every edit, `rebuildChainFrom` at the index `firstChangedIndex` reports must
+ * produce byte-identical geometry to `buildAtoms` from scratch. That is the
  * optimisation claude.md asks for, and it is exactly the kind of thing that can
  * be silently wrong — a too-high index yields a structure that is subtly stale
  * rather than one that visibly breaks.
@@ -57,10 +64,12 @@ function expectIncrementalMatchesFullRebuild(
   after: readonly Residue[],
   expectedReusedResidues: number,
 ): void {
-  const previousAtoms = buildBackbone(before)
+  const previousGroups = buildChain(before)
+  const previousAtoms = flattenAtoms(previousGroups)
   const fromIndex = firstChangedIndex(before, after)
-  const incremental = rebuildFrom(previousAtoms, after, fromIndex)
-  const fromScratch = buildBackbone(after)
+  const incrementalGroups = rebuildChainFrom(previousGroups, after, fromIndex)
+  const incremental = flattenAtoms(incrementalGroups)
+  const fromScratch = buildAtoms(after)
 
   expect(incremental).toHaveLength(fromScratch.length)
   incremental.forEach((atom, i) => {
@@ -73,9 +82,16 @@ function expectIncrementalMatchesFullRebuild(
   })
 
   expect(fromIndex).toBe(expectedReusedResidues)
+
   // The reused prefix must be the *same objects*, not equal copies — downstream
-  // memoisation relies on reference identity to skip work.
-  for (let i = 0; i < expectedReusedResidues * ATOMS_PER_RESIDUE; i++) {
+  // memoisation relies on reference identity to skip work. Assert it at both
+  // levels: whole residue groups, and therefore every atom inside them.
+  const reusedGroups = Math.min(expectedReusedResidues, previousGroups.length)
+  for (let i = 0; i < reusedGroups; i++) {
+    expect(incrementalGroups[i]).toBe(previousGroups[i])
+  }
+  const reusedAtoms = atomOffsets(previousGroups)[reusedGroups]!
+  for (let i = 0; i < reusedAtoms; i++) {
     expect(incremental[i]).toBe(previousAtoms[i])
   }
 }
@@ -108,7 +124,7 @@ describe('wrapDegrees', () => {
   it('preserves the conformation it wraps', () => {
     // 200° and −160° are the same dihedral, so they must build the same atom.
     const at = (omega: number) =>
-      buildBackbone([
+      buildAtoms([
         { id: 'a', aminoAcid: 'ALA', phi: -57, psi: -47, omega },
         { id: 'b', aminoAcid: 'ALA', phi: -57, psi: -47, omega: 180 },
       ])
@@ -303,8 +319,8 @@ describe('incremental rebuild matches a full rebuild', () => {
     // derived by NeRF — nothing can be reused, and the whole chain must move.
     const after = insertResidue(ubiquitin, 0, newResidue(ubiquitin))
     expectIncrementalMatchesFullRebuild(ubiquitin, after, 0)
-    const before = buildBackbone(ubiquitin)
-    const rebuilt = buildBackbone(after)
+    const before = buildAtoms(ubiquitin)
+    const rebuilt = buildAtoms(after)
     expect(distance(rebuilt[4]!.position, before[0]!.position)).toBeGreaterThan(0.1)
   })
 
@@ -337,8 +353,8 @@ describe('incremental rebuild matches a full rebuild', () => {
     const after = updateResidue(ubiquitin, 15, { aminoAcid: 'TRP' })
     expectIncrementalMatchesFullRebuild(ubiquitin, after, 15)
     // Identity does not affect backbone geometry — only the labels change.
-    const before = buildBackbone(ubiquitin)
-    buildBackbone(after).forEach((atom, i) => {
+    const before = buildAtoms(ubiquitin)
+    buildAtoms(after).forEach((atom, i) => {
       expect(atom.position).toEqual(before[i]!.position)
     })
   })
@@ -355,17 +371,17 @@ describe('incremental rebuild matches a full rebuild', () => {
     // The blank-canvas flow: every append must leave the existing structure
     // exactly where it was, or the viewport would jitter as the user types.
     let residues: Residue[] = []
-    let atoms = buildBackbone(residues)
+    let groups = buildChain(residues)
     for (let i = 0; i < 12; i++) {
       const next = appendResidue(residues, { phi: -57, psi: -47 })
       const fromIndex = firstChangedIndex(residues, next)
       expect(fromIndex).toBe(residues.length)
-      const grown = rebuildFrom(atoms, next, fromIndex)
+      const grown = rebuildChainFrom(groups, next, fromIndex)
       // Every previously placed atom is still the same object in the same place.
-      atoms.forEach((atom, j) => expect(grown[j]).toBe(atom))
-      expect(grown).toEqual(buildBackbone(next))
+      flattenAtoms(groups).forEach((atom, j) => expect(flattenAtoms(grown)[j]).toBe(atom))
+      expect(flattenAtoms(grown)).toEqual(buildAtoms(next))
       residues = next
-      atoms = grown
+      groups = grown
     }
   })
 
@@ -378,7 +394,7 @@ describe('incremental rebuild matches a full rebuild', () => {
       return seed / 2147483648
     }
     let residues: Residue[] = [...short]
-    let atoms = buildBackbone(residues)
+    let groups = buildChain(residues)
 
     for (let step = 0; step < 200; step++) {
       const pick = Math.floor(random() * 5)
@@ -397,9 +413,9 @@ describe('incremental rebuild matches a full rebuild', () => {
       }
 
       const fromIndex = firstChangedIndex(residues, next)
-      atoms = rebuildFrom(atoms, next, fromIndex)
+      groups = rebuildChainFrom(groups, next, fromIndex)
       residues = next
-      expect(atoms).toEqual(buildBackbone(residues))
+      expect(flattenAtoms(groups)).toEqual(buildAtoms(residues))
     }
     expect(residues.length).toBeGreaterThan(0)
   })
