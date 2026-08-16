@@ -821,3 +821,108 @@
   color: var(--muted);
   pointer-events: none;
 }
+
+/* ---- feedback dialog (top bar) ---- */
+
+.feedback-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 40%);
+}
+
+.feedback-dialog {
+  position: relative;
+  width: min(90vw, 360px);
+  padding: 1.25rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+}
+
+.feedback-dialog h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.feedback-subtitle {
+  margin: 0.3rem 0 0.9rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.feedback-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: 0.35rem;
+}
+
+.feedback-close:hover {
+  color: var(--accent);
+}
+
+.feedback-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+  font-size: 0.82rem;
+  color: inherit;
+  resize: vertical;
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+}
+
+.feedback-textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.feedback-submit {
+  width: 100%;
+  padding: 0.45rem;
+  margin-top: 0.6rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+}
+
+.feedback-submit:hover {
+  border-color: var(--accent);
+}
+
+.feedback-submit:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.feedback-status {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.feedback-status.error {
+  color: var(--danger);
+}

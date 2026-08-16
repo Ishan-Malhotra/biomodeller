@@ -10,8 +10,8 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 13 — fixed the top-bar jump when 2D is toggled off;
-moved Examples into a top-bar dropdown.
+**Last completed:** Stage 14 — a feedback/message button in the top bar,
+opening a small centered dialog that posts to Formspree.
 **Next:** nothing queued. Candidates at the bottom of this file. A hydrogen toggle
 (2D + formula + 3D) was requested and explicitly deferred as its own phase.
 
@@ -62,6 +62,7 @@ React layer:
 | --- | --- |
 | `src/theme.ts` | `useTheme` — light/dark resolution, persistence, and the `data-theme` attribute. |
 | `src/TopBar.tsx` | Title strip and the lightbulb toggle. Stage 9 fills the middle with the 2D view. |
+| `src/FeedbackDialog.tsx` | The message button and its centered dialog. Self-contained; owns its own open state and submit call. |
 | `src/useChain.ts` | The chain state. Holds `residues`; derives canonical `atoms` incrementally. |
 | `src/useOrigin.ts` | The origin frame. Consumes `useChain`'s atoms and moves them rigidly. |
 | `src/editor/NumberField.tsx` | The draft/commit numeric input. `AngleField` is a wrapper over it. |
@@ -1209,6 +1210,44 @@ a single `onSelectExample` callback to `TopBar`; `EXAMPLE_CHAINS` and its
 rendering live only in `ExamplesMenu.tsx`.
 
 **Status: 275/275 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Stage 14 — A feedback button in the top bar
+
+**Date:** 2026-08-17
+
+Not part of `claude.md`'s build order — a small, self-contained addition so
+anyone using the tool can send feedback or report a bug. UI-only: no `lib/`
+changes, no new state in `useChain`/`useOrigin`, no new tests (nothing here is
+geometry).
+
+`src/FeedbackDialog.tsx` sits in the top bar's button cluster, right after the
+theme toggle, styled the same way (`.theme-toggle`, an inline SVG icon). It
+owns its own open state and submit logic, so `TopBar` and `App` don't need new
+props for it. Clicking it opens a centered `position: fixed` backdrop + panel —
+the first true modal in the app; everything before this (`ExamplesMenu`) was an
+anchored dropdown, not a centered dialog, so this is a new small pattern rather
+than a reuse, though it borrows the same Escape-to-close convention and the
+same CSS tokens (`--panel`, `--line`, `--accent`, `--field`, `--danger`) as
+everything else.
+
+**No backend to lean on.** This is a static Vite app with no `/api` route and
+no mail service anywhere in the codebase, so the form POSTs directly to a
+Formspree endpoint (`https://formspree.io/f/mvkpwogp`, created by hand, not
+generated here) via `fetch`, which relays the message to email. The endpoint
+is a plain string constant — Formspree endpoints are meant to be called
+client-side, so there's no secret to hide and no env-var indirection needed.
+
+Verified with a real headless-browser run against the dev server (Playwright,
+since `chromium-cli` wasn't available in this environment): the dialog opens
+centered with the correct subtitle and placeholder text, Escape and a
+backdrop click both close it, and a real submitted message returned a
+successful Formspree response and flipped the UI to "Sent — thanks!" — the
+full path, not just that the button renders. Checked in both themes; the
+token-based styling needed no theme-specific overrides.
+
+**Status: 275/275 tests pass (unchanged), `tsc -b` and `oxlint` clean.**
 
 ---
 

@@ -10,6 +10,7 @@ import { useState } from 'react'
 
 import type { Residue } from '../lib/types.ts'
 import { ExamplesMenu } from './ExamplesMenu.tsx'
+import { FeedbackDialog } from './FeedbackDialog.tsx'
 import type { ExampleChain } from './sampleChains.ts'
 import type { Theme } from './theme.ts'
 import { Depiction2D } from './viewer/Depiction2D.tsx'
@@ -114,6 +115,8 @@ export function TopBar({
       >
         <LightbulbIcon lit={lit} />
       </button>
+
+      <FeedbackDialog />
     </header>
   )
 }
