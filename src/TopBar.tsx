@@ -9,6 +9,8 @@
 import { useState } from 'react'
 
 import type { Residue } from '../lib/types.ts'
+import { ExamplesMenu } from './ExamplesMenu.tsx'
+import type { ExampleChain } from './sampleChains.ts'
 import type { Theme } from './theme.ts'
 import { Depiction2D } from './viewer/Depiction2D.tsx'
 
@@ -52,12 +54,14 @@ export function TopBar({
   residues,
   highlightKey,
   onHoverAtom,
+  onSelectExample,
 }: {
   theme: Theme
   onToggleTheme: () => void
   residues: readonly Residue[]
   highlightKey?: string | null | undefined
   onHoverAtom?: ((atom: { residueIndex: number; atomName: string } | null) => void) | undefined
+  onSelectExample: (example: ExampleChain) => void
 }) {
   const lit = theme === 'light'
   // Collapsible, because a long chain's diagram is tall and the 3D view is the
@@ -71,16 +75,22 @@ export function TopBar({
         <p>Protein Structure Builder</p>
       </div>
 
-      {open && (
-        <div className="topbar-depiction">
+      {/* Always mounted, even when collapsed: this is the `flex: 1` spacer that
+          keeps the title pinned left and the two buttons pinned right. Removing
+          the div itself (rather than just its contents) collapsed the row and
+          made both buttons jump left whenever the 2D view was toggled off. */}
+      <div className="topbar-depiction">
+        {open && (
           <Depiction2D
             residues={residues}
             theme={theme}
             highlightKey={highlightKey}
             onHoverAtom={onHoverAtom}
           />
-        </div>
-      )}
+        )}
+      </div>
+
+      <ExamplesMenu onSelect={onSelectExample} />
 
       <button
         type="button"

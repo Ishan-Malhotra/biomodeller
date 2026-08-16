@@ -490,16 +490,34 @@
   border-color: var(--accent);
 }
 
-/* ---- examples ---- */
+/* ---- examples menu (top bar) ---- */
 
-.examples {
+/* Anchors the dropdown; the toggle button inside it is a plain flex child. */
+.examples-menu {
+  position: relative;
+  flex: none;
+}
+
+.examples-dropdown {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  width: 20rem;
+  max-height: 26rem;
+  padding: 0.6rem;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 15%);
 }
 
 .examples-hint {
-  margin: 0.15rem 0 0.25rem;
+  margin: 0 0 0.1rem;
 }
 
 .example {

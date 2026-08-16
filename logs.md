@@ -10,8 +10,8 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 12 — sidebar order, coordinates-on-by-default, a
-bordered 2D box, rebrand to "Biomodeller".
+**Last completed:** Stage 13 — fixed the top-bar jump when 2D is toggled off;
+moved Examples into a top-bar dropdown.
 **Next:** nothing queued. Candidates at the bottom of this file. A hydrogen toggle
 (2D + formula + 3D) was requested and explicitly deferred as its own phase.
 
@@ -1175,6 +1175,38 @@ test needed updating.
 - **Rebrand:** the `<h1>` is now "Biomodeller" and the subtitle "Protein Structure
   Builder" — swapped from the old title/tagline pair, which described the NeRF
   math rather than naming the tool.
+
+**Status: 275/275 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Stage 13 — Fix the top-bar jump; move Examples into a dropdown
+
+**Date:** 2026-08-16
+
+Two more presentation fixes.
+
+**The jump.** Toggling the 2D view off unmounted `.topbar-depiction` — the
+`flex: 1` spacer between the title and the 2D/theme buttons — entirely, so the
+row collapsed and both buttons slid left to sit right after the title. The
+spacer div is now always mounted; only its contents (the `Depiction2D`
+component) are conditional. Verified directly: button `left` offsets are
+identical (1215 / 1302 / 1352px) with the 2D view open and closed.
+
+**Examples moved to the top bar.** `src/ExamplesMenu.tsx` is a small dropdown —
+a `.depiction-toggle`-styled button plus an absolutely-positioned panel reusing
+the existing `.example`/`.example-name`/`.example-detail` styles — sitting
+between the depiction spacer and the 2D toggle, so all three view-level controls
+(Examples, 2D, theme) group together on the right. It closes on outside
+pointerdown or Escape, the standard dropdown contract; verified with a real CDP
+pointer event (a synthetic `.click()` doesn't dispatch `pointerdown` and gave a
+false negative during testing).
+
+The sidebar's Examples section is gone entirely — loading an example is a
+once-at-the-start action, not something referenced while editing, so it no
+longer competes with the residue list for vertical space. `App.tsx` now passes
+a single `onSelectExample` callback to `TopBar`; `EXAMPLE_CHAINS` and its
+rendering live only in `ExamplesMenu.tsx`.
 
 **Status: 275/275 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
 

@@ -32,7 +32,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { atomKey } from '../lib/naming.ts'
 import './App.css'
-import { EXAMPLE_CHAINS } from './sampleChains.ts'
+import type { ExampleChain } from './sampleChains.ts'
 import { TopBar } from './TopBar.tsx'
 import { useTheme } from './theme.ts'
 import { useChain } from './useChain.ts'
@@ -64,6 +64,11 @@ function App() {
     setPickArmed(false)
   }
 
+  const selectExample = (example: ExampleChain) => {
+    editor.replaceAll(example.residues)
+    fit()
+  }
+
   const highlightKey = hovered ? atomKey(hovered.residueIndex, hovered.atomName) : null
   // Resolved against the transformed atoms, so the tooltip's coordinates are the
   // ones the coordinate panel shows rather than the canonical ones.
@@ -92,6 +97,7 @@ function App() {
         residues={residues}
         highlightKey={highlightKey}
         onHoverAtom={setHovered}
+        onSelectExample={selectExample}
       />
 
       <aside className="panel">
@@ -126,28 +132,6 @@ function App() {
             Fit view
           </button>
           <p className="hint">Drag to orbit · scroll to zoom · right-drag to pan</p>
-        </section>
-
-        <section className="examples">
-          <h2>Examples</h2>
-          <p className="hint examples-hint">
-            Loads into the list above, where every angle stays editable.
-          </p>
-          {EXAMPLE_CHAINS.map((example) => (
-            <button
-              type="button"
-              key={example.name}
-              className="example"
-              title={example.description}
-              onClick={() => {
-                editor.replaceAll(example.residues)
-                fit()
-              }}
-            >
-              <span className="example-name">{example.name}</span>
-              <span className="example-detail">{example.description}</span>
-            </button>
-          ))}
         </section>
       </aside>
 
