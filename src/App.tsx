@@ -104,28 +104,6 @@ function App() {
           onArmPick={setPickArmed}
         />
 
-        <section className="examples">
-          <h2>Examples</h2>
-          <p className="hint examples-hint">
-            Loads into the list above, where every angle stays editable.
-          </p>
-          {EXAMPLE_CHAINS.map((example) => (
-            <button
-              type="button"
-              key={example.name}
-              className="example"
-              title={example.description}
-              onClick={() => {
-                editor.replaceAll(example.residues)
-                fit()
-              }}
-            >
-              <span className="example-name">{example.name}</span>
-              <span className="example-detail">{example.description}</span>
-            </button>
-          ))}
-        </section>
-
         <section className="readout">
           <h2>Derived</h2>
           <dl>
@@ -148,6 +126,28 @@ function App() {
             Fit view
           </button>
           <p className="hint">Drag to orbit · scroll to zoom · right-drag to pan</p>
+        </section>
+
+        <section className="examples">
+          <h2>Examples</h2>
+          <p className="hint examples-hint">
+            Loads into the list above, where every angle stays editable.
+          </p>
+          {EXAMPLE_CHAINS.map((example) => (
+            <button
+              type="button"
+              key={example.name}
+              className="example"
+              title={example.description}
+              onClick={() => {
+                editor.replaceAll(example.residues)
+                fit()
+              }}
+            >
+              <span className="example-name">{example.name}</span>
+              <span className="example-detail">{example.description}</span>
+            </button>
+          ))}
         </section>
       </aside>
 

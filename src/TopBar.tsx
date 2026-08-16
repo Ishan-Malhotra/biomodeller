@@ -67,8 +67,8 @@ export function TopBar({
   return (
     <header className={open ? 'topbar open' : 'topbar'}>
       <div className="topbar-title">
-        <h1>Protein Structure Builder</h1>
-        <p>Structure reconstructed from φ/ψ/ω and χ by NeRF.</p>
+        <h1>Biomodeller</h1>
+        <p>Protein Structure Builder</p>
       </div>
 
       {open && (

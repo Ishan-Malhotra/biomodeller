@@ -10,7 +10,8 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 11 — layout fixes (centered 2D depiction, sidebar reorder).
+**Last completed:** Stage 12 — sidebar order, coordinates-on-by-default, a
+bordered 2D box, rebrand to "Biomodeller".
 **Next:** nothing queued. Candidates at the bottom of this file. A hydrogen toggle
 (2D + formula + 3D) was requested and explicitly deferred as its own phase.
 
@@ -1143,6 +1144,37 @@ its own phase, not now." Scoped for whenever that phase starts:
   `tests/depiction.test.ts`'s node-count and edge-parity tests assert exact 1:1
   correspondence with `buildAtoms()`'s heavy-atom output, so H nodes must not be
   `isRealAtom: true` or those tests break.
+
+**Status: 275/275 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Stage 12 — Sidebar order, coordinates-on-by-default, a bordered 2D box, rebrand
+
+**Date:** 2026-08-16
+
+Four small UI fixes. No logic changes — every file touched is presentation, so no
+test needed updating.
+
+- **`DEFAULT_ORIGIN.enabled` is now `true`.** The coordinate table and the gridlines
+  are informative enough on their own that they shouldn't need a click to discover;
+  turning the panel off still returns to the exact canonical NeRF frame, so this
+  only moves the toggle's starting value, not its behaviour.
+- **Sidebar reordered again:** `Residues → Coordinates → Derived (+ Fit view) →
+  Examples`. Derived was pulled up above Examples, matching the move Coordinates
+  made in stage 11.
+- **The 2D depiction sits inside a bordered box** (`.depiction` gained `border`,
+  `background`, `padding`, and `max-height: 13rem; overflow: auto`), and the
+  formula/tally line is now centered (`.depiction-head { justify-content: center
+  }`) rather than left-aligned. The box is a hard boundary rather than a soft
+  target: ordinary chains never fill 13rem, but a pathological case scrolls inside
+  the box instead of growing the top bar. Verified with the 40-residue tryptophan
+  case from stage 11 — box height holds at 203px against a 208px cap, while the
+  diagram itself still overflows and scrolls horizontally underneath it
+  (`scrollWidth: 2278` in a `clientWidth: 1093` viewport).
+- **Rebrand:** the `<h1>` is now "Biomodeller" and the subtitle "Protein Structure
+  Builder" — swapped from the old title/tagline pair, which described the NeRF
+  math rather than naming the tool.
 
 **Status: 275/275 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
 

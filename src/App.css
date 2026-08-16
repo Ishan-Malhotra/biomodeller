@@ -68,21 +68,37 @@
 
 /* ---- 2D depiction ---- */
 
+/* The formula and diagram sit inside one bordered box, so the 2D view reads as a
+   distinct panel rather than loose content floating in the top bar. `max-height` +
+   `overflow: auto` give it a hard boundary: ordinary chains never fill it, but a
+   pathological case (a very tall side chain stack, a cramped window) scrolls inside
+   the box instead of pushing the whole top bar taller. */
 .depiction {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.3rem;
   min-width: 0;
+  max-height: 13rem;
+  padding: 0.5rem 0.75rem;
+  overflow: auto;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
 }
 
 .empty-depiction {
-  padding: 0.5rem 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
 }
 
+/* Centered, like the diagram below it — the formula reads as the box's single
+   caption rather than a left-aligned label. */
 .depiction-head {
   display: flex;
   gap: 0.6rem;
   align-items: baseline;
+  justify-content: center;
 }
 
 .formula {

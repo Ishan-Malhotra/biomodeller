@@ -62,7 +62,12 @@ export interface OriginSpec {
 const DEFAULT_GRID_SPACING = 1
 
 export const DEFAULT_ORIGIN: OriginSpec = {
-  enabled: false,
+  // On by default: the coordinate table is informative enough on its own (and
+  // the AutoCAD half of the interaction model product.md asks for) that it
+  // shouldn't need a click to discover. Turning it off still returns to the
+  // canonical NeRF frame exactly as before — this only changes the starting
+  // value of a toggle the user can flip either way.
+  enabled: true,
   anchor: { kind: 'first-ca' },
   target: vec3(0, 0, 0),
   rotation: vec3(0, 0, 0),
