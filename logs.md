@@ -1239,6 +1239,16 @@ generated here) via `fetch`, which relays the message to email. The endpoint
 is a plain string constant — Formspree endpoints are meant to be called
 client-side, so there's no secret to hide and no env-var indirection needed.
 
+**Revised: the dialog asks for the visitor's email instead of showing mine.**
+The first version put `ishanmalhotra2004@gmail.com` in the dialog's own
+heading — a private address, made public to every visitor for no reason. It
+now reads "Got feedback?", followed by a required `type="email"` field for
+*their* address, then the subtitle, then the message box — the order the
+request asked for, and the reason for that order is that the subtitle ("If I
+keep building this, I'll keep you in the loop") is a promise that only means
+something once there's an email to keep in the loop *to*. Both fields go into
+the same Formspree submission.
+
 Verified with a real headless-browser run against the dev server (Playwright,
 since `chromium-cli` wasn't available in this environment): the dialog opens
 centered with the correct subtitle and placeholder text, Escape and a

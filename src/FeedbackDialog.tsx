@@ -30,6 +30,7 @@ function MessageIcon() {
 
 export function FeedbackDialog() {
   const [open, setOpen] = useState(false)
+  const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<SendStatus>('idle')
 
@@ -57,10 +58,11 @@ export function FeedbackDialog() {
       const response = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ email, message }),
       })
       if (!response.ok) throw new Error('Formspree request failed')
       setStatus('sent')
+      setEmail('')
       setMessage('')
     } catch {
       setStatus('error')
@@ -97,9 +99,18 @@ export function FeedbackDialog() {
             <button type="button" className="feedback-close" aria-label="Close" onClick={close}>
               ×
             </button>
-            <h2 id="feedback-title">ishanmalhotra2004@gmail.com</h2>
-            <p className="feedback-subtitle">If I keep building this, I'll keep you in the loop.</p>
+            <h2 id="feedback-title">Got feedback?</h2>
             <form onSubmit={handleSubmit}>
+              <input
+                type="email"
+                className="feedback-email"
+                placeholder="Your email"
+                aria-label="Your email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+              />
+              <p className="feedback-subtitle">If I keep building this, I'll keep you in the loop.</p>
               <textarea
                 className="feedback-textarea"
                 placeholder="Drop me a message here or report bugs/ideas here"

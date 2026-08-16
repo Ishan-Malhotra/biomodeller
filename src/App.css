@@ -849,8 +849,26 @@
   font-size: 0.95rem;
 }
 
+.feedback-email {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+  font-size: 0.82rem;
+  color: inherit;
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+}
+
+.feedback-email:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
 .feedback-subtitle {
-  margin: 0.3rem 0 0.9rem;
+  margin: 0.6rem 0 0.9rem;
   font-size: 0.8rem;
   color: var(--muted);
 }
