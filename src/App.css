@@ -98,14 +98,29 @@
 }
 
  /* Horizontal only: the diagram is scaled to fit vertically, because side chains
-    grow upward and a vertical scrollbar would hide the backbone. */
+    grow upward and a vertical scrollbar would hide the backbone.
+
+    `justify-content: safe center` rather than plain `center`: centering keeps a
+    short diagram from hugging the left edge of the bar, but plain `center` on an
+    overflowing flex item can push its start past the scrollable origin and make
+    it unreachable — exactly the case a long chain hits. `safe` falls back to
+    start-alignment once the content overflows, so a short diagram centers and a
+    long one scrolls from its natural left edge. */
 .depiction-scroll {
+  display: flex;
+  justify-content: safe center;
   overflow-x: auto;
   overflow-y: hidden;
 }
 
 .depiction-scroll svg {
   display: block;
+  /* A flex item shrinks below its intrinsic size by default, which — found by
+     testing a wide chain — silently squashed the SVG to fit the container instead
+     of overflowing it, defeating the horizontal scroll `.depiction-scroll` exists
+     for. `flex: none` keeps the diagram at its real, computed width; centering
+     still applies whenever that width is less than the container's. */
+  flex: none;
 }
 
 /* Bonds. The main chain is heaviest so the chain's path reads first, exactly as in

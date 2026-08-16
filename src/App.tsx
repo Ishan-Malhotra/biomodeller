@@ -97,6 +97,13 @@ function App() {
       <aside className="panel">
         <ResidueList editor={editor} />
 
+        <CoordinatePanel
+          frame={frame}
+          atoms={atoms}
+          pickArmed={pickArmed}
+          onArmPick={setPickArmed}
+        />
+
         <section className="examples">
           <h2>Examples</h2>
           <p className="hint examples-hint">
@@ -118,13 +125,6 @@ function App() {
             </button>
           ))}
         </section>
-
-        <CoordinatePanel
-          frame={frame}
-          atoms={atoms}
-          pickArmed={pickArmed}
-          onArmPick={setPickArmed}
-        />
 
         <section className="readout">
           <h2>Derived</h2>

@@ -10,8 +10,9 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 10 — hover linking. **All five requested features are done.**
-**Next:** nothing queued. Candidates at the bottom of this file.
+**Last completed:** Stage 11 — layout fixes (centered 2D depiction, sidebar reorder).
+**Next:** nothing queued. Candidates at the bottom of this file. A hydrogen toggle
+(2D + formula + 3D) was requested and explicitly deferred as its own phase.
 
 **Steps 1–6 of the `claude.md` build order are done**, plus stages 6–10 covering a
 five-feature request. The math is validated against real PDB data for all 20 amino
@@ -1095,27 +1096,79 @@ readout.
 
 ---
 
+## Stage 11 — Layout fixes: centered depiction, sidebar reorder
+
+**Date:** 2026-08-16
+
+Two small fixes to the stage 9/10 layout, plus a deferral. No dependencies.
+
+### The 2D depiction is centered, and a flexbox trap along the way
+
+`.depiction-scroll` was a plain block, so the SVG — `display: block` with an
+explicit pixel width — sat flush left whenever it was narrower than the top bar.
+Made the container `display: flex; justify-content: safe center`. **`safe`, not
+plain `center`:** plain `center` on an overflowing flex item can push its start
+past the scrollable origin and make it unreachable — exactly the case a long
+chain hits. `safe` falls back to start-alignment once the content overflows, so
+a short diagram centers and a long one still scrolls from its natural left edge.
+
+That introduced a second bug, caught by deliberately testing a 40-residue
+tryptophan chain rather than trusting the short-chain case: **a flex item
+shrinks below its intrinsic size by default**, so flexbox silently squashed the
+2278px-wide diagram down to the 975px container instead of overflowing it —
+`scrollWidth === clientWidth === svgWidth`, no scrollbar, most of a long chain's
+diagram simply gone. `flex: none` on the svg fixed it; verified both cases
+afterward (short: centered with equal 425px gaps either side; wide: `scrollWidth
+2278 > clientWidth 975`, reachable from `scrollLeft: 0`).
+
+### Sidebar reordered
+
+`Residues → Examples → Coordinates → Derived` is now `Residues → Coordinates →
+Examples → Derived`. Pure JSX move in `App.tsx`; no prop or CSS changes, since
+`.examples`'s styles were already position-independent.
+
+### Deferred — hydrogens in 2D, formula, and 3D
+
+Asked where a hydrogen toggle should apply; the answer was "all three, but as
+its own phase, not now." Scoped for whenever that phase starts:
+
+- **3D** has no hydrogens today — `Element` in `lib/types.ts` is `'N' | 'C' | 'O'
+  | 'S'`. Placing them is a new geometry problem (bond lengths/angles, valence-
+  correct counts per heavy atom), not a toggle over existing data.
+- **Formula** already computes H via `FREE_HYDROGEN_COUNT` in `lib/formula.ts`,
+  a whole-residue scalar — a toggle here is just showing/hiding the existing H
+  term.
+- **2D** would need a new per-heavy-atom implicit-H table (nothing like it exists
+  yet) and new nodes marked `isRealAtom: false` like the terminus caps —
+  `tests/depiction.test.ts`'s node-count and edge-parity tests assert exact 1:1
+  correspondence with `buildAtoms()`'s heavy-atom output, so H nodes must not be
+  `isRealAtom: true` or those tests break.
+
+**Status: 275/275 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
 ## Next — nothing queued
 
-The five-feature request is complete. What is still unbuilt, in the order
-`claude.md` and product.md suggest:
+What is still unbuilt, in the order `claude.md` and product.md suggest:
 
 1. **A live Ramachandran plot**, linked both ways to the 3D view. The strongest
    remaining feature for grading: it ties the abstract φ/ψ plot to the concrete
    structure, which product.md §5 calls out explicitly. The hover-linking machinery
    from stage 10 is the pattern to reuse — shared `hovered` state in `App`, a key
    both views agree on, and `lib/` doing the layout.
-2. **PDB export.** Cheap, and a credibility win: the output can be opened in PyMOL
+2. **The hydrogen toggle** (2D + formula + 3D), deferred above as its own phase.
+3. **PDB export.** Cheap, and a credibility win: the output can be opened in PyMOL
    or ChimeraX and checked by someone who doesn't trust this tool. The atom naming
    and `residueIndex` numbering it needs already exist.
-3. **Clash detection.** The data is already there — `tests/chain.test.ts` documents
+4. **Clash detection.** The data is already there — `tests/chain.test.ts` documents
    1UBQ's ideal-geometry clashes, and a diagnostic written during stage 8 found 71
    non-bonded pairs closer than 1.6 Å in a default-rotamer ubiquitin. Surfacing
    those in the UI is a display feature, and it must stay one: **detecting a clash
    must never move an atom.**
-4. **Rotamer suggestions** (product.md §4.2(b)), which would need a bundled Dunbrack
-   library. The biggest lift of the four and the one furthest from the current
-   premise, since it means suggesting angles rather than reconstructing from them.
+5. **Rotamer suggestions** (product.md §4.2(b)), which would need a bundled Dunbrack
+   library. The biggest lift and the one furthest from the current premise, since
+   it means suggesting angles rather than reconstructing from them.
 
 The rough edges listed at the top of this file are all cosmetic and all in
 rendering, not geometry.
