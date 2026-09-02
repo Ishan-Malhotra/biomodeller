@@ -21,6 +21,11 @@
  * deliberately *not* in `useChain` — it is view state, and putting it there would
  * make a mouse movement capable of triggering a chain rebuild.
  *
+ * Both of those views are now children of `<main>`: the 2D depiction is a
+ * floating card over the canvas rather than a strip in the top bar, so the
+ * shared state no longer has to be threaded through TopBar, which never used
+ * it. That reclaimed most of the bar's height for the 3D view.
+ *
  * The camera is framed on explicit request rather than on every edit. Re-framing
  * per keystroke would fight the user's own orbiting, and it would also hide the
  * thing worth seeing: when you change φ of residue 5, everything before it stays
@@ -41,6 +46,7 @@ import { useOrigin } from './useOrigin.ts'
 import { CoordinatePanel } from './editor/CoordinatePanel.tsx'
 import { ResidueList } from './editor/ResidueList.tsx'
 import { AtomTooltip, type HoverPoint } from './viewer/AtomTooltip.tsx'
+import { Depiction2D } from './viewer/Depiction2D.tsx'
 import type { AtomRef } from './viewer/BackboneStructure.tsx'
 import { StructureViewport } from './viewer/StructureViewport.tsx'
 
@@ -72,6 +78,9 @@ function App() {
   const [fitToken, setFitToken] = useState(0)
   const [pickArmed, setPickArmed] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  // Lifted out of TopBar now that the card it controls renders in the viewport.
+  // Open by default, as it was there, so the feature stays discoverable.
+  const [showDepiction, setShowDepiction] = useState(true)
   const [exportError, setExportError] = useState<string | null>(null)
   const [hovered, setHovered] = useState<AtomRef | null>(null)
   const [pointer, setPointer] = useState<HoverPoint | null>(null)
@@ -133,9 +142,8 @@ function App() {
       <TopBar
         theme={theme}
         onToggleTheme={toggleTheme}
-        residues={residues}
-        highlightKey={highlightKey}
-        onHoverAtom={setHovered}
+        depictionOpen={showDepiction}
+        onToggleDepiction={() => setShowDepiction((current) => !current)}
         onSelectExample={selectExample}
       />
 
@@ -143,7 +151,7 @@ function App() {
         <div className="panel-header">
           <button
             type="button"
-            className="theme-toggle"
+            className="btn btn-icon btn-quiet"
             aria-expanded={!sidebarCollapsed}
             aria-label={`${sidebarCollapsed ? 'Show' : 'Hide'} the sidebar`}
             title={`${sidebarCollapsed ? 'Show' : 'Hide'} the sidebar`}
@@ -158,7 +166,7 @@ function App() {
             <div>
               <button
                 type="button"
-                className="export-pdb"
+                className="btn btn-block btn-primary"
                 disabled={residues.length === 0}
                 onClick={exportPdb}
               >
@@ -194,7 +202,7 @@ function App() {
                       : `recomputed ${stats.recomputed} of ${stats.total}, from residue ${stats.fromIndex + 1}`}
                 </dd>
               </dl>
-              <button type="button" className="fit" onClick={fit}>
+              <button type="button" className="btn btn-block" onClick={fit}>
                 Fit view
               </button>
               <p className="hint">Drag to orbit · scroll to zoom · right-drag to pan</p>
@@ -222,6 +230,18 @@ function App() {
           onHoverAtom={setHovered}
           highlightKey={highlightKey}
         />
+        {/* Before the tooltip in DOM order as well as below it in z-index, so
+            hovering an atom inside this card still puts the label on top. */}
+        {showDepiction && (
+          <div className="depiction-overlay">
+            <Depiction2D
+              residues={residues}
+              theme={theme}
+              highlightKey={highlightKey}
+              onHoverAtom={setHovered}
+            />
+          </div>
+        )}
         {hoveredAtom && pointer && <AtomTooltip atom={hoveredAtom} at={pointer} />}
         {atoms.length === 0 && (
           <p className="empty">Blank canvas — add a residue to place the seed frame.</p>

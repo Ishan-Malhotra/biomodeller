@@ -81,7 +81,7 @@ export function FeedbackDialog() {
     <>
       <button
         type="button"
-        className="theme-toggle"
+        className="btn btn-icon"
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label="Send feedback or report a bug"
@@ -130,7 +130,7 @@ export function FeedbackDialog() {
                   required
                   rows={4}
                 />
-                <button type="submit" className="feedback-submit" disabled={status === 'sending'}>
+                <button type="submit" className="btn btn-block feedback-submit" disabled={status === 'sending'}>
                   {status === 'sending' ? 'Sending…' : 'Send'}
                 </button>
                 {status === 'sent' && <p className="feedback-status">Sent — thanks!</p>}

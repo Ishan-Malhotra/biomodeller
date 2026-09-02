@@ -1,9 +1,16 @@
 /**
  * The Cartesian coordinate / origin control — AutoCAD's UCS, in a sidebar.
  *
- * Collapsed by default, because the canonical frame is a fine answer for most of
- * what the tool is for and an always-open coordinate table would bury the residue
- * list. Opening it does not change the structure; only editing does.
+ * There are two independent affordances here, and they are easy to confuse:
+ *
+ *   - The **accordion** controls whether this section's UI is on screen. It is
+ *     open by default, because stage 12 decided the coordinate table is
+ *     informative enough that it shouldn't need a click to discover.
+ *   - The **on/off switch** in the header controls whether a user-defined frame
+ *     applies at all. Off returns to the canonical NeRF frame exactly.
+ *
+ * Neither one changes the structure. Only editing an angle does; collapsing the
+ * section or switching the frame off cannot reach the NeRF inputs.
  *
  * The two ways of defining an origin are presented as two ways of choosing an
  * *anchor*, which is what they are — see `src/useOrigin.ts`. Everything else (the
@@ -12,6 +19,7 @@
 
 import { coordinateRows } from '../../lib/coordinates.ts'
 import type { Atom } from '../../lib/types.ts'
+import { Accordion } from '../Accordion.tsx'
 import type { OriginFrame } from '../useOrigin.ts'
 import { NumberField } from './NumberField.tsx'
 
@@ -37,9 +45,10 @@ export function CoordinatePanel({
   const rows = spec.enabled ? coordinateRows(atoms) : []
 
   return (
-    <section className="coords">
-      <div className="coords-head">
-        <h2>Cartesian coordinates</h2>
+    <Accordion
+      title="Cartesian coordinates"
+      defaultOpen
+      aside={
         <label className="switch">
           <input
             type="checkbox"
@@ -51,8 +60,8 @@ export function CoordinatePanel({
           />
           <span>{spec.enabled ? 'on' : 'off'}</span>
         </label>
-      </div>
-
+      }
+    >
       {!spec.enabled ? (
         <p className="hint">
           Off — atoms sit in the canonical frame, with N of residue 1 at (0, 0, 0). Turn on to
@@ -136,7 +145,7 @@ export function CoordinatePanel({
               returns to that. Saying "canonical frame" here would be wrong. */}
           <button
             type="button"
-            className="fit"
+            className="btn btn-block"
             title="Cα of residue 1 back to (0, 0, 0) with no rotation. To return to the canonical NeRF frame instead, switch this panel off."
             onClick={() => {
               frame.reset()
@@ -161,7 +170,11 @@ export function CoordinatePanel({
                   <button
                     type="button"
                     key={spacing}
-                    className={spec.gridSpacing === spacing ? 'spacing selected' : 'spacing'}
+                    className={
+                      spec.gridSpacing === spacing
+                        ? 'btn btn-sm spacing selected'
+                        : 'btn btn-sm spacing'
+                    }
                     aria-pressed={spec.gridSpacing === spacing}
                     onClick={() => frame.setGridSpacing(spacing)}
                   >
@@ -203,6 +216,6 @@ export function CoordinatePanel({
           )}
         </>
       )}
-    </section>
+    </Accordion>
   )
 }

@@ -140,7 +140,7 @@ function ResidueRowImpl({
         {chiCount > 0 && (
           <button
             type="button"
-            className={showChi ? 'chi-toggle open' : 'chi-toggle'}
+            className="btn btn-sm chi-toggle"
             aria-expanded={showChi}
             aria-label={`${showChi ? 'Hide' : 'Show'} the ${chiCount} χ ${chiCount === 1 ? 'angle' : 'angles'} of residue ${index + 1}`}
             title={`${chiCount} side-chain dihedral${chiCount === 1 ? '' : 's'}`}
@@ -151,41 +151,44 @@ function ResidueRowImpl({
         )}
 
         <div className="row-actions">
-        <button
-          type="button"
-          aria-label={`Move residue ${index + 1} toward the N-terminus`}
-          title="Move up"
-          disabled={isFirst}
-          onClick={() => onMove(index, index - 1)}
-        >
-          ↑
-        </button>
-        <button
-          type="button"
-          aria-label={`Move residue ${index + 1} toward the C-terminus`}
-          title="Move down"
-          disabled={isLast}
-          onClick={() => onMove(index, index + 1)}
-        >
-          ↓
-        </button>
-        <button
-          type="button"
-          aria-label={`Duplicate residue ${index + 1}`}
-          title="Duplicate"
-          onClick={() => onDuplicate(index)}
-        >
-          ⧉
-        </button>
-        <button
-          type="button"
-          className="danger"
-          aria-label={`Delete residue ${index + 1}`}
-          title="Delete"
-          onClick={() => onRemove(index)}
-        >
-          ✕
-        </button>
+          <button
+            type="button"
+            className="btn btn-sm btn-icon"
+            aria-label={`Move residue ${index + 1} toward the N-terminus`}
+            title="Move up"
+            disabled={isFirst}
+            onClick={() => onMove(index, index - 1)}
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            className="btn btn-sm btn-icon"
+            aria-label={`Move residue ${index + 1} toward the C-terminus`}
+            title="Move down"
+            disabled={isLast}
+            onClick={() => onMove(index, index + 1)}
+          >
+            ↓
+          </button>
+          <button
+            type="button"
+            className="btn btn-sm btn-icon"
+            aria-label={`Duplicate residue ${index + 1}`}
+            title="Duplicate"
+            onClick={() => onDuplicate(index)}
+          >
+            ⧉
+          </button>
+          <button
+            type="button"
+            className="btn btn-sm btn-icon btn-danger"
+            aria-label={`Delete residue ${index + 1}`}
+            title="Delete"
+            onClick={() => onRemove(index)}
+          >
+            ✕
+          </button>
         </div>
       </div>
     </li>

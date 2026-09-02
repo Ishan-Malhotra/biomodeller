@@ -34,6 +34,130 @@
   grid-template-columns: 3.5rem minmax(0, 1fr);
 }
 
+/* ---- buttons ----
+
+   One base plus modifiers, replacing five near-identical rules (.theme-toggle,
+   .depiction-toggle, .fit, .export-pdb, .feedback-submit) that had drifted into
+   three heights, two paddings and two radii for what is visually one family.
+   The top bar was the worst of it: a 2rem *square* icon button sitting directly
+   beside a 2rem-tall text pill with different padding, so the cluster read as
+   assembled rather than designed. They now differ only in width.
+
+   `:hover:not(:disabled)` throughout rather than a bare `:hover`. A plain hover
+   rule still recolours a dead button, which is how the move arrows on the first
+   and last rows ended up looking live. */
+.btn {
+  display: inline-flex;
+  flex: none;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  height: var(--control-h);
+  padding: 0 var(--control-px);
+  font: inherit;
+  font-size: var(--control-font);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--muted);
+  white-space: nowrap;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.btn:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+/* Square. The icon inside is 16px, so the height is doing the padding's job. */
+.btn-icon {
+  width: var(--control-h);
+  padding: 0;
+}
+
+/* The dense in-row variant: the chi disclosure, the row arrows, the grid
+   spacings — controls that sit inside a residue row rather than beside it. */
+.btn-sm {
+  height: var(--control-h-sm);
+  padding: 0 var(--control-px-sm);
+  font-size: var(--control-font-sm);
+  border-radius: var(--radius-sm);
+}
+
+.btn-sm.btn-icon {
+  width: var(--control-h-sm);
+  padding: 0;
+}
+
+/* Full-width sidebar actions. Height is content-driven here rather than fixed:
+   these sit alone in a column, where a 1.75rem strip reads as cramped. */
+.btn-block {
+  display: flex;
+  width: 100%;
+  height: auto;
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.8rem;
+  color: inherit;
+}
+
+/* The on state, keyed on `aria-expanded` and an explicit `.selected` class and
+   deliberately *not* on `[aria-pressed]`. The theme lightbulb carries
+   `aria-pressed` as a correct accessibility annotation, but it is not a "this
+   control is active" affordance the way the 2D toggle is — matching it here
+   would leave the bulb permanently tinted in one of the two themes.
+
+   The tint means "this control is revealing something you would not otherwise
+   see" — the 2D card, the examples dropdown. It is not for controls whose
+   expanded state is simply the resting state, hence `.btn-quiet` below. */
+.btn[aria-expanded='true'],
+.btn.selected {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* Opts out of the tint while keeping `aria-expanded` for screen readers. The
+   sidebar collapse toggle is the case this exists for: it is expanded by
+   default, so tinting on `aria-expanded` would leave it lit up permanently and
+   the highlight would carry no information at all. */
+.btn-quiet[aria-expanded='true'] {
+  color: var(--muted);
+  background: transparent;
+  border-color: var(--line);
+}
+
+.btn-quiet[aria-expanded='true']:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* The two actions that create something: Export PDB and + Add residue. Tinted
+   rather than saturated — a solid --accent block would be the loudest thing on
+   screen, louder than the molecule, which is not what the sidebar is for.
+   --accent-soft is already the app's "this is on" tint, so a CTA reads as the
+   same accent family rather than as a new colour. */
+.btn-primary {
+  color: var(--accent);
+  background: var(--cta-bg);
+  border-color: var(--accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--cta-bg-hover);
+}
+
+.btn-danger:hover:not(:disabled) {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
 /* ---- top bar ---- */
 
 /* `sticky`, not just a grid row: `.app` is `overflow: hidden`, which makes it a
@@ -58,68 +182,87 @@
   z-index: 10;
   display: flex;
   grid-area: topbar;
-  gap: 1rem;
+  gap: var(--space-5);
   align-items: center;
-  padding: 0.6rem 1rem;
+  padding: var(--topbar-py) var(--space-5);
   border-bottom: 1px solid var(--line);
   background: var(--panel);
 }
 
+/* Title and subtitle on one baseline rather than stacked. The bar's height is
+   now the taller of this and a single control, and two stacked lines were the
+   main reason it stood at ~3.5rem before the 2D view even opened. */
 .topbar-title {
+  display: flex;
   flex: none;
-}
-
-/* The depiction takes the slack and scrolls internally, so a long chain widens the
-   diagram rather than the bar. Capped so a tall side chain can't push the 3D
-   viewport off the bottom of the screen. */
-.topbar-depiction {
-  flex: 1;
+  gap: var(--space-3);
+  align-items: baseline;
   min-width: 0;
 }
 
-.depiction-toggle {
+/* `margin-left: auto` rather than a `flex: 1` spacer element between the title
+   and the cluster. The spacer used to be `.topbar-depiction`, and it had to
+   stay mounted-but-empty whenever the 2D view was off: unmounting it collapsed
+   the row and slid every button left, which read as the bar jumping. With the
+   depiction moved into the viewport there is nothing conditional left in this
+   row at all, so that class of jump cannot recur. */
+.topbar-actions {
+  display: flex;
   flex: none;
-  height: 2rem;
-  padding: 0 0.5rem;
-  font: inherit;
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: var(--muted);
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 0.45rem;
+  gap: var(--space-2);
+  align-items: center;
+  margin-left: auto;
 }
 
-.depiction-toggle:hover {
-  color: var(--accent);
-  border-color: var(--accent);
+/* Narrow windows lose the subtitle first. The four controls are not the thing
+   to drop — they are the only way to reach Examples, the 2D view and the theme. */
+@media (width <= 44rem) {
+  .topbar-title p {
+    display: none;
+  }
 }
 
-.depiction-toggle[aria-expanded='true'] {
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-color: var(--accent);
+/* ---- 2D depiction (a floating card over the viewport) ---- */
+
+/* Positioned inside `.viewport` rather than in the top bar. The bar's job is
+   controls, and a 13rem-tall diagram in it cost the 3D view a seventh of the
+   window even when nobody was looking at the diagram. As a floating card it
+   costs nothing when hidden and covers only a corner of the canvas when shown —
+   and it stays *beside* the 3D view, which is what makes the two-way hover
+   linking useful in the first place.
+
+   `z-index: 1` is deliberately small. `.viewport` is `position: relative` with
+   `z-index: auto`, so it is NOT a stacking context and everything in here
+   competes globally: `.topbar` (10), `.examples-dropdown` (20) and
+   `.feedback-backdrop` (30) all still have to win, and `.atom-tooltip` (2) has
+   to sit above this card because hovering an atom *in* the card puts the
+   tooltip over it. 1 is exactly enough to beat the `<canvas>`, which is all
+   this needs to do. */
+.depiction-overlay {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  z-index: 1;
+  max-width: min(38rem, calc(100% - 2 * var(--space-4)));
 }
 
-/* ---- 2D depiction ---- */
-
-/* The formula and diagram sit inside one bordered box, so the 2D view reads as a
-   distinct panel rather than loose content floating in the top bar. `max-height` +
-   `overflow: auto` give it a hard boundary: ordinary chains never fill it, but a
-   pathological case (a very tall side chain stack, a cramped window) scrolls inside
-   the box instead of pushing the whole top bar taller. */
+/* `max-height` + `overflow: auto` are still a hard boundary: ordinary chains
+   never fill it, but a very tall side-chain stack scrolls inside the card
+   rather than growing it over the whole viewport. `--panel`, not `--canvas`:
+   the card now sits *on* --canvas, and a card the colour of its background is
+   not a card. */
 .depiction {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   min-width: 0;
   max-height: 13rem;
-  padding: 0.5rem 0.75rem;
+  padding: var(--space-3) var(--space-4);
   overflow: auto;
-  background: var(--canvas);
+  background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-overlay);
 }
 
 .empty-depiction {
@@ -223,28 +366,15 @@
   letter-spacing: -0.01em;
 }
 
+/* No top margin now that it sits beside the title rather than under it. It is
+   also the one thing here allowed to truncate, hence the ellipsis. */
 .topbar-title p {
-  margin: 0.1rem 0 0;
+  margin: 0;
+  overflow: hidden;
   font-size: 0.72rem;
   color: var(--muted);
-}
-
-.theme-toggle {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  color: var(--muted);
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 0.45rem;
-}
-
-.theme-toggle:hover {
-  color: var(--accent);
-  border-color: var(--accent);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .panel {
@@ -282,20 +412,73 @@
   color: var(--muted);
 }
 
-/* ---- residue list ---- */
+/* ---- accordion ---- */
 
-.residues {
+/* The shared shape for a collapsible sidebar section. Replaces `.residues` /
+   `.residues-head` and `.coords` / `.coords-head`, which were the same
+   flex-column + space-between-header pattern under two different names. */
+.accordion {
   display: flex;
+  flex: none;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-3);
 }
 
-.residues-head {
+.accordion-head {
   display: flex;
+  gap: var(--space-3);
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 0.1rem;
 }
+
+/* The <h2> is still the heading and still picks up `.panel h2`'s uppercase
+   treatment; it just has a button for its text now. */
+.accordion-head h2 {
+  min-width: 0;
+}
+
+.accordion-toggle {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.accordion-toggle:hover {
+  color: var(--accent);
+}
+
+/* Rotation only. The bodies contain a `max-height` scroll container with a
+   sticky table header, and animating their height (via max-height or a
+   0fr->1fr grid track) either clips that header or fights the inner scroll —
+   for 150ms of polish. The chevron carries the affordance on its own. */
+.accordion-chevron {
+  display: inline-flex;
+  transition: transform 120ms ease-out;
+}
+
+.accordion.open .accordion-chevron {
+  transform: rotate(90deg);
+}
+
+.accordion-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Not optional. `hidden` is only a UA `display: block`, so the rule above beats
+   it on specificity and the "hidden" body stays fully visible. */
+.accordion-body[hidden] {
+  display: none;
+}
+
+/* ---- residue list ---- */
 
 .link {
   padding: 0;
@@ -371,11 +554,19 @@
   border-radius: 0.3rem;
 }
 
-.row-angles {
+/* The three-column field grid, shared with `.row-chi` and `.triple` below via
+   one rule, so a chi field sits under its dihedral and an origin x/y/z lines up
+   column-for-column with a phi/psi/omega row in a different component. */
+.row-angles,
+.row-chi,
+.triple {
   display: grid;
-  grid-area: angles;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.25rem;
+  gap: var(--field-gap);
+}
+
+.row-angles {
+  grid-area: angles;
 }
 
 .angle {
@@ -434,39 +625,18 @@
   color: var(--muted);
 }
 
-/* The χ fields, revealed per row. Same grid as the backbone angles so the columns
-   line up and χ1 sits under φ — they are the same kind of control. */
+/* The χ fields, revealed per row. Grid declared with `.row-angles` above, so χ1
+   sits under φ — they are the same kind of control. */
 .row-chi {
-  display: grid;
   grid-area: chi;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.25rem;
-  margin-top: 0.25rem;
+  margin-top: var(--field-gap);
 }
 
+/* Size, colour and the open state all come from `.btn .btn-sm` now; the only
+   thing left that is specific to this button is the tabular figures, so the
+   chi count doesn't jitter as it changes width. */
 .chi-toggle {
-  height: 1.4rem;
-  padding: 0 0.35rem;
-  font: inherit;
-  font-size: 0.7rem;
   font-variant-numeric: tabular-nums;
-  line-height: 1;
-  color: var(--muted);
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-}
-
-.chi-toggle:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.chi-toggle.open {
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-color: var(--accent);
 }
 
 /* Holds the χ disclosure (always visible) and the row actions (hover-revealed).
@@ -496,49 +666,11 @@
   opacity: 1;
 }
 
-.row-actions button {
-  width: 1.4rem;
-  height: 1.4rem;
-  padding: 0;
-  font: inherit;
-  font-size: 0.72rem;
-  line-height: 1;
-  color: var(--muted);
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-}
-
-.row-actions button:hover:not(:disabled) {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.row-actions button.danger:hover:not(:disabled) {
-  color: var(--danger);
-  border-color: var(--danger);
-}
-
+/* Fainter than `.btn:disabled`'s 0.5. These sit inside a row that is already
+   hover-revealed, so a disabled arrow wants to recede further than a disabled
+   Export button standing alone in the sidebar does. */
 .row-actions button:disabled {
-  cursor: default;
   opacity: 0.3;
-}
-
-.add {
-  padding: 0.4rem;
-  font: inherit;
-  font-size: 0.78rem;
-  color: var(--accent);
-  cursor: pointer;
-  background: transparent;
-  border: 1px dashed var(--line);
-  border-radius: 0.4rem;
-}
-
-.add:hover {
-  background: var(--accent-soft);
-  border-color: var(--accent);
 }
 
 /* ---- examples menu (top bar) ---- */
@@ -606,18 +738,6 @@
 
 /* ---- coordinate / origin panel ---- */
 
-.coords {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.coords-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
 .switch {
   display: flex;
   gap: 0.35rem;
@@ -667,44 +787,28 @@
   color: var(--accent);
 }
 
-/* The three x/y/z inputs. Same .angle styling as a dihedral field — they are the
-   same kind of control, and looking alike is correct rather than lazy. */
-.triple {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.25rem;
-}
+/* The three x/y/z inputs share .angle's styling with a dihedral field and their
+   grid with `.row-angles` above — they are the same kind of control, and
+   looking alike is correct rather than lazy. */
 
 .grid-switch {
   color: inherit;
   font-size: 0.76rem;
 }
 
+/* Four, not three, so this keeps its own track count — but the same gap, so it
+   still reads as part of the same field system. */
 .spacings {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.2rem;
+  gap: var(--field-gap);
 }
 
+/* Sizing and the selected state come from `.btn .btn-sm` and `.btn.selected`;
+   only the horizontal padding is overridden, because four buttons across a
+   23rem sidebar have no room for it. */
 .spacing {
-  padding: 0.2rem 0;
-  font: inherit;
-  font-size: 0.7rem;
-  color: var(--muted);
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 0.3rem;
-}
-
-.spacing:hover {
-  border-color: var(--accent);
-}
-
-.spacing.selected {
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-color: var(--accent);
+  padding: 0;
 }
 
 /* Capped and scrollable: a 76-residue chain is 304 rows, and the panel still has
@@ -783,43 +887,6 @@
 .readout dd {
   margin: 0;
   font-variant-numeric: tabular-nums;
-}
-
-.fit {
-  width: 100%;
-  padding: 0.45rem;
-  font: inherit;
-  font-size: 0.8rem;
-  color: inherit;
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 0.4rem;
-}
-
-.fit:hover {
-  border-color: var(--accent);
-}
-
-.export-pdb {
-  width: 100%;
-  padding: 0.45rem;
-  font: inherit;
-  font-size: 0.8rem;
-  color: inherit;
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 0.4rem;
-}
-
-.export-pdb:hover {
-  border-color: var(--accent);
-}
-
-.export-pdb:disabled {
-  cursor: default;
-  opacity: 0.5;
 }
 
 .export-error {
@@ -991,26 +1058,9 @@
   box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
+/* Sizing from `.btn .btn-block`; only the gap above it is specific here. */
 .feedback-submit {
-  width: 100%;
-  padding: 0.45rem;
   margin-top: 0.6rem;
-  font: inherit;
-  font-size: 0.8rem;
-  color: inherit;
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 0.4rem;
-}
-
-.feedback-submit:hover {
-  border-color: var(--accent);
-}
-
-.feedback-submit:disabled {
-  cursor: default;
-  opacity: 0.6;
 }
 
 .feedback-status {
