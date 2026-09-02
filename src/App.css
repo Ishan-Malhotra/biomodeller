@@ -6,20 +6,56 @@
    Every colour here resolves through a token from index.css — nothing is a
    literal — which is what makes the theme a token swap rather than an edit here. */
 
+/* Both tracks are `minmax(0, ...)`, not the bare `23rem 1fr` / `auto 1fr` this
+   started as. A plain `1fr` means `minmax(auto, 1fr)`, which refuses to shrink
+   below the track's *min-content* — and the viewport column contains a
+   `<canvas>` whose min-content is whatever pixel width Three.js last sized it
+   to. So on a window resize the grid stayed as wide as the old canvas instead
+   of following the window, and since `.app` is `overflow: hidden`, everything
+   past the new window edge — including the top bar's right-hand buttons — was
+   simply clipped away. `minmax(0, 1fr)` lets the track shrink to the space
+   actually available; the sidebar gets the same treatment so a very narrow
+   window shrinks it rather than pushing the viewport off-screen. */
 .app {
   display: grid;
-  grid-template-columns: 23rem 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(0, 23rem) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   grid-template-areas:
     'topbar topbar'
     'panel  viewport';
   height: 100vh;
   overflow: hidden;
+  transition: grid-template-columns 0.15s ease;
+}
+
+/* Collapsed to a thin strip — just wide enough for the reopen toggle — so the
+   viewport can go near-fullscreen without losing the way back in. */
+.app.sidebar-collapsed {
+  grid-template-columns: 3.5rem minmax(0, 1fr);
 }
 
 /* ---- top bar ---- */
 
+/* `sticky`, not just a grid row: `.app` is `overflow: hidden`, which makes it a
+   real scroll container even with no visible scrollbar, and the topbar sitting
+   in normal flow means any scroll offset on `.app` — from a focused field being
+   scrolled into view, or any future layout change — carries the topbar and its
+   buttons along with it. Pinning it to the top of `.app`'s own scroll port is
+   what keeps it in place regardless of what `.panel` or `.app` are doing.
+
+   `z-index: 10` is load-bearing, not decorative: without an explicit value,
+   `<canvas>` (the WebGL viewport) can end up compositing above this element's
+   descendants regardless of DOM order — confirmed by testing ExamplesMenu's
+   dropdown with and without it, since the dropdown's own `z-index: 20` isn't
+   enough on its own to beat the canvas unless *this* element establishes a
+   stacking context for it to win inside. That does mean FeedbackDialog's
+   backdrop, being a descendant, can no longer dim this bar by itself (a
+   stacking-context boundary), which is exactly why FeedbackDialog renders its
+   backdrop through a portal instead of relying on nesting here. */
 .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   grid-area: topbar;
   gap: 1rem;
@@ -219,6 +255,21 @@
   padding: 1.25rem 1rem;
   overflow-y: auto;
   border-right: 1px solid var(--line);
+  background: var(--panel);
+}
+
+/* Holds just the collapse toggle, top-right of the sidebar, always visible —
+   including while collapsed (the only way back) and while the residue list
+   below it is long enough to scroll `.panel` internally. `sticky` rather than
+   plain flow: without it, this row is just the first flex child and scrolls
+   out of view with everything else the moment the panel scrolls. */
+.panel-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex: none;
+  justify-content: flex-end;
   background: var(--panel);
 }
 
@@ -748,6 +799,33 @@
 
 .fit:hover {
   border-color: var(--accent);
+}
+
+.export-pdb {
+  width: 100%;
+  padding: 0.45rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+}
+
+.export-pdb:hover {
+  border-color: var(--accent);
+}
+
+.export-pdb:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.export-error {
+  margin: 0.3rem 0 0;
+  font-size: 0.7rem;
+  color: var(--danger);
 }
 
 .hint {
