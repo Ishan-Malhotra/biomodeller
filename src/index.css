@@ -1,9 +1,14 @@
-/* Base styles and the colour tokens App.css draws on.
+/* Base styles and the tokens App.css draws on.
 
    Every colour in the app resolves through one of these tokens, so a theme is a
    block of values here and nothing else. The 3D scene is the one thing that
    cannot read them — WebGL materials take literal colours — so its equivalents
-   live in src/viewer/atomStyle.ts, keyed by the same two theme names. */
+   live in src/viewer/atomStyle.ts, keyed by the same two theme names.
+
+   The geometry tokens below hold the same line for spacing, control size and
+   radius. They were not invented: each one is a value already repeated across
+   App.css, promoted to a name so that "every control in the top bar is the same
+   height" is enforced by the stylesheet rather than by whoever edits it next. */
 
 :root {
   --panel: #ffffff;
@@ -16,6 +21,50 @@
   --danger: #c2382f;
   /* Inputs sit on --panel in light mode, so they need no separate fill. */
   --field: #ffffff;
+
+  /* ---- geometry ----
+
+     A six-step spacing scale. Every gap and padding in App.css resolves to one
+     of these, the same way every colour resolves to a token above. */
+  --space-1: 0.25rem;
+  --space-2: 0.35rem;
+  --space-3: 0.5rem;
+  --space-4: 0.75rem;
+  --space-5: 1rem;
+  --space-6: 1.5rem;
+
+  /* One control height for the whole top-bar cluster, and one dense variant for
+     the in-row controls (the chi disclosure, the row arrows, the grid
+     spacings). Two sizes, deliberately no third — the top bar reading as one
+     system is the whole point of having these at all. */
+  --control-h: 1.75rem;
+  --control-h-sm: 1.4rem;
+  --control-px: 0.55rem;
+  --control-px-sm: 0.35rem;
+  --control-font: 0.74rem;
+  --control-font-sm: 0.7rem;
+
+  --radius-sm: 0.3rem;
+  --radius-md: 0.45rem;
+  --radius-lg: 0.6rem;
+
+  /* The three-column field grid, shared by the phi/psi/omega row, the chi row
+     and the origin's x/y/z. One value, so a dihedral field and a coordinate
+     field line up column-for-column despite living in different components. */
+  --field-gap: var(--space-1);
+
+  /* The top bar's vertical padding. Shrinking the bar is shrinking this. */
+  --topbar-py: 0.4rem;
+
+  /* Raised surfaces: the examples dropdown, the feedback dialog, the 2D card. */
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 15%);
+
+  /* Primary-action fill. Aliases --accent-soft, which is already the app's
+     "this is on" tint, so a CTA reads as part of the accent family rather than
+     as a new colour. No dark override is needed for --cta-bg: var() resolves at
+     use time, so it follows --accent-soft's own redefinition below. */
+  --cta-bg: var(--accent-soft);
+  --cta-bg-hover: #dfe9fb;
 
   color-scheme: light;
 
@@ -43,6 +92,14 @@
   --accent-soft: #1e2a3f;
   --danger: #e8695e;
   --field: #151921;
+
+  /* Deeper and softer than the light shadow: on a #12151b canvas a 15% shadow
+     is invisible, so depth has to come from a darker, wider spread. */
+  --shadow-overlay: 0 10px 28px rgb(0 0 0 / 55%);
+
+  /* One step up from the dark --accent-soft (#1e2a3f), matching the size of the
+     light-mode hover step rather than its direction. */
+  --cta-bg-hover: #27354e;
 
   color-scheme: dark;
 }

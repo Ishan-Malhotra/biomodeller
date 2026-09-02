@@ -39,7 +39,7 @@ export function ExamplesMenu({ onSelect }: { onSelect: (example: ExampleChain) =
     <div className="examples-menu" ref={rootRef}>
       <button
         type="button"
-        className="depiction-toggle"
+        className="btn"
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}

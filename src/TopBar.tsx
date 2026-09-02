@@ -1,19 +1,21 @@
 /**
- * The top bar: the title, the 2D chemical depiction, and the theme toggle.
+ * The top bar: the title and the view-level controls.
  *
- * The depiction lives here rather than beside the 3D view because it is a *second
- * reading of the same molecule* — a strip across the top that stays legible while
- * the 3D view is orbited, and the thing stage 10's hover highlights into.
+ * The 2D depiction used to live here as a full-width strip, which cost the 3D
+ * view roughly a seventh of the window even when nobody was looking at the
+ * diagram. It is now a floating card inside the viewport (see App.tsx), so this
+ * bar owns only the *toggle* for it and can be a single-line strip.
+ *
+ * That move also removed the last conditional element in this row, which is why
+ * the buttons can no longer jump: they sit in a `.topbar-actions` container
+ * pushed right by `margin-left: auto` rather than by a spacer that had to stay
+ * mounted-but-empty to hold its width.
  */
 
-import { useState } from 'react'
-
-import type { Residue } from '../lib/types.ts'
 import { ExamplesMenu } from './ExamplesMenu.tsx'
 import { FeedbackDialog } from './FeedbackDialog.tsx'
 import type { ExampleChain } from './sampleChains.ts'
 import type { Theme } from './theme.ts'
-import { Depiction2D } from './viewer/Depiction2D.tsx'
 
 /**
  * A lightbulb. Filled with rays when lit (light mode), outlined and dark when off.
@@ -52,71 +54,55 @@ function LightbulbIcon({ lit }: { lit: boolean }) {
 export function TopBar({
   theme,
   onToggleTheme,
-  residues,
-  highlightKey,
-  onHoverAtom,
+  depictionOpen,
+  onToggleDepiction,
   onSelectExample,
 }: {
   theme: Theme
   onToggleTheme: () => void
-  residues: readonly Residue[]
-  highlightKey?: string | null | undefined
-  onHoverAtom?: ((atom: { residueIndex: number; atomName: string } | null) => void) | undefined
+  depictionOpen: boolean
+  onToggleDepiction: () => void
   onSelectExample: (example: ExampleChain) => void
 }) {
   const lit = theme === 'light'
-  // Collapsible, because a long chain's diagram is tall and the 3D view is the
-  // main event. Open by default so the feature is discoverable.
-  const [open, setOpen] = useState(true)
 
   return (
-    <header className={open ? 'topbar open' : 'topbar'}>
+    <header className="topbar">
       <div className="topbar-title">
         <h1>Biomodeller</h1>
         <p>Protein Structure Builder</p>
       </div>
 
-      {/* Always mounted, even when collapsed: this is the `flex: 1` spacer that
-          keeps the title pinned left and the two buttons pinned right. Removing
-          the div itself (rather than just its contents) collapsed the row and
-          made both buttons jump left whenever the 2D view was toggled off. */}
-      <div className="topbar-depiction">
-        {open && (
-          <Depiction2D
-            residues={residues}
-            theme={theme}
-            highlightKey={highlightKey}
-            onHoverAtom={onHoverAtom}
-          />
-        )}
+      {/* All four controls share `.btn`, so they agree on height, radius and
+          hover treatment; only their widths differ. */}
+      <div className="topbar-actions">
+        <ExamplesMenu onSelect={onSelectExample} />
+
+        <button
+          type="button"
+          className="btn"
+          aria-expanded={depictionOpen}
+          aria-label={`${depictionOpen ? 'Hide' : 'Show'} the 2D structural formula`}
+          title={`${depictionOpen ? 'Hide' : 'Show'} the 2D formula`}
+          onClick={onToggleDepiction}
+        >
+          2D
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-icon"
+          onClick={onToggleTheme}
+          aria-pressed={!lit}
+          // The accessible name says what the button does, not what it shows.
+          aria-label={`Switch to ${lit ? 'dark' : 'light'} mode`}
+          title={`Switch to ${lit ? 'dark' : 'light'} mode`}
+        >
+          <LightbulbIcon lit={lit} />
+        </button>
+
+        <FeedbackDialog />
       </div>
-
-      <ExamplesMenu onSelect={onSelectExample} />
-
-      <button
-        type="button"
-        className="depiction-toggle"
-        aria-expanded={open}
-        aria-label={`${open ? 'Hide' : 'Show'} the 2D structural formula`}
-        title={`${open ? 'Hide' : 'Show'} the 2D formula`}
-        onClick={() => setOpen((current) => !current)}
-      >
-        2D
-      </button>
-
-      <button
-        type="button"
-        className="theme-toggle"
-        onClick={onToggleTheme}
-        aria-pressed={!lit}
-        // The accessible name says what the button does, not what it shows.
-        aria-label={`Switch to ${lit ? 'dark' : 'light'} mode`}
-        title={`Switch to ${lit ? 'dark' : 'light'} mode`}
-      >
-        <LightbulbIcon lit={lit} />
-      </button>
-
-      <FeedbackDialog />
     </header>
   )
 }

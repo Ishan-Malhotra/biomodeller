@@ -11,6 +11,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import type { Residue } from '../../lib/types.ts'
+import { Accordion } from '../Accordion.tsx'
 import type { ChainEditor } from '../useChain.ts'
 import { ResidueRow } from './ResidueRow.tsx'
 
@@ -59,16 +60,17 @@ export function ResidueList({ editor }: { editor: ChainEditor }) {
   )
 
   return (
-    <section className="residues">
-      <div className="residues-head">
-        <h2>Residues</h2>
-        {residues.length > 0 && (
+    <Accordion
+      title="Residues"
+      defaultOpen
+      aside={
+        residues.length > 0 ? (
           <button type="button" className="link" onClick={editor.clear}>
             Clear
           </button>
-        )}
-      </div>
-
+        ) : undefined
+      }
+    >
       {residues.length === 0 ? (
         <p className="blank">
           Nothing built yet. Add a residue to place the first N, Cα, C and O from the canonical seed
@@ -95,12 +97,12 @@ export function ResidueList({ editor }: { editor: ChainEditor }) {
         </ol>
       )}
 
-      <button type="button" className="add" onClick={add}>
+      <button type="button" className="btn btn-block btn-primary" onClick={add}>
         + Add residue
       </button>
       {residues.length > 0 && (
         <p className="hint">Enter inserts a residue below · new rows extend the C-terminus</p>
       )}
-    </section>
+    </Accordion>
   )
 }

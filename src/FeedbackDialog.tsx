@@ -5,9 +5,17 @@
  * nothing above it needs a prop for this. Delivery has no backend to lean on
  * (this is a static Vite app), so it POSTs to a Formspree endpoint, which
  * relays the message to email without a server of our own.
+ *
+ * The backdrop+dialog render through a portal to `document.body` rather than
+ * in place. `.topbar` needs its own `z-index` to reliably paint above the
+ * WebGL canvas (see App.css), which makes it a stacking context — and a
+ * fixed-position backdrop nested *inside* that context can no longer dim the
+ * topbar itself, only the page beyond it. Rendering outside the topbar's
+ * subtree entirely sidesteps that ancestor coupling.
  */
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mvkpwogp'
 
@@ -73,7 +81,7 @@ export function FeedbackDialog() {
     <>
       <button
         type="button"
-        className="theme-toggle"
+        className="btn btn-icon"
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label="Send feedback or report a bug"
@@ -83,53 +91,57 @@ export function FeedbackDialog() {
         <MessageIcon />
       </button>
 
-      {open && (
-        <div
-          className="feedback-backdrop"
-          onPointerDown={(event) => {
-            if (event.target === event.currentTarget) close()
-          }}
-        >
+      {open &&
+        createPortal(
           <div
-            className="feedback-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="feedback-title"
+            className="feedback-backdrop"
+            onPointerDown={(event) => {
+              if (event.target === event.currentTarget) close()
+            }}
           >
-            <button type="button" className="feedback-close" aria-label="Close" onClick={close}>
-              ×
-            </button>
-            <h2 id="feedback-title">Got feedback?</h2>
-            <form onSubmit={handleSubmit}>
-              <input
-                type="email"
-                className="feedback-email"
-                placeholder="Your email"
-                aria-label="Your email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-              />
-              <p className="feedback-subtitle">If I keep building this, I'll keep you in the loop.</p>
-              <textarea
-                className="feedback-textarea"
-                placeholder="Drop me a message here or report bugs/ideas here"
-                value={message}
-                onChange={(event) => setMessage(event.target.value)}
-                required
-                rows={4}
-              />
-              <button type="submit" className="feedback-submit" disabled={status === 'sending'}>
-                {status === 'sending' ? 'Sending…' : 'Send'}
+            <div
+              className="feedback-dialog"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="feedback-title"
+            >
+              <button type="button" className="feedback-close" aria-label="Close" onClick={close}>
+                ×
               </button>
-              {status === 'sent' && <p className="feedback-status">Sent — thanks!</p>}
-              {status === 'error' && (
-                <p className="feedback-status error">Something went wrong — try again.</p>
-              )}
-            </form>
-          </div>
-        </div>
-      )}
+              <h2 id="feedback-title">Got feedback?</h2>
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="email"
+                  className="feedback-email"
+                  placeholder="Your email"
+                  aria-label="Your email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                />
+                <p className="feedback-subtitle">
+                  If I keep building this, I'll keep you in the loop.
+                </p>
+                <textarea
+                  className="feedback-textarea"
+                  placeholder="Drop me a message here or report bugs/ideas here"
+                  value={message}
+                  onChange={(event) => setMessage(event.target.value)}
+                  required
+                  rows={4}
+                />
+                <button type="submit" className="btn btn-block feedback-submit" disabled={status === 'sending'}>
+                  {status === 'sending' ? 'Sending…' : 'Send'}
+                </button>
+                {status === 'sent' && <p className="feedback-status">Sent — thanks!</p>}
+                {status === 'error' && (
+                  <p className="feedback-status error">Something went wrong — try again.</p>
+                )}
+              </form>
+            </div>
+          </div>,
+          document.body,
+        )}
     </>
   )
 }

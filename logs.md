@@ -10,8 +10,8 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 14 — a feedback/message button in the top bar,
-opening a small centered dialog that posts to Formspree.
+**Last completed:** Stage 16 — the frontend layout refactor (branch
+`ui/layout-refactor`).
 **Next:** nothing queued. Candidates at the bottom of this file. A hydrogen toggle
 (2D + formula + 3D) was requested and explicitly deferred as its own phase.
 
@@ -19,15 +19,16 @@ opening a small centered dialog that posts to Formspree.
 five-feature request. The math is validated against real PDB data for all 20 amino
 acids, the chain builder recomputes only the affected suffix, and the app is a
 Desmos-style editor over a live 3D viewport with a linked 2D structural formula, a
-user-definable coordinate frame, and a light/dark theme.
+user-definable coordinate frame, a light/dark theme, and PDB export. Stage 16 then
+reworked the layout around that feature set without changing any of it.
 
-What remains unbuilt from the original spec: the live Ramachandran plot and PDB
-export (`claude.md`'s "everything else" tier), and rotamer suggestions and clash
+What remains unbuilt from the original spec: the live Ramachandran plot
+(`claude.md`'s "everything else" tier), and rotamer suggestions and clash
 detection (product.md stretch goals).
 
 ```
 npm run dev        # http://localhost:5173 (no port is configured; --port 5273 was used ad hoc)
-npm test           # 275 tests, all passing
+npm test           # 289 tests, all passing
 npm run typecheck  # tsc -b, strict + noUncheckedIndexedAccess + exactOptionalPropertyTypes
 npm run lint       # oxlint
 npm run build      # tsc -b && vite build
@@ -55,14 +56,16 @@ Pure, framework-free, unit-tested — no React or Three.js imports anywhere in `
 | `lib/coordinates.ts` | The per-atom x/y/z readout rows. Fixed-decimal formatting. |
 | `lib/depiction.ts` | The 2D skeletal layout. Topological, not a projection of the 3D. |
 | `lib/formula.ts` | The empirical formula. Hydrogens computed, since none are placed. |
+| `lib/pdbExport.ts` | `exportToPDB` — fixed-column ATOM records + END. No OXT; no filtering. |
 
 React layer:
 
 | File | What it owns |
 | --- | --- |
 | `src/theme.ts` | `useTheme` — light/dark resolution, persistence, and the `data-theme` attribute. |
-| `src/TopBar.tsx` | Title strip and the lightbulb toggle. Stage 9 fills the middle with the 2D view. |
-| `src/FeedbackDialog.tsx` | The message button and its centered dialog. Self-contained; owns its own open state and submit call. |
+| `src/Accordion.tsx` | The one collapsible-sidebar-section primitive. Heading-as-button, `aria-controls`, children unmounted when closed. |
+| `src/TopBar.tsx` | Title and the four view controls. Since stage 16 it owns the 2D *toggle*, not the 2D view. |
+| `src/FeedbackDialog.tsx` | The message button and its centered dialog. Self-contained; owns its own open state and submit call. Dialog renders through a portal, so `.topbar`'s stacking context can't trap it. |
 | `src/useChain.ts` | The chain state. Holds `residues`; derives canonical `atoms` incrementally. |
 | `src/useOrigin.ts` | The origin frame. Consumes `useChain`'s atoms and moves them rigidly. |
 | `src/editor/NumberField.tsx` | The draft/commit numeric input. `AngleField` is a wrapper over it. |
@@ -77,11 +80,11 @@ React layer:
 | `src/viewer/BackboneStructure.tsx` | Instanced ball-and-stick. Two draw calls at any chain length. |
 | `src/viewer/atomStyle.ts` | CPK colours and display radii. Render-only; deliberately not in `lib/`. |
 | `src/sampleChains.ts` | Example chains, loaded into the editable list. |
-| `src/App.tsx` | Wires the editor to the viewport. Owns `fitToken`. |
+| `src/App.tsx` | Wires the editor to the viewport. Owns `fitToken`, `sidebarCollapsed`, `showDepiction`, the Export PDB handler. |
 
 Tests: `sidechains.test.ts` (64), `depiction.test.ts` (51), `edits.test.ts` (47),
 `transform.test.ts` (30), `nerf.test.ts` (25), `render-data.test.ts` (22),
-`chain.test.ts` (21), `coordinates.test.ts` (15).
+`chain.test.ts` (21), `pdbExport.test.ts` (14), `coordinates.test.ts` (15).
 
 Two fixtures, both generated from committed PDB files so their provenance is
 auditable and the tests never touch the network:
@@ -125,6 +128,11 @@ a test fail, the test is probably right.
     bonds looks plausible — that test is the only thing that catches it.
 11. **Hover state is view state.** It lives in `App`, never in `useChain`, so a
     mouse movement cannot trigger a chain rebuild.
+12. **Every `fr` track in `.app` is `minmax(0, ...)`.** A bare `1fr` is
+    `minmax(auto, 1fr)` and will not shrink below its content's min-content —
+    and this grid contains a `<canvas>` whose min-content is a stale pixel
+    width. Three separate bugs traced to this one cause (stage 15). If a top-bar
+    button ever vanishes on resize again, look here first.
 
 ### Known rough edges
 
@@ -134,7 +142,13 @@ a test fail, the test is probably right.
   reference — but still a framing fix waiting to happen (e.g. a direction
   perpendicular to the structure's longest axis), never a geometry one.
 - The 2D diagram's scale is set by the tallest residue present, so one arginine in
-  a chain shrinks the whole diagram. Fine at 8 residues, cramped at 30.
+  a chain shrinks the whole diagram. Fine at 8 residues, cramped at 30. Stage 16
+  capped the card at 38rem wide, so a long chain now scrolls horizontally inside
+  it rather than growing — which bounds the symptom without fixing the cause.
+- The 2D card sits top-left of the viewport at a fixed position. It overlaps the
+  structure whenever the structure happens to be drawn there. Making it
+  draggable, or auto-placing it away from the bounding sphere's projection,
+  is the fix; both are rendering changes, not geometry ones.
 - Proline's ring and tryptophan's second ring are laid out by the tree walk rather
   than as polygons in the 2D view (see stage 9). Topologically correct, visibly less
   tidy than the other rings.
@@ -1261,6 +1275,379 @@ token-based styling needed no theme-specific overrides.
 
 ---
 
+## Stage 15 — PDB export, and a sidebar collapse toggle
+
+**Date:** 2026-08-21
+
+`product.md` §6 lists "Export coordinates (PDB-format text output)" as an MVP
+feature, and it was the last unbuilt one. Purely a serialization layer over
+data that already exists — no new geometry, no new state — plus a small UX
+add-on: a way to collapse the left sidebar so the 3D viewport can go
+near-fullscreen.
+
+### `lib/pdbExport.ts` — one pure function
+
+`exportToPDB(atoms, residues)` writes one fixed-column `ATOM` record per atom
+and a trailing `END`. Framework-free like every other `lib/` module. The
+column layout was taken from measuring `tests/fixtures/1UBQ.pdb` directly
+(`python3` slicing real lines) rather than trusting a written spec verbatim —
+that measurement caught that occupancy and temp factor are 6-character
+fields (`"  1.00"`, `"  0.00"`), not 5, which matters because a byte-level test
+against a real file will fail on exactly that kind of one-character drift.
+
+**`residues`, not just `atoms`, is a real parameter.** `Atom` already carries
+`aminoAcid` and `residueIndex`, so an implementation could read the residue
+name straight off the atom and never touch `residues` — which would trip
+`noUnusedParameters` (already strict project-wide). Instead the residue name
+comes from `residues[atom.residueIndex].aminoAcid`: the actual source of
+truth per claude.md's central invariant, not the atom's own denormalized copy
+of it. Same value either way for a correctly-built chain, but it keeps the
+exporter honest about which side of that invariant it reads from. The residue
+*sequence number*, similarly, is `atom.residueIndex + 1` — position in the
+list — never `Residue.id`, which can have gaps after a delete.
+
+**No OXT.** `lib/chain.ts` has never placed a C-terminal OXT (see Stage 9's
+`lib/formula.ts` note: the formula's heavy-atom count equals what the builder
+places "plus exactly one — the unmodelled C-terminal OXT"). The exporter
+serializes whatever atoms it's handed and invents nothing, so an exported
+file is one atom short of a deposited PDB file at the C-terminus. Left as a
+documented gap, not patched — synthesizing OXT geometry here would mean
+guessing a bond the rest of the codebase deliberately doesn't model.
+
+### Tests — `tests/pdbExport.test.ts`, 14 cases (289 total)
+
+Two tiers, for the same reason `tests/nerf.test.ts` uses two: a file that
+round-trips through its own parser can be self-consistently wrong.
+
+- **Round-trip.** Export 1UBQ's real backbone-plus-default-side-chains
+  reconstruction, re-parse with an independent small column parser, and check
+  coordinates survive to the format's own 3-decimal precision; serials are
+  sequential from 1 regardless of the backbone/side-chain mix; residue
+  sequence numbers follow list position even when ids have gaps (a hand-built
+  three-residue list with ids `r1`/`r5`/`r9` still exports resSeq 1/2/3); a
+  hand-built tryptophan residue exports all 10 side-chain atoms
+  `lib/sidechainTopology.ts` lists for TRP, in order, alongside its 4 backbone
+  atoms; an empty structure exports exactly `"END\n"`.
+- **Byte-level format**, against `tests/fixtures/1UBQ.pdb` read directly (same
+  `readFileSync`/`fileURLToPath` idiom `scripts/build-fixture.ts` uses) — not
+  the exporter's own parser reading its own output, which structurally cannot
+  catch a misaligned column. For Met1 N/CA/CB, and Gly76 N/CA/C/O (not OXT,
+  which the builder never emits and has nothing to compare against): every
+  non-numeric column byte-identical to the real file, and every numeric
+  column matching in width and shape (regex, not value — our coordinates are
+  an ideal-geometry reconstruction, not the deposited structure).
+
+### UI — `src/App.tsx`, `src/App.css`
+
+**Export PDB** sits above the RESIDUES section, styled identically to "Fit
+view" (a new `.export-pdb` class with the same ruleset — the codebase already
+keeps near-duplicate button classes rather than one shared abstraction, e.g.
+`.theme-toggle` vs `.depiction-toggle`, so this follows that). Disabled via
+the `disabled` attribute at zero residues; the handler *also* checks
+`residues.length === 0` and sets an inline "Nothing to export" message, so
+that path exists regardless of how the click arrived. Exports `atoms` — the
+post-origin-transform positions already fed to the viewport and the
+coordinate table — not `editor.atoms`, so the download matches what's on
+screen. The download itself is the standard Blob + object URL + temporary
+`<a>` click, revoked immediately after.
+
+**Sidebar collapse** is a new `sidebarCollapsed` boolean living next to
+`pickArmed` (both plain UI-mode flags, unlike `fitToken`/`hovered`/`pointer`
+which are driven by viewport events). A slim always-visible header row sits
+above everything else in the sidebar, holding one icon button that reuses the
+existing `.theme-toggle` square-button class and a new inline-SVG chevron
+(`SidebarToggleIcon`, following `TopBar.tsx`'s no-icon-library convention).
+Collapsing sets `grid-template-columns` on `.app` to `3.5rem 1fr` — just wide
+enough to keep the reopen toggle reachable — and everything else in the
+sidebar unmounts rather than just hiding, matching `TopBar.tsx`'s existing
+`open && (...)` convention for the 2D toggle.
+
+### Verified in the browser, not just in tests
+
+Drove it over Playwright against the dev server (no `chromium-cli` in this
+environment, same substitution as Stage 14): with zero residues, Export PDB
+is disabled; adding residues enables it, and clicking it downloads
+`biomodeller-export.pdb` with correctly-formed 78-column lines ending in
+`END`. A one-residue tryptophan chain exported all 14 atoms (4 backbone + 10
+side chain) with the right names in the right order. The collapse toggle
+shrinks the sidebar to a thin strip, the viewport visibly expands to fill the
+freed space, and the reopen control stays clickable throughout — checked in
+both themes.
+
+### Fixed: the top bar could scroll itself off-screen with a long chain
+
+Reported as "the buttons on the top right disappear when I open the left
+menu." The actual trigger had nothing to do with the collapse toggle itself —
+`.app`'s grid was `grid-template-rows: auto 1fr`, and a plain `1fr` track is a
+well-known CSS Grid trap: it doesn't shrink below the *content's* min size
+unless told to, so with enough residues (a tall/wide 2D depiction plus a long
+residue list) the two rows together could exceed `.app`'s `100vh` box. `.app`
+has `overflow: hidden`, which still makes it a valid scroll container even
+with no visible scrollbar — so when `+ Add residue`'s autofocus tried to
+scroll the new row into view, the browser scrolled `.app` itself (not just
+`.panel`, which has its own `overflow-y: auto` and scrolled correctly on its
+own). That dragged the entire topbar — title and every top-right button —
+up and out of the visible area. Collapsing the sidebar happened to be how the
+user most often re-triggered a relayout with a long chain already loaded,
+which is why it looked collapse-specific.
+
+Fixed at the source: `grid-template-rows: auto minmax(0, 1fr)`. The
+`minmax(0, ...)` is what tells the second row it's allowed to shrink to
+exactly the leftover space rather than growing to fit content, so `.app`
+never has scrollable overflow and can never be a target for the browser's
+scroll-into-view — `.panel` remains the only thing that ever scrolls.
+Verified by reproducing the original bug (12 residues, `+ Add residue`'s
+autofocus, then toggling the sidebar) and confirming every topbar button's
+bounding box stays at the same `y` before and after.
+
+While in there: `.panel-header` (the sidebar's own collapse toggle) was a
+plain flow child of `.panel`, so *it* scrolled out of view too once a long
+residue list scrolled internally — a smaller instance of the same "thing
+that should stay put doesn't" class of bug. Made `position: sticky; top: 0`,
+verified by scrolling `.panel` to its end and confirming the toggle is still
+where it was.
+
+**The `minmax(0, 1fr)` fix above genuinely stopped the overflow, but wasn't
+the whole story** — reported back as "worked for the first click but not
+afterward." It couldn't be reproduced by re-running the same repro (12
+residues, repeated `+ Add residue` autofocus, repeated collapse/reopen, even
+rapid-fire with no settle time, in both Chromium and WebKit) — every run held
+steady. So `.topbar` was additionally made `position: sticky; top: 0` on the
+theory that pinning it directly is strictly stronger than "prevent the one
+overflow path I could find": correct regardless of whether some other,
+unreproduced path can still scroll `.app`.
+
+That surfaced two *real* regressions, each caught by checking every other
+piece of floating UI in the top bar, not just the one this was meant to fix:
+
+1. Giving `.topbar` a `z-index` (needed — see the CSS comment; without one,
+   `<canvas>`, the WebGL viewport, could composite above `ExamplesMenu`'s
+   dropdown regardless of DOM order, confirmed by testing with and without
+   it) makes it a stacking context. A stacking context traps its
+   descendants' z-index inside it — so `FeedbackDialog`'s backdrop, nested in
+   the topbar to sit next to its trigger button, could no longer dim the
+   topbar itself, only the rest of the page. Confirmed by diffing against
+   the pre-session baseline (`git stash`), which dimmed correctly, so this
+   wasn't a pre-existing gap.
+2. Dropping the `z-index` to dodge (1) reopened the canvas issue it was
+   guarding against — reproduced by `elementFromPoint` on a coordinate inside
+   an open dropdown's first example button and finding `<canvas>` on top,
+   not the button.
+
+Neither omission nor inclusion of one property could satisfy both, because
+the real conflict was architectural: `FeedbackDialog`'s modal shouldn't be
+nested inside the one element in the whole app that has a legitimate reason
+to own a stacking context. Fixed by having `FeedbackDialog` render its
+backdrop through `createPortal(..., document.body)` instead of in place —
+it now sits entirely outside `.topbar`'s subtree, so nothing about the
+topbar's own stacking can reach it. `.topbar` keeps both `position: sticky`
+and `z-index: 10`. Verified all three properties together: the dropdown
+renders above the canvas, the feedback backdrop dims the topbar along with
+everything else, and the original pinning repro still holds.
+
+**Third report, and the one that was actually it: window resize.** Everything
+above is real, but none of it was the reported bug — which is why two rounds
+of "fixed" weren't. Asking for the trigger instead of guessing again got the
+answer in one step: *resizing the window*, in Chrome. That reproduced
+instantly and every time.
+
+The cause is the same CSS Grid trap as the row fix, one axis over.
+`grid-template-columns: 23rem 1fr` — and a bare `1fr` is `minmax(auto, 1fr)`,
+which refuses to shrink a track below its **min-content**. The viewport column
+holds the WebGL `<canvas>`, whose min-content is whatever pixel width Three.js
+last sized it to. So shrinking the window left the grid as wide as the *old*
+canvas: measured, `.app` stayed 1280px while the window went to 450px, and
+because `.app` is `overflow: hidden`, everything past the new window edge was
+clipped — the top-right buttons sitting at x=1184 in a 450px window. Not
+scrolled away, not stacking: **clipped**, which is why the earlier sticky and
+z-index work couldn't have helped.
+
+Fixed with `minmax(0, ...)` on both columns (`minmax(0, 23rem) minmax(0, 1fr)`,
+and the collapsed variant too). Verified across 1280→450px in both directions,
+shrink-then-grow, while collapsed, while toggling the sidebar at a narrow
+width, and at short heights with a tall tryptophan depiction — asserting *no*
+topbar button lands outside the window rather than eyeballing one button's
+coordinates, which is the check that would have caught this the first time.
+
+Worth keeping as the lesson: all three of these were the same defect class —
+a grid track sized by its content instead of its container — and the first two
+rounds fixed instances of it that weren't the one being reported. The
+generalizable rule for this layout: **every `fr` track in `.app` wants
+`minmax(0, ...)`**, because both of its axes contain something (a canvas, a
+scrolling panel) whose intrinsic size has nothing to do with the window.
+
+**Status: 289/289 tests pass, `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Stage 16 — Layout refactor: reclaim the canvas, unify the controls
+
+**Date:** 2026-09-03
+**Branch:** `ui/layout-refactor` (stage 15 was still uncommitted on `main` when
+this started; it was carried onto the branch and committed there first, so
+`main` never moved).
+
+Presentation only. No `lib/` file changed, no geometry changed, and the 289
+tests passed untouched from start to finish — which is the point: every test in
+this project is over a pure module, so a layout refactor should be invisible to
+them, and if one had broken it would have meant the change reached further than
+intended.
+
+### The top bar was spending a seventh of the window on a diagram
+
+The 2D depiction lived in the top bar as a full-width strip, which cost ~14rem
+of height whenever it was open and ~3.5rem when it wasn't. It is now a floating
+card positioned inside `.viewport`, so the bar is a **41.8px single-line strip**
+and the 3D view gets everything else.
+
+Moving it to an overlay rather than a modal or a sidebar section was the whole
+decision: the reason a 2D depiction exists here is stage 10's two-way hover
+linking, and that only pays off if both readings of the molecule are on screen
+at once. A modal would have covered the thing it links to.
+
+The move also **shortened the prop path**. `hovered`/`highlightKey`/`setHovered`
+already lived in `App`; `TopBar` was a pure pass-through for three props it
+never read. `Depiction2D` is now a direct sibling of `StructureViewport`, which
+is a truer picture of what that state is shared between.
+
+**And it deleted a bug class.** The old "buttons jump when you toggle 2D"
+fix required `.topbar-depiction` to stay mounted-but-empty, because it was the
+`flex: 1` spacer holding the cluster right. With the depiction gone the spacer
+is gone too, replaced by `margin-left: auto` on a real `.topbar-actions`
+container — there is now nothing conditional in that row at all, so the jump
+cannot recur rather than being prevented.
+
+### z-index, after the move
+
+`.viewport` is `position: relative` with `z-index: auto`, so it is **not** a
+stacking context and everything inside it competes globally. The card therefore
+needs the smallest value that beats the `<canvas>` and nothing more:
+
+| Element | z-index | Why |
+| --- | --- | --- |
+| `<canvas>` | auto | composites unpredictably; every overlay needs an explicit value |
+| `.depiction-overlay` | **1** (new) | above the canvas, below everything else |
+| `.atom-tooltip` | 2 | must stay above the card — hovering an atom *in* the card puts the tooltip over it |
+| `.topbar` | 10 | unchanged |
+| `.examples-dropdown` | 20 | opens over the viewport, must cover the card |
+| `.feedback-backdrop` | 30 | portalled to `body`, unchanged |
+
+All four orderings were verified with `elementFromPoint`, not by reading the
+numbers — including that the feedback backdrop still dims the card.
+
+### One button system, replacing five
+
+`.theme-toggle` (a 2rem square), `.depiction-toggle` (a 2rem pill with different
+padding), `.fit`, `.export-pdb` and `.feedback-submit` (three byte-identical
+full-width rules) became `.btn` plus `.btn-icon` / `.btn-sm` / `.btn-block` /
+`.btn-primary` / `.btn-danger`. Measured after: all four top-bar controls report
+the same height (28px) and the same radius (7.2px).
+
+Two details worth keeping:
+
+- **`:hover:not(:disabled)` throughout.** A bare `:hover` recolours a dead
+  button, which is exactly how the row arrows on the first and last rows looked
+  live before stage 8 caught it. Encoding it in the base class means the next
+  button gets it for free.
+- **The on-state tint is keyed on `aria-expanded` and `.selected`, never
+  `[aria-pressed]`.** The lightbulb carries `aria-pressed` as a correct
+  annotation but is not an "active" affordance, and matching it would have left
+  the bulb permanently lit in one of the two themes. The sidebar collapse toggle
+  needed the same escape for the opposite reason — it is `aria-expanded` in its
+  *resting* state — hence `.btn-quiet`, which opts out of the tint while keeping
+  the attribute for screen readers. **The tint means "this is revealing
+  something you would not otherwise see", and two controls that carry the
+  attribute don't mean that.**
+
+### Tokens, so "same height" is enforced rather than remembered
+
+`index.css` had nine colour tokens and **no** spacing, size or radius tokens, so
+those were literals scattered over ~1000 lines — which is how three button
+heights and two radii drifted in unnoticed. Added a six-step `--space-*` scale,
+`--control-h`/`--control-px`/`--control-font` (plus `-sm` variants), three radii,
+`--field-gap`, `--topbar-py`, `--shadow-overlay` and `--cta-bg`. None of them is
+a new value; each is one already in use, promoted to a name.
+
+`--cta-bg` aliases `--accent-soft` and deliberately gets **no** dark override:
+`var()` resolves at use time, so it follows `--accent-soft`'s own redefinition
+in the dark block. Only `--shadow-overlay` and `--cta-bg-hover` are
+theme-dependent — a 15% shadow is invisible on a `#12151b` canvas.
+
+### The accordion, and the one rule that would have shipped it broken
+
+There were four hand-rolled disclosures and no shared primitive.
+`src/Accordion.tsx` is the one for *sections*; the other three (the sidebar
+strip, the 2D toggle, the per-row χ expander) stay hand-rolled because none of
+them is a section and forcing them through one API would be the wrong reuse.
+
+```css
+.accordion-body[hidden] { display: none; }
+```
+
+Not optional. `hidden` is only a UA `display: block`, so `.accordion-body`'s own
+`display: flex` beats it and the "hidden" body stays fully visible. This is the
+classic way a `hidden` element doesn't hide.
+
+Three other choices:
+
+- **`<h2>` wrapping a `<button>`, not the reverse.** The heading has to stay a
+  heading for a screen reader's heading list; the button has to be the whole
+  interactive surface.
+- **The body element is always in the DOM, its children are not.**
+  `aria-controls` always resolves, while `{open && children}` keeps the
+  coordinate table's up-to-304 rows unbuilt rather than merely invisible.
+- **The chevron animates; the height does not.** These bodies contain a
+  `max-height` scroll container with a `position: sticky` table header, and a
+  `0fr → 1fr` or max-height transition either clips that header or fights the
+  inner scroll — for 150ms of polish.
+
+**A stale comment caught along the way.** `CoordinatePanel`'s docstring still
+said "collapsed by default", which stage 12 had made untrue when it set
+`DEFAULT_ORIGIN.enabled = true` on the reasoning that the table "shouldn't need
+a click to discover". The accordion made the conflict concrete, because there
+are now two separate things — is the *section* on screen, and does the *frame*
+apply — so the docstring now names both instead of blurring them. The section
+opens by default, preserving stage 12's decision rather than silently reverting
+it behind a refactor.
+
+### Input grids
+
+`.row-angles`, `.row-chi` and `.triple` were three separate
+`repeat(3, 1fr)` declarations that had drifted apart. They are one rule now, on
+`--field-gap`, so an origin x/y/z lines up column-for-column with a φ/ψ/ω row in
+a different component. `.spacings` keeps four tracks but takes the same gap.
+
+**`.angle` was deliberately not renamed.** `NumberField` builds
+`.angle-label` / `.angle-input` / `.angle-unit` by *string concatenation* from
+its `className` prop, and `CoordinatePanel` passes `className="angle"` as a
+literal — so a rename silently unstyles six inputs with no type error.
+
+### Verified by driving it, not by reading it
+
+~55 assertions over five Playwright runs against the dev server. Beyond the
+obvious: the recurring resize regression (1600→900→620→450 and back, asserting
+*no* top-bar button leaves the window, rather than eyeballing one); the examples
+dropdown painting over the card; the feedback backdrop dimming the card; 2D→3D
+hover linking with the tooltip above the card; a 30-residue chain overflowing
+the card and still scrollable from `scrollLeft: 0` (the `safe center` fix) while
+a 1-residue chain stays centred; the sticky panel header at `scrollTop 2387`;
+Export PDB downloading 78-column records; and atom picking, verified by
+hover-scanning the canvas for a real atom rather than clicking its centre and
+hoping.
+
+**Two "failures" were my own test bugs, not regressions** — a guessed
+`localStorage` key, and measuring the sticky header against `.panel`'s border
+box when `top: 0` sticks to its *padding* box. Both were confirmed against the
+pre-refactor baseline (`git diff` showed `.panel`/`.panel-header` untouched)
+before being dismissed, which is the step that distinguishes a bad probe from a
+real break.
+
+**Status: 289/289 tests pass (unchanged), `tsc -b` and `oxlint` clean,
+`vite build` succeeds. Top bar 224px → 41.8px with the 2D view open; viewport
+858px tall at 1440×900.**
+
+---
+
 ## Next — nothing queued
 
 What is still unbuilt, in the order `claude.md` and product.md suggest:
@@ -1271,15 +1658,12 @@ What is still unbuilt, in the order `claude.md` and product.md suggest:
    from stage 10 is the pattern to reuse — shared `hovered` state in `App`, a key
    both views agree on, and `lib/` doing the layout.
 2. **The hydrogen toggle** (2D + formula + 3D), deferred above as its own phase.
-3. **PDB export.** Cheap, and a credibility win: the output can be opened in PyMOL
-   or ChimeraX and checked by someone who doesn't trust this tool. The atom naming
-   and `residueIndex` numbering it needs already exist.
-4. **Clash detection.** The data is already there — `tests/chain.test.ts` documents
+3. **Clash detection.** The data is already there — `tests/chain.test.ts` documents
    1UBQ's ideal-geometry clashes, and a diagnostic written during stage 8 found 71
    non-bonded pairs closer than 1.6 Å in a default-rotamer ubiquitin. Surfacing
    those in the UI is a display feature, and it must stay one: **detecting a clash
    must never move an atom.**
-5. **Rotamer suggestions** (product.md §4.2(b)), which would need a bundled Dunbrack
+4. **Rotamer suggestions** (product.md §4.2(b)), which would need a bundled Dunbrack
    library. The biggest lift and the one furthest from the current premise, since
    it means suggesting angles rather than reconstructing from them.
 
