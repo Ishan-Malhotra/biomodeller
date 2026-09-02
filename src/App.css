@@ -114,8 +114,10 @@
    would leave the bulb permanently tinted in one of the two themes.
 
    The tint means "this control is revealing something you would not otherwise
-   see" — the 2D card, the examples dropdown. It is not for controls whose
-   expanded state is simply the resting state, hence `.btn-quiet` below. */
+   see" — the 2D card, the examples dropdown. The sidebar collapse toggle used
+   to need an opt-out here (it is expanded by default, which would have left
+   it permanently tinted), but it is no longer a `.btn` at all — see
+   `.panel-toggle` — so that opt-out no longer applies to anything. */
 .btn[aria-expanded='true'],
 .btn.selected {
   color: var(--accent);
@@ -123,26 +125,13 @@
   border-color: var(--accent);
 }
 
-/* Opts out of the tint while keeping `aria-expanded` for screen readers. The
-   sidebar collapse toggle is the case this exists for: it is expanded by
-   default, so tinting on `aria-expanded` would leave it lit up permanently and
-   the highlight would carry no information at all. */
-.btn-quiet[aria-expanded='true'] {
-  color: var(--muted);
-  background: transparent;
-  border-color: var(--line);
-}
-
-.btn-quiet[aria-expanded='true']:hover:not(:disabled) {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-/* The two actions that create something: Export PDB and + Add residue. Tinted
-   rather than saturated — a solid --accent block would be the loudest thing on
-   screen, louder than the molecule, which is not what the sidebar is for.
-   --accent-soft is already the app's "this is on" tint, so a CTA reads as the
-   same accent family rather than as a new colour. */
+/* The sidebar's creating action: + Add residue. Tinted rather than saturated —
+   a solid --accent block would be the loudest thing on screen, louder than the
+   molecule, which is not what the sidebar is for. --accent-soft is already the
+   app's "this is on" tint, so a CTA reads as the same accent family rather than
+   as a new colour. Export PDB used to carry this too, but moved to the top-bar
+   cluster as a plain `.btn` — it now reads as one of five equal controls rather
+   than a CTA among them. */
 .btn-primary {
   color: var(--accent);
   background: var(--cta-bg);
@@ -238,12 +227,29 @@
    to sit above this card because hovering an atom *in* the card puts the
    tooltip over it. 1 is exactly enough to beat the `<canvas>`, which is all
    this needs to do. */
+/* `top`/`left` set the resting position; dragging moves the card with
+   `transform: translate(...)` layered on top rather than by rewriting
+   `top`/`left` on every mousemove, which is one fewer layout recalculation per
+   frame. `cursor: grab` on the whole card, not just a drag handle — there is
+   nothing else here to click, so anywhere on the card is a fair place to grab
+   it, matching how the 2D card was asked for: draggable, not just relocatable
+   from one fixed handle. */
 .depiction-overlay {
   position: absolute;
   top: var(--space-4);
   left: var(--space-4);
   z-index: 1;
   max-width: min(38rem, calc(100% - 2 * var(--space-4)));
+  cursor: grab;
+}
+
+/* No transition while dragging — the card must track the cursor exactly, not
+   ease toward it a frame behind. `user-select: none` stops the drag from also
+   selecting the formula/atom-label text underneath the cursor, which browsers
+   do by default on any mousedown-drag over text. */
+.depiction-overlay.dragging {
+  cursor: grabbing;
+  user-select: none;
 }
 
 /* `max-height` + `overflow: auto` are still a hard boundary: ordinary chains
@@ -377,30 +383,59 @@
   white-space: nowrap;
 }
 
+/* `position: relative` makes this the positioning context for `.panel-toggle`,
+   which must stay pinned to the panel's own box — not drift with
+   `.panel-scroll`'s content the way a `position: absolute` child of the
+   scrolling element itself would (its `top: 50%` would resolve against the
+   full scrollable height, not the visible one, and scroll away with the rest). */
 .panel {
-  display: flex;
+  position: relative;
   grid-area: panel;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 1.25rem 1rem;
-  overflow-y: auto;
   border-right: 1px solid var(--line);
   background: var(--panel);
 }
 
-/* Holds just the collapse toggle, top-right of the sidebar, always visible —
-   including while collapsed (the only way back) and while the residue list
-   below it is long enough to scroll `.panel` internally. `sticky` rather than
-   plain flow: without it, this row is just the first flex child and scrolls
-   out of view with everything else the moment the panel scrolls. */
-.panel-header {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+.panel-scroll {
   display: flex;
-  flex: none;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;
+  padding: 1.25rem 1rem;
+  overflow-y: auto;
+}
+
+/* The IDE-style sidebar toggle: a small pill straddling the panel/viewport
+   border, centered on the panel's own height rather than pinned to its top.
+   Half its width sits on each side of the border via the `translate(50%, …)`,
+   so it reads as *on* the dividing line rather than beside it.
+
+   `z-index: 2` for the same reason `.topbar` needed an explicit one: `.panel`
+   has no z-index of its own, so without this the WebGL `<canvas>` in the
+   `viewport` grid cell can composite above a plain absolutely-positioned
+   sibling despite DOM order. 2 matches `.atom-tooltip`, the next thing this
+   has to out-rank. */
+.panel-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 2.4rem;
+  padding: 0;
+  color: var(--muted);
+  cursor: pointer;
   background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  transform: translate(50%, -50%);
+}
+
+.panel-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .panel h2 {
@@ -887,12 +922,6 @@
 .readout dd {
   margin: 0;
   font-variant-numeric: tabular-nums;
-}
-
-.export-error {
-  margin: 0.3rem 0 0;
-  font-size: 0.7rem;
-  color: var(--danger);
 }
 
 .hint {

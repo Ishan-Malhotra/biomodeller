@@ -57,12 +57,16 @@ export function TopBar({
   depictionOpen,
   onToggleDepiction,
   onSelectExample,
+  onExportPdb,
+  exportDisabled,
 }: {
   theme: Theme
   onToggleTheme: () => void
   depictionOpen: boolean
   onToggleDepiction: () => void
   onSelectExample: (example: ExampleChain) => void
+  onExportPdb: () => void
+  exportDisabled: boolean
 }) {
   const lit = theme === 'light'
 
@@ -73,8 +77,8 @@ export function TopBar({
         <p>Protein Structure Builder</p>
       </div>
 
-      {/* All four controls share `.btn`, so they agree on height, radius and
-          hover treatment; only their widths differ. */}
+      {/* All controls share `.btn`, so they agree on height, radius, hover
+          treatment and colour; only their widths differ. */}
       <div className="topbar-actions">
         <ExamplesMenu onSelect={onSelectExample} />
 
@@ -87,6 +91,10 @@ export function TopBar({
           onClick={onToggleDepiction}
         >
           2D
+        </button>
+
+        <button type="button" className="btn" disabled={exportDisabled} onClick={onExportPdb}>
+          Export PDB
         </button>
 
         <button

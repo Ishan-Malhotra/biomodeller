@@ -81,9 +81,17 @@ function App() {
   // Lifted out of TopBar now that the card it controls renders in the viewport.
   // Open by default, as it was there, so the feature stays discoverable.
   const [showDepiction, setShowDepiction] = useState(true)
-  const [exportError, setExportError] = useState<string | null>(null)
   const [hovered, setHovered] = useState<AtomRef | null>(null)
   const [pointer, setPointer] = useState<HoverPoint | null>(null)
+  // The 2D card's offset from its default top-left corner, in pixels within
+  // `.viewport`'s own box (the card is positioned absolutely relative to it).
+  // A ref, not state, for the drag *origin* — it only needs to survive across
+  // event handlers within one drag, never trigger a render itself.
+  const [depictionPos, setDepictionPos] = useState({ x: 0, y: 0 })
+  const [isDraggingDepiction, setIsDraggingDepiction] = useState(false)
+  const depictionDragOrigin = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null)
+  const viewportRef = useRef<HTMLDivElement>(null)
+  const depictionRef = useRef<HTMLDivElement>(null)
   const fit = () => setFitToken((token) => token + 1)
 
   const { residues, stats } = editor
@@ -103,11 +111,6 @@ function App() {
   }
 
   const exportPdb = () => {
-    if (residues.length === 0) {
-      setExportError('Nothing to export')
-      return
-    }
-    setExportError(null)
     const blob = new Blob([exportToPDB(atoms, residues)], { type: 'chemical/x-pdb' })
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')
@@ -137,6 +140,52 @@ function App() {
     wasEmpty.current = empty
   }, [atoms.length])
 
+  // The 2D card's drag. Listeners live on `window`, not on the card itself:
+  // a card that only tracked mousemove while the cursor stayed over it would
+  // drop the drag the instant a fast flick carried the cursor past its edge,
+  // which happens on nearly every real drag. Clamped to `.viewport`'s own box
+  // — the card is an overlay *inside* the 3D view, not a free-floating window,
+  // so "anywhere" means anywhere over the structure, never on top of the
+  // sidebar or top bar, where its z-index would lose to both anyway.
+  useEffect(() => {
+    if (!isDraggingDepiction) return
+
+    const handleMove = (event: MouseEvent) => {
+      const origin = depictionDragOrigin.current
+      const viewportBox = viewportRef.current?.getBoundingClientRect()
+      const cardEl = depictionRef.current
+      if (!origin || !viewportBox || !cardEl) return
+
+      // `depictionPos` of (0, 0) already sits at the card's resting inset
+      // (`--space-4` on both axes, via CSS), so the lower bound is 0 — sliding
+      // further negative would pull the card's left/top edge past the
+      // viewport's own edge. The upper bound leaves that same margin on the
+      // far side, so the card never sits flush against the opposite edge either.
+      const margin = 12 // px, matches --space-4 (0.75rem at the default root size)
+      const maxX = Math.max(0, viewportBox.width - cardEl.offsetWidth - 2 * margin)
+      const maxY = Math.max(0, viewportBox.height - cardEl.offsetHeight - 2 * margin)
+      const nextX = origin.startPosX + (event.clientX - origin.startX)
+      const nextY = origin.startPosY + (event.clientY - origin.startY)
+
+      setDepictionPos({
+        x: Math.min(Math.max(nextX, 0), maxX),
+        y: Math.min(Math.max(nextY, 0), maxY),
+      })
+    }
+
+    const stopDragging = () => {
+      depictionDragOrigin.current = null
+      setIsDraggingDepiction(false)
+    }
+
+    window.addEventListener('mousemove', handleMove)
+    window.addEventListener('mouseup', stopDragging)
+    return () => {
+      window.removeEventListener('mousemove', handleMove)
+      window.removeEventListener('mouseup', stopDragging)
+    }
+  }, [isDraggingDepiction])
+
   return (
     <div className={sidebarCollapsed ? 'app sidebar-collapsed' : 'app'}>
       <TopBar
@@ -145,73 +194,72 @@ function App() {
         depictionOpen={showDepiction}
         onToggleDepiction={() => setShowDepiction((current) => !current)}
         onSelectExample={selectExample}
+        onExportPdb={exportPdb}
+        exportDisabled={residues.length === 0}
       />
 
+      {/* `.panel` itself no longer scrolls — it is just the positioning context
+          for the border toggle below, which must stay fixed to the panel's own
+          box rather than drifting with `.panel-scroll`'s content as the residue
+          list grows past a screen's height. */}
       <aside className={sidebarCollapsed ? 'panel collapsed' : 'panel'}>
-        <div className="panel-header">
-          <button
-            type="button"
-            className="btn btn-icon btn-quiet"
-            aria-expanded={!sidebarCollapsed}
-            aria-label={`${sidebarCollapsed ? 'Show' : 'Hide'} the sidebar`}
-            title={`${sidebarCollapsed ? 'Show' : 'Hide'} the sidebar`}
-            onClick={() => setSidebarCollapsed((current) => !current)}
-          >
-            <SidebarToggleIcon collapsed={sidebarCollapsed} />
-          </button>
+        <div className="panel-scroll">
+          {!sidebarCollapsed && (
+            <>
+              <ResidueList editor={editor} />
+
+              <CoordinatePanel
+                frame={frame}
+                atoms={atoms}
+                pickArmed={pickArmed}
+                onArmPick={setPickArmed}
+              />
+
+              <section className="readout">
+                <h2>Derived</h2>
+                <dl>
+                  <dt>Residues</dt>
+                  <dd>{residues.length}</dd>
+                  <dt>Atoms</dt>
+                  <dd>{atoms.length}</dd>
+                  <dt title="Residues whose atoms were reused by reference from the previous build, rather than recomputed. Residue i depends on every residue before it, so an edit at i invalidates exactly the suffix from i onward.">
+                    Last edit
+                  </dt>
+                  <dd>
+                    {stats.total === 0
+                      ? '—'
+                      : stats.recomputed === 0
+                        ? `reused all ${stats.reused}`
+                        : `recomputed ${stats.recomputed} of ${stats.total}, from residue ${stats.fromIndex + 1}`}
+                  </dd>
+                </dl>
+                <button type="button" className="btn btn-block" onClick={fit}>
+                  Fit view
+                </button>
+                <p className="hint">Drag to orbit · scroll to zoom · right-drag to pan</p>
+              </section>
+            </>
+          )}
         </div>
 
-        {!sidebarCollapsed && (
-          <>
-            <div>
-              <button
-                type="button"
-                className="btn btn-block btn-primary"
-                disabled={residues.length === 0}
-                onClick={exportPdb}
-              >
-                Export PDB
-              </button>
-              {exportError && <p className="export-error">{exportError}</p>}
-            </div>
-
-            <ResidueList editor={editor} />
-
-            <CoordinatePanel
-              frame={frame}
-              atoms={atoms}
-              pickArmed={pickArmed}
-              onArmPick={setPickArmed}
-            />
-
-            <section className="readout">
-              <h2>Derived</h2>
-              <dl>
-                <dt>Residues</dt>
-                <dd>{residues.length}</dd>
-                <dt>Atoms</dt>
-                <dd>{atoms.length}</dd>
-                <dt title="Residues whose atoms were reused by reference from the previous build, rather than recomputed. Residue i depends on every residue before it, so an edit at i invalidates exactly the suffix from i onward.">
-                  Last edit
-                </dt>
-                <dd>
-                  {stats.total === 0
-                    ? '—'
-                    : stats.recomputed === 0
-                      ? `reused all ${stats.reused}`
-                      : `recomputed ${stats.recomputed} of ${stats.total}, from residue ${stats.fromIndex + 1}`}
-                </dd>
-              </dl>
-              <button type="button" className="btn btn-block" onClick={fit}>
-                Fit view
-              </button>
-              <p className="hint">Drag to orbit · scroll to zoom · right-drag to pan</p>
-            </section>
-          </>
-        )}
+        {/* Vertically centered on the panel/viewport border rather than pinned
+            to the top — the IDE-style sidebar-collapse convention, and the one
+            way back in while collapsed, so it stays put regardless of how far
+            `.panel-scroll` has scrolled. */}
+        <button
+          type="button"
+          className="panel-toggle"
+          aria-expanded={!sidebarCollapsed}
+          aria-label={`${sidebarCollapsed ? 'Show' : 'Hide'} the sidebar`}
+          title={`${sidebarCollapsed ? 'Show' : 'Hide'} the sidebar`}
+          onClick={() => setSidebarCollapsed((current) => !current)}
+        >
+          <SidebarToggleIcon collapsed={sidebarCollapsed} />
+        </button>
       </aside>
 
       <main
+        ref={viewportRef}
         className={pickArmed ? 'viewport picking' : 'viewport'}
         // Tracked on the container rather than per atom: the tooltip follows the
         // cursor, and an instanced mesh's own events don't fire on every move.
@@ -233,7 +281,26 @@ function App() {
         {/* Before the tooltip in DOM order as well as below it in z-index, so
             hovering an atom inside this card still puts the label on top. */}
         {showDepiction && (
-          <div className="depiction-overlay">
+          <div
+            ref={depictionRef}
+            className={isDraggingDepiction ? 'depiction-overlay dragging' : 'depiction-overlay'}
+            style={{
+              transform: `translate(${depictionPos.x}px, ${depictionPos.y}px)`,
+            }}
+            // mousedown-only: a click that never moves is a click (e.g. on an
+            // atom inside the SVG, for hover), and only turns into a drag once
+            // the window-level listener above actually sees movement.
+            onMouseDown={(event) => {
+              if (event.button !== 0) return
+              depictionDragOrigin.current = {
+                startX: event.clientX,
+                startY: event.clientY,
+                startPosX: depictionPos.x,
+                startPosY: depictionPos.y,
+              }
+              setIsDraggingDepiction(true)
+            }}
+          >
             <Depiction2D
               residues={residues}
               theme={theme}

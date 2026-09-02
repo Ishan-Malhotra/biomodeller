@@ -10,8 +10,8 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 16 — the frontend layout refactor (branch
-`ui/layout-refactor`).
+**Last completed:** Stage 17 — a draggable 2D card, and a second layout pass
+moving Export PDB into the top bar (branch `ui/layout-refactor`).
 **Next:** nothing queued. Candidates at the bottom of this file. A hydrogen toggle
 (2D + formula + 3D) was requested and explicitly deferred as its own phase.
 
@@ -64,7 +64,7 @@ React layer:
 | --- | --- |
 | `src/theme.ts` | `useTheme` — light/dark resolution, persistence, and the `data-theme` attribute. |
 | `src/Accordion.tsx` | The one collapsible-sidebar-section primitive. Heading-as-button, `aria-controls`, children unmounted when closed. |
-| `src/TopBar.tsx` | Title and the four view controls. Since stage 16 it owns the 2D *toggle*, not the 2D view. |
+| `src/TopBar.tsx` | Title and the five view controls (Examples, 2D toggle, Export PDB, theme, feedback). Owns the 2D *toggle*, not the 2D view. |
 | `src/FeedbackDialog.tsx` | The message button and its centered dialog. Self-contained; owns its own open state and submit call. Dialog renders through a portal, so `.topbar`'s stacking context can't trap it. |
 | `src/useChain.ts` | The chain state. Holds `residues`; derives canonical `atoms` incrementally. |
 | `src/useOrigin.ts` | The origin frame. Consumes `useChain`'s atoms and moves them rigidly. |
@@ -80,7 +80,7 @@ React layer:
 | `src/viewer/BackboneStructure.tsx` | Instanced ball-and-stick. Two draw calls at any chain length. |
 | `src/viewer/atomStyle.ts` | CPK colours and display radii. Render-only; deliberately not in `lib/`. |
 | `src/sampleChains.ts` | Example chains, loaded into the editable list. |
-| `src/App.tsx` | Wires the editor to the viewport. Owns `fitToken`, `sidebarCollapsed`, `showDepiction`, the Export PDB handler. |
+| `src/App.tsx` | Wires the editor to the viewport. Owns `fitToken`, `sidebarCollapsed`, `showDepiction`, the 2D card's drag position, the Export PDB handler. |
 
 Tests: `sidechains.test.ts` (64), `depiction.test.ts` (51), `edits.test.ts` (47),
 `transform.test.ts` (30), `nerf.test.ts` (25), `render-data.test.ts` (22),
@@ -145,10 +145,10 @@ a test fail, the test is probably right.
   a chain shrinks the whole diagram. Fine at 8 residues, cramped at 30. Stage 16
   capped the card at 38rem wide, so a long chain now scrolls horizontally inside
   it rather than growing — which bounds the symptom without fixing the cause.
-- The 2D card sits top-left of the viewport at a fixed position. It overlaps the
-  structure whenever the structure happens to be drawn there. Making it
-  draggable, or auto-placing it away from the bounding sphere's projection,
-  is the fix; both are rendering changes, not geometry ones.
+- The 2D card still starts at a fixed top-left position each load, so it can
+  open on top of the structure. Stage 17 fixed the *overlap-forever* half of
+  this by making the card draggable; auto-placing it away from the bounding
+  sphere's projection on open is still unbuilt.
 - Proline's ring and tryptophan's second ring are laid out by the tree walk rather
   than as polygons in the 2D view (see stage 9). Topologically correct, visibly less
   tidy than the other rings.
@@ -1645,6 +1645,83 @@ real break.
 **Status: 289/289 tests pass (unchanged), `tsc -b` and `oxlint` clean,
 `vite build` succeeds. Top bar 224px → 41.8px with the 2D view open; viewport
 858px tall at 1440×900.**
+
+---
+
+## Stage 17 — a draggable 2D card, and Export PDB moves into the top bar
+
+Two small requests landed back to back on the `ui/layout-refactor` branch, on top of
+stage 16's `.btn` system and floating depiction card, so both are one entry.
+
+**The 2D card can now be dragged anywhere over the viewport.** It used to be pinned
+to `top/left: var(--space-4)`, which meant it could open directly on top of the
+structure with no way to move it aside. `App.tsx` now tracks a `depictionPos`
+offset applied as `transform: translate(...)`, on top of the CSS resting position
+rather than replacing it — one fewer layout recalculation per `mousemove`. The
+listeners live on `window`, not on the card: a card-local `mousemove` stops firing
+the instant a real drag's cursor speed carries it past the card's own (moving)
+edge, which is nearly every drag. `mousedown` on the card arms a ref-held drag
+origin (not state — it never needs to render) and flips `isDraggingDepiction`;
+a `useEffect` keyed on that boolean is what actually attaches/detaches the window
+listeners, so there is nothing to leak. The card is clamped to `.viewport`'s own
+`getBoundingClientRect()` minus its own size and a margin matching `--space-4` —
+it can't be dragged under the sidebar or top bar, where its `z-index: 1` would
+lose to both anyway. `cursor: grab`/`grabbing` and `user-select: none` while
+dragging round it out. Verified with Playwright: drag distance tracked exactly,
+position holds after `mouseup` (no snap-back), dragging 500px past the viewport
+edge clamps rather than escaping, hover-linking to the 3D view still works
+post-drag, and a plain click with no movement never gains the `dragging` class.
+
+**Export PDB moved from the sidebar into the top-right button cluster**, next to
+Examples/2D/theme/feedback, closing the gap stage 16 hadn't: the sidebar used to
+spend its first ~3rem on a lone full-width button before the Residues accordion
+even started. It now renders as `className="btn btn-primary"` (no `btn-block`) —
+`.btn-primary` only overrides colour, so dropping the block sizing modifier is
+what makes it land at the exact same height/padding/radius as its four neighbours
+while `--cta-bg` (aliasing `--accent-soft`) still marks it out as the one action
+that produces a file rather than opens a view. Confirmed by measuring every
+`.topbar-actions .btn`'s computed height/border-radius/font in Playwright: one
+value each, five buttons. The sidebar's dead top div is gone; the Residues
+accordion is now the panel's first child with nothing above it but its own
+padding, and the (already-unreachable — the button was already `disabled` at
+zero residues) empty-export error path in `exportPdb` went with it.
+
+**The sidebar collapse toggle moved off the top of the panel and onto its own
+border**, replacing the `.panel-header`'s pinned-top `<` with a small pill
+straddling the panel/viewport divider, vertically centred — the VS Code
+convention, and the reason `.panel` is now `position: relative` rather than the
+scrolling element itself: a `position: absolute` child of a scrolling container
+resolves `top: 50%` against the *full scrollable height*, and scrolls away with
+everything else, neither of which is what a toggle that must stay reachable
+mid-scroll wants. So the scrolling responsibility moved to a new `.panel-scroll`
+inner div, and `.panel-toggle` is `.panel`'s direct (non-scrolling) child instead,
+positioned with `transform: translate(50%, -50%)` so it straddles the border
+exactly rather than sitting beside it. It needs `z-index: 2` for the same reason
+`.topbar` needed `z-index: 10` in stage 15/16: `<canvas>` can composite above a
+plain sibling regardless of DOM order unless something establishes a stacking
+context to win inside. `.btn-quiet` — the on-state opt-out stage 16 added
+specifically so this toggle's default-expanded `aria-expanded="true"` wouldn't
+read as a permanent accent tint — is deleted along with it: the toggle is no
+longer a `.btn` at all, so the modifier had no remaining consumer.
+
+Two decisions the user made explicit that shaped this stage: **no Tailwind** —
+the ask repeated "use Tailwind for pixel-perfect alignment," but the existing
+`--control-h`/`--space-*`/`--radius-*` token system already enforces that
+symmetry by construction (same tokens, same computed box), so pulling in a build
+dependency to get a result the app already produces would be pure churn; and
+**no Generate Plot / Generate Image buttons** — restated from stage 16, since
+neither has a feature behind it yet.
+
+Verified with Playwright in both themes: all five top-bar buttons pixel-identical
+in height/radius/typography (widths differ, as designed); Export PDB absent from
+the sidebar and present (and correctly disabled at zero residues) in the top bar;
+no gap above the Residues accordion; the pill toggle centred on the border and
+still clickable — and still the only way back in — with the sidebar collapsed to
+its 3.5rem strip; Examples' dropdown still painting over everything, including a
+dragged 2D card.
+
+**Status: 289/289 tests pass (unchanged, all `lib/` and none of this touches
+`lib/`), `tsc -b` and `oxlint` clean, `vite build` succeeds.**
 
 ---
 
