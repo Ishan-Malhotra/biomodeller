@@ -10,8 +10,8 @@ reasoning behind each decision, in the order they were made.
 
 ## Where things stand
 
-**Last completed:** Stage 17 — a draggable 2D card, and a second layout pass
-moving Export PDB into the top bar (branch `ui/layout-refactor`).
+**Last completed:** Stage 18 — exports open a Save As step (choose folder and
+filename) instead of downloading instantly.
 **Next:** nothing queued. Candidates at the bottom of this file. A hydrogen toggle
 (2D + formula + 3D) was requested and explicitly deferred as its own phase.
 
@@ -80,6 +80,8 @@ React layer:
 | `src/viewer/BackboneStructure.tsx` | Instanced ball-and-stick. Two draw calls at any chain length. |
 | `src/viewer/atomStyle.ts` | CPK colours and display radii. Render-only; deliberately not in `lib/`. |
 | `src/sampleChains.ts` | Example chains, loaded into the editable list. |
+| `src/saveFile.ts` | The one export path: OS Save As picker where supported, plain download otherwise. |
+| `src/SaveAsDialog.tsx` | The rename step for browsers without the picker. Reuses the feedback dialog's shell. |
 | `src/App.tsx` | Wires the editor to the viewport. Owns `fitToken`, `sidebarCollapsed`, `showDepiction`, the 2D card's drag position, the Export PDB handler. |
 
 Tests: `sidechains.test.ts` (64), `depiction.test.ts` (51), `edits.test.ts` (47),
@@ -1722,6 +1724,39 @@ dragged 2D card.
 
 **Status: 289/289 tests pass (unchanged, all `lib/` and none of this touches
 `lib/`), `tsc -b` and `oxlint` clean, `vite build` succeeds.**
+
+---
+
+## Stage 18 — Save As instead of an instant download
+
+Export PDB used to download `biomodeller-export.pdb` immediately. Now it asks
+where and under what name. `src/saveFile.ts` owns this for every export, current
+and future:
+
+- **Chrome/Edge** get `showSaveFilePicker` (File System Access API): the real OS
+  Save As dialog, so both folder and filename are the user's choice. It is called
+  synchronously from the click handler — the browser rejects it without a fresh
+  user gesture — and a cancel (`AbortError`) resolves silently.
+- **Firefox/Safari** have no API that lets a page choose a folder. They get
+  `SaveAsDialog`: a rename field (prefilled, pre-selected, `.pdb` shown as a fixed
+  suffix so a rename can't drop it; typing `x.pdb` doesn't double it), then a
+  normal download to the browser's downloads folder. The dialog says so rather
+  than implying a location choice it can't offer.
+
+**Known trade-off:** after the picker grants write access, Chrome shows "this
+site can see the edits you make". The indicator comes with the API and no site
+can suppress it. Dropping the picker (rename dialog + plain download everywhere)
+was tried and reverted — the in-site folder choice was judged worth the warning.
+
+The API isn't in TypeScript's DOM lib yet, so `saveFile.ts` declares the handful
+of members it uses instead of pulling in `@types/wicg-file-system-access`.
+
+Verified with Playwright: a stubbed picker receives `biomodeller-export.pdb` and a
+`.pdb` filter, gets the full ATOM…END content written, and no download fires; with
+the picker removed, the dialog opens instead of downloading, saves as
+`my-helix.pdb`, closes after, and Escape cancels.
+
+**Status: 289/289 tests pass, `tsc -b` and `oxlint` clean.**
 
 ---
 

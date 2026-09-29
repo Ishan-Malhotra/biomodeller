@@ -39,6 +39,8 @@ import { atomKey } from '../lib/naming.ts'
 import { exportToPDB } from '../lib/pdbExport.ts'
 import './App.css'
 import type { ExampleChain } from './sampleChains.ts'
+import { SaveAsDialog } from './SaveAsDialog.tsx'
+import { hasSavePicker, saveWithPicker, type SaveRequest } from './saveFile.ts'
 import { TopBar } from './TopBar.tsx'
 import { useTheme } from './theme.ts'
 import { useChain } from './useChain.ts'
@@ -82,6 +84,8 @@ function App() {
   // Open by default, as it was there, so the feature stays discoverable.
   const [showDepiction, setShowDepiction] = useState(true)
   const [hovered, setHovered] = useState<AtomRef | null>(null)
+  // Set only in browsers without an OS Save As picker; opens the rename dialog.
+  const [pendingSave, setPendingSave] = useState<SaveRequest | null>(null)
   const [pointer, setPointer] = useState<HoverPoint | null>(null)
   // The 2D card's offset from its default top-left corner, in pixels within
   // `.viewport`'s own box (the card is positioned absolutely relative to it).
@@ -111,13 +115,19 @@ function App() {
   }
 
   const exportPdb = () => {
-    const blob = new Blob([exportToPDB(atoms, residues)], { type: 'chemical/x-pdb' })
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = 'biomodeller-export.pdb'
-    anchor.click()
-    URL.revokeObjectURL(url)
+    const request: SaveRequest = {
+      blob: new Blob([exportToPDB(atoms, residues)], { type: 'chemical/x-pdb' }),
+      suggestedName: 'biomodeller-export',
+      extension: '.pdb',
+      description: 'PDB structure',
+    }
+    if (hasSavePicker()) {
+      saveWithPicker(request).catch((error: unknown) => {
+        console.error('Export failed', error)
+      })
+    } else {
+      setPendingSave(request)
+    }
   }
 
   const highlightKey = hovered ? atomKey(hovered.residueIndex, hovered.atomName) : null
@@ -314,6 +324,8 @@ function App() {
           <p className="empty">Blank canvas — add a residue to place the seed frame.</p>
         )}
       </main>
+
+      {pendingSave && <SaveAsDialog request={pendingSave} onClose={() => setPendingSave(null)} />}
     </div>
   )
 }

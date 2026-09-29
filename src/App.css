@@ -1101,3 +1101,20 @@
 .feedback-status.error {
   color: var(--danger);
 }
+
+/* ---- save-as dialog (fallback for browsers without an OS Save As picker) ---- */
+
+/* Name field with the extension shown as a fixed suffix, so renaming can't
+   accidentally drop it. Shares the feedback dialog's shell and field styles. */
+.save-as-name {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin-top: var(--space-4);
+}
+
+.save-as-ext {
+  flex: none;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
